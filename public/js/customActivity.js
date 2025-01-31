@@ -387,12 +387,24 @@ async function previewTemplate(tempvalue, tempid) {
         }
 
         // **Update Step 5 Preview Textarea**
-        const previewTextarea = document.querySelector('.html-editor');
+        const previewTextarea = document.querySelector('#step5 .html-editor');
         if (previewTextarea) {
             previewTextarea.value = dumpData; // Insert HTML into textarea for preview
         }
 
     } catch (error) {
         console.error("Error fetching template data:", error);
+    }
+}
+
+function selectTemplate(listId, template) {
+    const inputId = listId === "frontTemplateList" ? "frontTemplateInput" : "backTemplateInput";
+    const inputElement = document.getElementById(inputId);
+    if (inputElement) {
+        inputElement.value = template.description || 'No description';
+        // Call previewTemplate with the selected template ID and the corresponding element ID
+        previewTemplate(template.id, listId === "frontTemplateList" ? "selFrontTemp" : "selBackTemp");
+    } else {
+        console.error(`Input element with ID ${inputId} not found.`);
     }
 }
