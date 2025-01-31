@@ -165,7 +165,7 @@ define([
         return isValid;
     }
     
-    function validateStep3() {
+    /** function validateStep3() {
         let isValid = true;
         $(".error-message").remove();
 
@@ -206,7 +206,8 @@ define([
 
 
         return isValid;
-    }
+    } **/
+   
     //Set default date to today when the page loads
 $(document).ready(function () {
     let today = new Date().toISOString().split('T')[0];
@@ -316,7 +317,7 @@ $(document).ready(function () {
             backTemplateList.style.display = 'none';
         }
     });
-    
+
     
     // Add event listener for search input
     const frontSearchInput = document.getElementById('frontTemplateInput');
