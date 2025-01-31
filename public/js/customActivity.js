@@ -63,6 +63,13 @@ define([
                 connection.trigger("updateButton", { button: "back", visible: true });
                 connection.trigger('ready');
                 break;
+
+                case "step5":
+                $("#step5").show();
+                connection.trigger("updateButton", { button: "next", visible: true });
+                connection.trigger("updateButton", { button: "back", visible: true });
+                connection.trigger('ready');
+                break;
         }
     }
 
@@ -207,7 +214,7 @@ define([
 
         return isValid;
     } **/
-   
+
     //Set default date to today when the page loads
 $(document).ready(function () {
     let today = new Date().toISOString().split('T')[0];
