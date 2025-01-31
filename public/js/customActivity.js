@@ -317,6 +317,7 @@ $(document).ready(function () {
         }
     });
     
+    
     // Add event listener for search input
     const frontSearchInput = document.getElementById('frontTemplateInput');
     const backSearchInput = document.getElementById('backTemplateInput');
