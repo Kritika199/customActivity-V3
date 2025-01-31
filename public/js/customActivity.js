@@ -348,3 +348,51 @@ $(document).ready(function () {
     fetchTemplates();
 
 });
+
+
+async function previewTemplate(tempvalue, tempid) {
+    var requestOptions = {
+        method: 'GET',
+        headers: { "x-api-key": "test_sk_tGvCebFUALc3uRpdpjKPaZ" },
+        redirect: 'follow'
+    };
+
+    try {
+        const response = await fetch(`https://api.postgrid.com/print-mail/v1/templates/${tempvalue}`, requestOptions);
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+        const dataJson = await response.json();
+        let dumpData = dataJson.html;
+
+        // Clean up HTML for display
+        dumpData = dumpData.replace(/\n/g, "")
+            .replace(/[\t ]+\</g, "<")
+            .replace(/\>[\t ]+\</g, "><")
+            .replace(/\>[\t ]+$/g, ">");
+
+        // Inject into the correct section
+        if (tempid === "selTempLetter") {
+            document.getElementById('letterHtml').innerHTML = dumpData;
+        } 
+        if (tempid === "selFrontTemp") {
+            dumpData = dumpData.replace('class="page"', 'class="frontbox"')
+                .replace('.page', ".frontbox");
+            document.getElementById('frontDiv').innerHTML = dumpData;
+        } 
+        if (tempid === "selBackTemp") {
+            dumpData = dumpData.replace('class="page"', 'class="backbox"')
+                .replace('.page', ".backbox");
+            document.getElementById('backDiv').innerHTML = dumpData;
+        }
+
+        // **Update Step 5 Preview Textarea**
+        const previewTextarea = document.querySelector('.html-editor');
+        if (previewTextarea) {
+            previewTextarea.value = dumpData; // Insert HTML into textarea for preview
+        }
+
+    } catch (error) {
+        console.error("Error fetching template data:", error);
+    }
+}
