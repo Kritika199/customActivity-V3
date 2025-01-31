@@ -350,61 +350,94 @@ $(document).ready(function () {
 });
 
 
-async function previewTemplate(tempvalue, tempid) {
-    var requestOptions = {
-        method: 'GET',
-        headers: { "x-api-key": "test_sk_tGvCebFUALc3uRpdpjKPaZ" },
-        redirect: 'follow'
-    };
+// Fetch templates on page load
+fetchTemplates();
 
-    try {
-        const response = await fetch(`https://api.postgrid.com/print-mail/v1/templates/${tempvalue}`, requestOptions);
-        if (!response.ok) {
-            throw new Error(`API request failed with status ${response.status}`);
-        }
-        const dataJson = await response.json();
-        let dumpData = dataJson.html;
+// Store selected template data
+let selectedFrontTemplate = null;
+let selectedBackTemplate = null;
 
-        // Clean up HTML for display
-        dumpData = dumpData.replace(/\n/g, "")
-            .replace(/[\t ]+\</g, "<")
-            .replace(/\>[\t ]+\</g, "><")
-            .replace(/\>[\t ]+$/g, ">");
-
-        // Inject into the correct section
-        if (tempid === "selTempLetter") {
-            document.getElementById('letterHtml').innerHTML = dumpData;
-        } 
-        if (tempid === "selFrontTemp") {
-            dumpData = dumpData.replace('class="page"', 'class="frontbox"')
-                .replace('.page', ".frontbox");
-            document.getElementById('frontDiv').innerHTML = dumpData;
-        } 
-        if (tempid === "selBackTemp") {
-            dumpData = dumpData.replace('class="page"', 'class="backbox"')
-                .replace('.page', ".backbox");
-            document.getElementById('backDiv').innerHTML = dumpData;
-        }
-
-        // **Update Step 5 Preview Textarea**
-        const previewTextarea = document.querySelector('#step5 .html-editor');
-        if (previewTextarea) {
-            previewTextarea.value = dumpData; // Insert HTML into textarea for preview
-        }
-
-    } catch (error) {
-        console.error("Error fetching template data:", error);
-    }
-}
-
+// Handle template selection
 function selectTemplate(listId, template) {
     const inputId = listId === "frontTemplateList" ? "frontTemplateInput" : "backTemplateInput";
     const inputElement = document.getElementById(inputId);
     if (inputElement) {
         inputElement.value = template.description || 'No description';
-        // Call previewTemplate with the selected template ID and the corresponding element ID
-        previewTemplate(template.id, listId === "frontTemplateList" ? "selFrontTemp" : "selBackTemp");
+        inputElement.dataset.id = template.id; // Store template ID in dataset
+
+        // Store the selected template data
+        if (listId === "frontTemplateList") {
+            selectedFrontTemplate = template;
+        } else if (listId === "backTemplateList") {
+            selectedBackTemplate = template;
+        }
     } else {
         console.error(`Input element with ID ${inputId} not found.`);
+    }
+}
+
+// Collect form data
+function getFormData() {
+    const formData = {
+        name: document.getElementById('nameInput').value,
+        address: document.getElementById('addressInput').value,
+        // Add more fields as needed
+    };
+    return formData;
+}
+
+// Update preview screen
+function updatePreviewScreen() {
+    // Get form data
+    const formData = getFormData();
+
+    // Get selected template data
+    const frontTemplateData = selectedFrontTemplate ? selectedFrontTemplate.html : '';
+    const backTemplateData = selectedBackTemplate ? selectedBackTemplate.html : '';
+
+    // Combine template data with form data
+    const combinedFrontData = injectFormDataIntoTemplate(frontTemplateData, formData);
+    const combinedBackData = injectFormDataIntoTemplate(backTemplateData, formData);
+
+    // Display combined data in the preview screen
+    const previewTextarea = document.querySelector('#step5 .html-editor');
+    if (previewTextarea) {
+        previewTextarea.value = `${combinedFrontData}\n\n${combinedBackData}`;
+    } else {
+        console.error("Preview textarea not found.");
+    }
+}
+
+// Inject form data into template
+function injectFormDataIntoTemplate(template, formData) {
+    if (!template) return '';
+
+    // Replace placeholders in the template with form data
+    let updatedTemplate = template;
+    for (const key in formData) {
+        const placeholder = `{{${key}}}`;
+        updatedTemplate = updatedTemplate.replace(new RegExp(placeholder, 'g'), formData[key]);
+    }
+
+    return updatedTemplate;
+}
+
+// Show step and update preview screen for step5
+function showStep(stepId) {
+    console.log("showStep() - Showing step:", stepId);
+
+    // Hide all steps
+    const steps = document.querySelectorAll('.step');
+    steps.forEach(step => step.style.display = 'none');
+
+    // Show the selected step
+    const selectedStep = document.getElementById(stepId);
+    if (selectedStep) {
+        selectedStep.style.display = 'block';
+    }
+
+    // If the selected step is step5, update the preview screen
+    if (stepId === 'step5') {
+        updatePreviewScreen();
     }
 }
