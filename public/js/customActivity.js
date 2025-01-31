@@ -172,7 +172,7 @@ define([
         return isValid;
     }
     
-    /** function validateStep3() {
+    function validateStep3() {
         let isValid = true;
         $(".error-message").remove();
 
@@ -213,7 +213,7 @@ define([
 
 
         return isValid;
-    } **/
+    } 
 
     //Set default date to today when the page loads
 $(document).ready(function () {
