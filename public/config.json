@@ -17,7 +17,7 @@
                             
             ],
             "outArguments": [],
-            "url": "https://customactivity-v2.vercel.app/journeybuilder/execute",
+            "url": "https://custom-activity-v3-c98m.vercel.app/journeybuilder/execute",
             "verb": "POST",
             "body": "",
             "format": "json",
@@ -28,7 +28,7 @@
     "configurationArguments": {
         "applicationExtensionKey": "6844ce9d-6a56-4bdd-9826-fac70597e125",
          "save": {
-           "url": "https://customactivity-v2.vercel.app/save",
+           "url": "https://custom-activity-v3-c98m.vercel.app//save",
             "verb": "POST",
             "body": "",
             "format": "json",
@@ -36,7 +36,7 @@
             "timeout": 2000
        },
        "publish": {
-           "url": "https://customactivity-v2.vercel.app/publish",
+           "url": "https://custom-activity-v3-c98m.vercel.app/publish",
             "verb": "POST",
             "body": "",
             "format": "json",
@@ -44,7 +44,7 @@
             "timeout": 2000
        },
        "validate": {
-           "url": "https://customactivity-v2.vercel.app/validate",
+           "url": "https://custom-activity-v3-c98m.vercel.app/validate",
             "verb": "POST",
             "body": "",
             "format": "json",
@@ -52,7 +52,7 @@
             "timeout": 2000
        },
        "stop": {
-           "url": "https://customactivity-v2.vercel.app/stop",
+           "url": "https://custom-activity-v3-c98m.vercel.app/stop",
             "verb": "POST",
             "body": "",
             "format": "json",
