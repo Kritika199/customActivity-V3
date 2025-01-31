@@ -1,0 +1,440 @@
+/* -------------------First Step------------------- */
+
+/* -------------------First Step------------------- */
+
+
+/* -------------------Second Step------------------- */
+
+.second-step {
+    display: grid;
+    grid-template-columns: 1fr auto; /* Auto width for right box */
+    gap: 10px;
+    padding: 3% 3% 0px;
+    align-items: start;
+    position: relative;
+}
+
+/* Left Box */
+.left-box {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Section Label */
+.section-label {
+    font-size: 22px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    margin-bottom: 10px;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Input Container */
+.input-container {
+    margin-bottom: 40px; /* Increased space between sections */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Increased gap */
+    align-items: center;
+    color: #6b6b6b; /* Light gray color for fading */
+}
+
+/* Radio Buttons and Labels */
+.radio-input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.radio-label,
+#card-insert-container label,
+#card-insert-type label {
+    font-size: 18px; /* Same size for all */
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #6b6b6b; /* Light gray color for fading */
+}
+
+/* Card Insert (Initially Hidden) */
+#card-insert-container {
+    display: none;
+    margin-top: 10px;
+    margin-bottom: 20px; /* Added margin to separate it from the next content */
+}
+
+#card-insert-container.visible {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px; /* Ensures space after it appears */
+}
+
+/* Checkbox Size */
+#card-insert {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Card Insert Type */
+#card-insert-type {
+    margin-top: 25px; /* Increased margin */
+}
+
+#card-insert-type .input-container {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Increased gap */
+}
+
+/* Ensure every input-container has spacing after it */
+.input-container:last-child {
+    margin-bottom: 40px; /* Prevents sections from sticking together */
+}
+
+/* Creation Type */
+.input-container input[type="radio"] {
+    width: 18px;
+    height: 18px;
+}
+
+
+/* Error Messages */
+.error-message {
+    color: red;
+    font-size: 16px;
+    margin-left: 10px;
+    display: inline-block;
+}
+
+/* Right Box (Toggle Field) */
+.right-box {
+    position: absolute;
+    margin-top: 40px; 
+    right: 3%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* Align Toggle Properly */
+.align-right {
+    font-size: 18px; /* Same size for all */
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Toggle Switch */
+.test-to-live-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+/* Hide Default Checkbox */
+.test-to-live-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Toggle Slider */
+.test-to-live-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.test-to-live-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+/* Toggle Active State */
+input:checked + .test-to-live-slider {
+    background-color: #30c8ff;
+}
+
+input:focus + .test-to-live-slider {
+    box-shadow: 0 0 1px #30c8ff;
+}
+
+input:checked + .test-to-live-slider:before {
+    -webkit-transform: translateX(24px);
+    -ms-transform: translateX(24px);
+    transform: translateX(24px);
+}
+
+/* Rounded Sliders */
+.test-to-live-slider.round {
+    border-radius: 34px;
+}
+
+.test-to-live-slider.round:before {
+    border-radius: 50%;
+}
+
+
+
+
+
+/* -------------------Third Step------------------- */
+.spacer{
+   
+    padding: 3% 3% 1px;
+}
+/* Section Label */
+.section-label {
+    font-size: 22px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    margin-bottom: 30px;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
+.input-fields{
+    display: grid;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: repeat(2, auto);
+    
+    align-content: start;
+    row-gap: 15px;     
+    column-gap: 50px;     
+    margin-bottom: 40px;
+}
+.input-box{
+    display: grid;
+    grid-template-rows: repeat(2, auto);               
+}
+
+.input-field {
+    padding: 5px 10px;
+    border-radius: 3px;   
+    border: 3px solid lightgray;    
+    box-shadow: 0px 0px 1px 1px lightgray;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+    outline: none;
+}
+
+.input-label {
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 5px;
+}
+
+.input-label-radio{
+    font-size: 18px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 10px;
+    
+}
+
+.radio-buttons{
+    display: grid;
+    grid-template-columns: repeat(11, auto);
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+
+
+
+.checkbox-label{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.checkbox-input{
+    margin-left: auto;
+    margin-right: 5px;
+    width: 1.2em;
+    height: 1.2em;
+    vertical-align: bottom;
+}
+.checkboxes{
+    display:grid;
+    grid-template-rows: repeat(2,auto);
+    margin-top: 40px;
+}
+.three-checkboxes{
+    display: grid;
+    grid-template-columns: repeat(3,auto);
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+.two-checkboxes{
+    display: grid;
+    grid-template-columns: repeat(2,auto);
+    justify-content: space-between;
+}
+
+.html-editior{
+    border: 3px solid lightgray;
+    border-radius: 10px;        
+    outline:none; 
+    resize:none;
+    overflow:auto;
+    width: 95%;
+    height: 100%;
+    padding: 10px;
+}
+
+.six-input-field{
+    display: grid;
+    grid-template-rows: repeat(3, auto);
+    grid-template-columns: repeat(3, 23%);
+    justify-content: space-between;
+    align-content: start;
+    row-gap: 15px;         
+    margin-bottom: 20px;
+}        
+
+.five-checkboxes{
+    display: grid;
+    grid-template-columns: repeat(5, auto);
+    justify-content: space-between;
+    margin-bottom: 15px;
+    margin-bottom: 40px;
+}
+
+.drop-pdf{
+    width: 100%;
+    background-color: lightgrey;
+    height: 80px;
+    margin-top: 30px;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+}
+.input-label-drop{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.error-message {
+    color: red;
+    font-size: 16px;
+    display: block;
+    margin-top: 4px;
+}
+.error-field {
+    border: 1px solid red;
+}
+
+
+.mapping-dropdown {
+    position: relative;
+    width: 300px; /* Adjust as needed */
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+/* Basic styling for dropdowns */
+
+/* Basic styling for dropdowns */
+.mapping-dropdown {
+    position: relative;
+    width: 264px; /* Adjust as needed */
+}
+
+#search-contact,
+#frontTemplateInput,
+#backTemplateInput {
+    width: 100%;
+    padding: 8px 30px 8px 12px; /* Add padding for the arrow */
+    box-sizing: border-box;
+    border: 3px solid #ccc; /* Add border for better visibility */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow */
+    font-size: 14px; /* Adjust font size if needed */
+    
+    background: transparent; /* Ensure background is transparent */
+}
+
+/* Arrow CSS */
+.arrow {
+    border: solid black;
+    border-width: 0 1.5px 1.5px 0;
+    display: inline-block;
+    padding: 3px;
+    position: absolute;
+    right: 10px; /* Position the arrow inside the input field */
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg); /* Center and rotate the arrow */
+    pointer-events: none; /* Ensure the arrow doesn't block clicks */
+}
+
+.down {
+    transform: translateY(-50%) rotate(45deg); /* Down arrow rotation */
+}
+
+.dropdown-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    background: #fff;
+    display: none;
+    z-index: 1000;
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+.dropdown-options div,
+.dropdown-options li {
+    padding: 8px;
+    cursor: pointer;
+    list-style: none; /* Ensure no bullet points */
+}
+
+.dropdown-options div:hover,
+.dropdown-options li:hover {
+    background: #f0f0f0;
+}

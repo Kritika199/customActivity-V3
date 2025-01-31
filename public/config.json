@@ -1,0 +1,149 @@
+{
+    "workflowApiVersion": "1.1",
+    "metaData": {
+       "icon": "images/icon.png",
+       "category": "message"
+    },
+    "type": "REST",
+    "lang": {
+       "en-US": {
+           "name": "Postgrid Postcard & Letter Custom Activity",
+           "description": "Send letter and postcard from journey Builder using postgrid platform"
+       }
+    },
+    "arguments": {
+        "execute": {
+            "inArguments": [
+                            
+            ],
+            "outArguments": [],
+            "url": "https://customactivity-v2.vercel.app/journeybuilder/execute",
+            "verb": "POST",
+            "body": "",
+            "format": "json",
+            "useJwt": false,
+            "timeout": 2000
+        }
+    },
+    "configurationArguments": {
+        "applicationExtensionKey": "6844ce9d-6a56-4bdd-9826-fac70597e125",
+         "save": {
+           "url": "https://customactivity-v2.vercel.app/save",
+            "verb": "POST",
+            "body": "",
+            "format": "json",
+            "useJwt": false,
+            "timeout": 2000
+       },
+       "publish": {
+           "url": "https://customactivity-v2.vercel.app/publish",
+            "verb": "POST",
+            "body": "",
+            "format": "json",
+            "useJwt": false,
+            "timeout": 2000
+       },
+       "validate": {
+           "url": "https://customactivity-v2.vercel.app/validate",
+            "verb": "POST",
+            "body": "",
+            "format": "json",
+            "useJwt": false,
+            "timeout": 2000
+       },
+       "stop": {
+           "url": "https://customactivity-v2.vercel.app/stop",
+            "verb": "POST",
+            "body": "",
+            "format": "json",
+            "useJwt": false,
+            "timeout": 2000
+       }
+    },
+    "wizardSteps": [
+        { "label": "Connect Account", "key": "step1" },
+        { "label": "Select Method", "key": "step2" },
+        { "label": "Select Message", "key": "step3" },
+        { "label": "Select Contact", "key": "step4" },
+        { "label": "Preview Message", "key": "step5" }
+    ],
+    "userInterfaces": {
+       "configModal": {
+           "height": 600,
+           "width": 1200,
+           "fullscreen": false
+       }
+    },
+    "schema": {
+        "arguments": {
+            "execute": {
+                "inArguments": [
+                    {
+                        "FirstName": {
+                             "dataType": "String",
+                             "isNullable": false,
+                             "direction": "in"   
+                         }
+                     },                    
+                     {
+                         "LastName": {
+                             "dataType": "String",
+                             "isNullable": false,
+                             "direction": "in"   
+                         }
+                     },                    
+                     {
+                         "Company": {
+                             "dataType": "String",
+                             "isNullable": false,
+                             "direction": "in"   
+                         }
+                     },                    
+                     {
+                         "AddressLine1": {
+                             "dataType": "String",
+                             "isNullable": false,
+                             "direction": "in"   
+                         }
+                     },
+                     {
+                        "AddressLine2": {
+                            "dataType": "String",
+                            "isNullable": false,
+                            "direction": "in"   
+                        }
+                     },
+                     {
+                        "City": {
+                            "dataType": "String",
+                            "isNullable": false,
+                            "direction": "in"   
+                        }
+                     },
+                     {
+                        "State": {
+                            "dataType": "String",
+                            "isNullable": false,
+                            "direction": "in"   
+                        }
+                     },
+                     {
+                        "Country": {
+                            "dataType": "String",
+                            "isNullable": false,
+                            "direction": "in"   
+                        }
+                     },
+                     {
+                        "Postal": {
+                            "dataType": "String",
+                            "isNullable": false,
+                            "direction": "in"   
+                        }
+                     }
+                ],
+                "outArguments": []
+            }
+        }
+    }
+}

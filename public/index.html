@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>TESTING: Custom Journey Builder Activity</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- Include Select2 CSS -->
+<!-- Include Choices CSS -->
+
+<!-- Include Choices JS -->
+
+
+    <script type="text/javascript" src="./js/require.js"></script>
+    <script type="text/javascript">
+        (function () {
+            var config = {
+                baseUrl: 'js'
+            };
+
+            var dependencies = [
+                'customActivity'
+            ];
+
+            require(config, dependencies);
+        })();
+    </script>
+
+    <!--Styles-->
+    <link rel="stylesheet" type="text/css" href="./css/styles.css" />
+    <style type="text/css">
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .step {
+            display: none;
+        }
+
+        #step1 {
+            display: block;
+        }
+
+        .screen-2,
+        .screen-3,
+        .screen-4,
+        #letterScreen {
+            display: none;
+        }
+
+        /* Additional CSS for alignment */
+        .checkboxes {
+            margin-top: 20px; /* Add space above the checkboxes */
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center; /* Align checkbox and label vertically */
+            gap: 10px; /* Add space between checkbox and label */
+        }
+
+        .checkbox-input {
+            margin: 0; /* Remove default margin */
+        }
+
+        .input-label-radio {
+            margin-top: 20px; /* Add space above the radio buttons */
+        }
+
+        .radio-buttons {
+            margin-top: 10px; /* Add space above the radio buttons */
+        }
+
+        .error-message {
+            color: red;
+            display: none;
+        }
+        
+        .error-field {
+            border: 1px solid red;
+        }
+    </style>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+    <!-- Step 1: Connect PostGrid Account -->
+    
+    <!-- Step 2: Message Type and Creation Type Selection -->
+    <!-- Step 2: Message Type and Creation Type Selection -->
+<div id="step2" class="step">
+    <div class="second-step">
+        <div class="left-box">
+            <!-- Message Type -->
+            <div class="section-label">Message Type *</div>
+            <div class="input-container">
+                <input type="radio" class="radio-input step2radioBTN" id="letters" name="msgType">
+                <label for="letters" class="radio-label">Letters</label>
+
+                <input type="radio" class="radio-input step2radioBTN" id="postcard" name="msgType">
+                <label for="postcard" class="radio-label">Postcard</label>
+
+                <input type="radio" class="radio-input step2radioBTN" id="self-mailer" name="msgType">
+                <label for="self-mailer" class="radio-label">Self Mailer</label>
+
+                <!-- Error message for Message Type -->
+                <span id="msgType-error" class="error-message"></span>
+            </div>
+
+            <div id="card-insert-container" class="hidden">
+                <input type="checkbox" id="card-insert">
+                <label for="card-insert">Card Insert</label>
+            </div>
+
+            <!-- Card Insert Type (Conditional) -->
+            <div id="card-insert-type">
+                <div class="section-label">Card Insert Type</div>
+                <div class="input-container">
+                    <input type="radio" id="single-sided" name="cardType">
+                    <label for="single-sided">Single-sided</label>
+
+                    <input type="radio" id="double-sided" name="cardType">
+                    <label for="double-sided">Double-sided</label>
+                </div>
+            </div>
+
+            <!-- Creation Type -->
+            <div class="section-label">Creation Type *</div>
+            <div class="input-container">
+                <input type="radio" class="radio-input step2radioBTN" id="htmlId" name="createType">
+                <label for="htmlId" class="radio-label">HTML</label>
+
+                <input type="radio" class="radio-input step2radioBTN" id="pdfId" name="createType">
+                <label for="pdfId" class="radio-label">PDF Upload</label>
+
+                <input type="radio" class="radio-input step2radioBTN" id="extTempId" name="createType">
+                <label for="extTempId" class="radio-label">Existing Template</label>
+
+                <!-- Error message for Creation Type -->
+                <span id="createType-error" class="error-message"></span>
+            </div>
+        </div>
+
+        <!-- Right box for Test Mode -->
+        <div class="right-box">
+            <div class="input-container align-right">
+                <label class="test-to-live-switch">
+                    <input type="checkbox">
+                    <span class="test-to-live-slider round"></span>
+                </label>
+                <label for="testMode" class="slider-label">Live Mode</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Step 3: Postcard Screen -->
+    <div id="step3" class="step">
+        <div id="postcardScreen">
+            <!-- Third Step Third Screen -->
+            <div class="screen-3">
+                <div class="spacer">
+                    <div class="section-label">Existing Template</div>
+                    <div class="six-input-field">
+                        <div class="input-box">
+                            <label for="description3" class="input-label">Description *</label>
+                            <input type="text" class="input-field" id="description3" name="description3">
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="input-box">
+                            <label for="sendDate3" class="input-label">Send Date *</label>
+                            <input type="date" placeholder="" class="input-field" id="sendDate3" name="sendDate3">
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="input-box">
+                            <label for="mailingClass3" class="input-label">Mailing *</label>
+                            <select class="input-field" id="mailingClass3" name="mailingClass3">
+                                <option value="First Class" selected>First Class (7-10 business days)</option>
+                                <option value="Standard Class">Standard Class (10-14 business days)</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                        <!-- Front Template Dropdown -->
+                        <!-- Front Template -->
+<!-- Front Template -->
+
+<div class="input-box">
+    <label for="frontTemplateInput" class="input-label">Front Template *</label>
+    <div class="mapping-dropdown">
+        <input
+            type="text"
+            id="frontTemplateInput"
+            placeholder="Search or enter template"
+            autocomplete="off"
+            aria-describedby="frontTemplateList"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+        />
+       
+        <i class="arrow down"></i> <!-- Add down arrow here -->
+        <div id="frontTemplateList" class="dropdown-options" role="listbox" aria-labelledby="frontTemplateInput"></div>
+        <span class="error-message"></span>
+    </div>
+    
+</div>
+
+<!-- Back Template -->
+<div class="input-box">
+    <label for="backTemplateInput" class="input-label">Back Template * * *</label>
+    <div class="mapping-dropdown">
+        <input
+            type="text"
+            id="backTemplateInput"
+            placeholder="Search or enter template"
+            autocomplete="off"
+            aria-describedby="backTemplateList"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+        />
+        
+        <i class="arrow down"></i> <!-- Add down arrow here -->
+        <div id="backTemplateList" class="dropdown-options" role="listbox" aria-labelledby="backTemplateInput"></div>
+        <span class="error-message"></span>
+    </div>
+   
+   
+</div>
+
+
+  </div>          
+                        
+                        
+                        
+                    
+                    <div class="input-label-radio">Size *</div>
+<div class="radio-buttons width-50">
+    <label class="radio-label size_radio_label">
+        <input type="radio" class="radio-input" id="six-four" name="size" checked>
+        6x4
+    </label>
+    <label class="radio-label size_radio_label">
+        <input type="radio" class="radio-input" id="nine-six" name="size">
+        9x6
+    </label>
+    <label class="radio-label size_radio_label">
+        <input type="radio" class="radio-input" id="eleven-eight" name="size">
+        11x8
+    </label>
+    <span class="error-message"></span>
+</div>
+                    <!-- Express Delivery Checkbox -->
+                    <div class="checkboxes">
+                        <div class="five-checkboxes">
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="checkbox-input" id="expDelivery" name="expDelivery">
+                                Express Delivery
+                            </label>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    
+    
+</body>
+
+</html>
