@@ -444,6 +444,7 @@ input[type="text"] {
 /** exsting template preview screen css  **/
 
 /* Step 5: Preview Section - Unique Classes */
+/* Step 5: Preview Section - Unique Classes */
 .template-preview-step {
     display: flex;
     justify-content: center;
@@ -456,14 +457,9 @@ input[type="text"] {
 }
 
 .template-preview-container {
-    display: flex;
     width: 100%;
     max-width: 1200px; /* Adjust as needed */
-    gap: 20px; /* Space between left and right sections */
-}
-
-.template-preview-left {
-    flex: 1; /* Take up available space */
+    margin: 0 auto; /* Center the container */
 }
 
 .template-preview-label {
@@ -475,30 +471,21 @@ input[type="text"] {
 
 .template-preview-box {
     width: 100%;
-    height: 100%;
+    height: 500px; /* Adjust height as needed */
     border: 1px solid #ccc;
     border-radius: 8px;
-    overflow: hidden;
+    overflow: auto; /* Add scroll if content overflows */
     background-color: #f9f9f9;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for depth */
-}
-
-.template-preview-editor {
-    width: 100%;
-    height: 500px; /* Adjust height as needed */
-    padding: 10px;
+    padding: 15px; /* Add padding for better spacing */
     box-sizing: border-box;
-    border: none;
-    resize: none; /* Prevent resizing */
-    font-family: monospace;
-    font-size: 14px;
-    background-color: #fff;
-    color: #333; /* Adjust text color as needed */
 }
 
-.template-preview-right {
-    flex: 1; /* Take up available space */
-    background-color: #f0f0f0;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for depth */
+.template-preview-content {
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif; /* Adjust font as needed */
+    font-size: 14px;
+    color: #333; /* Adjust text color as needed */
+    line-height: 1.5; /* Improve readability */
 }
