@@ -361,275 +361,241 @@ define([
 
 
 
-    async function createContacts() {
-        console.log("Creating recipient contact...");
-        recipientContactId = await createContact();
-        console.log("Recipient contact ID:", recipientContactId);
-
-        console.log("Creating sender contact...");
-        senderContactId = await createContact();
-        console.log("Sender contact ID:", senderContactId);
-
-        if (!recipientContactId || !senderContactId) {
-            console.error("Failed to create required contacts.");
-            return false;
-        }
-
-        return true;
-    }
-
-    async function createContact() {
-        console.log("Creating contact...");
-        const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
-        const apiUrl = "https://api.postgrid.com/print-mail/v1/contacts";
-
-        const contactData = {
-            firstName: "Kevin",
-            lastName: "Smith",
-            companyName: "PostGrid",
-            addressLine1: "20-20 bay st",
-            addressLine2: "floor 11",
-            city: "Toronto",
-            provinceOrState: "ON",
-            countryCode: "CA",
-            postalOrZip: "M5J 2N8",
-            email: "kevinsmith@postgrid.com",
-            phoneNumber: "9059059059",
-            jobTitle: "Manager",
-            description: "Kevin Smith's contact information"
-        };
-
-        console.log("Sending contact creation request...", contactData);
-
-        try {
-            const response = await fetch(apiUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": apiKey
-                },
-                body: JSON.stringify(contactData)
-            });
-
-            if (!response.ok) {
-                throw new Error(`API request failed with status ${response.status}`);
+    $(document).ready(function () {
+        async function createContacts() {
+            console.log("Creating recipient contact...");
+            recipientContactId = await createContact();
+            console.log("Recipient contact ID:", recipientContactId);
+    
+            console.log("Creating sender contact...");
+            senderContactId = await createContact();
+            console.log("Sender contact ID:", senderContactId);
+    
+            if (!recipientContactId || !senderContactId) {
+                console.error("Failed to create required contacts.");
+                return false;
             }
-
-            const responseData = await response.json();
-            console.log("Contact created successfully:", responseData);
-            return responseData.id;
-        } catch (error) {
-            console.error("Error creating contact:", error);
-            return null;
+    
+            return true;
         }
-    }
-
-    // Function to show the loading screen
-function showLoadingScreen() {
-    $("#step5").html(`
-        <div class="loading-screen">
-            <p>Creating your postcard. Please wait...</p>
-        </div>
-    `);
-}
-
-// Function to show the preview screen
-function showPreviewScreen(postcardId) {
-    $("#step5").html(`
-        <div class="preview-screen">
-            <p>Postcard created successfully!</p>
-            <p>Postcard ID: ${postcardId}</p>
-            <div class="template-preview-content"></div>
-        </div>
-    `);
-}
-
-// Function to handle postcard creation
-async function handlePostcardCreation() {
-    showLoadingScreen(); // Show loading screen
-
-    try {
-        // Simulate processing time (optional)
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Create the postcard
-        console.log("Creating postcard...");
-        const postcardId = await createPostcard();
-
-        if (postcardId) {
-            showPreviewScreen(postcardId); // Show preview screen
-            await fetchAndShowPostcardPreview(postcardId); // Fetch and display preview
-        } else {
+    
+        async function createContact() {
+            console.log("Creating contact...");
+            const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
+            const apiUrl = "https://api.postgrid.com/print-mail/v1/contacts";
+    
+            const contactData = {
+                firstName: "Kevin",
+                lastName: "Smith",
+                companyName: "PostGrid",
+                addressLine1: "20-20 bay st",
+                addressLine2: "floor 11",
+                city: "Toronto",
+                provinceOrState: "ON",
+                countryCode: "CA",
+                postalOrZip: "M5J 2N8",
+                email: "kevinsmith@postgrid.com",
+                phoneNumber: "9059059059",
+                jobTitle: "Manager",
+                description: "Kevin Smith's contact information"
+            };
+    
+            console.log("Sending contact creation request...", contactData);
+    
+            try {
+                const response = await $.ajax({
+                    url: apiUrl,
+                    type: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-api-key": apiKey
+                    },
+                    data: JSON.stringify(contactData)
+                });
+    
+                console.log("Contact created successfully:", response);
+                return response.id;
+            } catch (error) {
+                console.error("Error creating contact:", error);
+                return null;
+            }
+        }
+    
+        // Function to show the loading screen
+        function showLoadingScreen() {
             $("#step5").html(`
-                <div class="error-screen">
-                    <p>Failed to create postcard. Please try again.</p>
+                <div class="loading-screen">
+                    <p>Creating your postcard. Please wait...</p>
                 </div>
             `);
         }
-    } catch (error) {
-        console.error("Error in handlePostcardCreation:", error);
-        $("#step5").html(`
-            <div class="error-screen">
-                <p>Failed to create postcard. Please try again.</p>
-            </div>
-        `);
-    }
-}
-
-// Function to create the postcard
-// Function to create the postcard
-async function createPostcard() {
-    console.log("Starting postcard creation...");
-
-    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
-    const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards?expand[]=frontTemplate&expand[]=backTemplate";
-
-    // Retrieve selected template IDs from the input fields
-    const frontTemplateInput = document.getElementById("frontTemplateInput");
-    const backTemplateInput = document.getElementById("backTemplateInput");
-    const sendDate = document.getElementById("sendDate3");
-    const description = document.getElementById("description3");
-
-    // Fetch selected size radio button
-    const sizeInputs = document.querySelectorAll('input[name="size"]');
-    let selectedSize = null;
-
-    sizeInputs.forEach(input => {
-        if (input.checked) {
-            console.log("Checked input ID:", input.id); // Log the checked size
-            // Map the input IDs directly to valid size values
-            if (input.id === "six-four") {
-                selectedSize = "6x4";
-            } else if (input.id === "nine-six") {
-                selectedSize = "9x6";
-            } else if (input.id === "eleven-eight") {
-                selectedSize = "11x8";
+    
+        // Function to show the preview screen
+        function showPreviewScreen(postcardId) {
+            $("#step5").html(`
+                <div class="preview-screen">
+                    <p>Postcard created successfully!</p>
+                    <p>Postcard ID: ${postcardId}</p>
+                    <div class="template-preview-content"></div>
+                </div>
+            `);
+        }
+    
+        // Function to handle postcard creation
+        async function handlePostcardCreation() {
+            showLoadingScreen(); // Show loading screen
+    
+            try {
+                // Simulate processing time (optional)
+                await new Promise(resolve => setTimeout(resolve, 2000));
+    
+                // Create the postcard
+                console.log("Creating postcard...");
+                const postcardId = await createPostcard();
+    
+                if (postcardId) {
+                    showPreviewScreen(postcardId); // Show preview screen
+                    await fetchAndShowPostcardPreview(postcardId); // Fetch and display preview
+                } else {
+                    $("#step5").html(`
+                        <div class="error-screen">
+                            <p>Failed to create postcard. Please try again.</p>
+                        </div>
+                    `);
+                }
+            } catch (error) {
+                console.error("Error in handlePostcardCreation:", error);
+                $("#step5").html(`
+                    <div class="error-screen">
+                        <p>Failed to create postcard. Please try again.</p>
+                    </div>
+                `);
+            }
+        }
+    
+        // Function to create the postcard
+        async function createPostcard() {
+            console.log("Starting postcard creation...");
+    
+            const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
+            const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards?expand[]=frontTemplate&expand[]=backTemplate";
+    
+            // Retrieve selected template IDs from the input fields
+            const frontTemplateId = $("#frontTemplateInput").data("id");
+            const backTemplateId = $("#backTemplateInput").data("id");
+            const sendDate = $("#sendDate3").val();
+            const description = $("#description3").val();
+    
+            // Fetch selected size radio button
+            const selectedSize = $('input[name="size"]:checked').attr("id");
+    
+            let size;
+            if (selectedSize === "six-four") {
+                size = "6x4";
+            } else if (selectedSize === "nine-six") {
+                size = "9x6";
+            } else if (selectedSize === "eleven-eight") {
+                size = "11x8";
+            }
+    
+            console.log("Selected Size:", size);
+    
+            // Validate required fields
+            if (!frontTemplateId || !backTemplateId || !sendDate || !description || !size) {
+                alert("Please fill all required fields.");
+                return;
+            }
+    
+            // Ensure recipient and sender IDs are defined
+            if (!recipientContactId || !senderContactId) {
+                console.error("Recipient or Sender Contact ID is missing.");
+                return;
+            }
+    
+            // Request body for creating the postcard
+            const requestBody = {
+                to: recipientContactId,
+                from: senderContactId,
+                frontTemplate: frontTemplateId,
+                backTemplate: backTemplateId,
+                size: size,
+                sendDate: sendDate || undefined,
+                description: description || "Postcard created via API"
+            };
+    
+            console.log("Sending postcard creation request...", requestBody);
+    
+            try {
+                const response = await $.ajax({
+                    url: apiUrl,
+                    type: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-api-key": apiKey
+                    },
+                    data: JSON.stringify(requestBody)
+                });
+    
+                console.log("Postcard created successfully:", response);
+                return response.id;
+            } catch (error) {
+                console.error("Error creating postcard:", error);
+                return null;
+            }
+        }
+    
+        async function fetchAndShowPostcardPreview(postcardId) {
+            console.log(`Fetching preview for postcard ID: ${postcardId}`);
+    
+            const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
+            const apiUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}?expand[]=frontTemplate&expand[]=backTemplate`;
+    
+            try {
+                const response = await $.ajax({
+                    url: apiUrl,
+                    type: "GET",
+                    headers: { "x-api-key": apiKey }
+                });
+    
+                console.log("Fetched Postcard Data:", response);
+                displayPreview(response);
+            } catch (error) {
+                console.error("Error fetching postcard preview:", error);
+                $(".template-preview-content").html(
+                    `<p class="error-message">Failed to load preview. Please try again.</p>`
+                );
+            }
+        }
+    
+        function displayPreview(postcardData) {
+            const previewContainer = $(".template-preview-content");
+            if (!previewContainer.length) {
+                console.error("Preview container not found.");
+                return;
+            }
+            previewContainer.empty(); // Clear previous content
+    
+            if (postcardData.frontTemplate || postcardData.backTemplate) {
+                if (postcardData.frontTemplate) {
+                    previewContainer.append(`
+                        <div class="template-section">
+                            <h3>Front Template</h3>${postcardData.frontTemplate.html}
+                        </div>
+                    `);
+                }
+    
+                if (postcardData.backTemplate) {
+                    previewContainer.append(`
+                        <div class="template-section">
+                            <h3>Back Template</h3>${postcardData.backTemplate.html}
+                        </div>
+                    `);
+                }
+            } else {
+                previewContainer.html(`<p class="no-preview-message">No preview available for this postcard.</p>`);
             }
         }
     });
 
-    // Debugging: Log the selected size
-    console.log("Selected Size:", selectedSize);
-
-    // Validate required fields
-    if (!frontTemplateInput || !backTemplateInput || !sendDate || !description || !selectedSize) {
-        console.error("One or more required DOM elements are missing.");
-        return;
-    }
-
-    const frontTemplateId = frontTemplateInput.dataset.id; // Get the template ID for the front
-    const backTemplateId = backTemplateInput.dataset.id; // Get the template ID for the back
-    const sendDateValue = sendDate.value;
-    const descriptionValue = description.value;
-
-    if (!frontTemplateId || !backTemplateId || !selectedSize) {
-        alert("Please fill all required fields.");
-        return;
-    }
-
-    // Ensure recipient and sender IDs are defined
-    if (!recipientContactId || !senderContactId) {
-        console.error("Recipient or Sender Contact ID is missing.");
-        return;
-    }
-
-    // Request body for creating the postcard
-    const requestBody = {
-        to: recipientContactId, // Use stored recipient contact ID
-        from: senderContactId,  // Use stored sender contact ID
-        frontTemplate: frontTemplateId, // Use template ID
-        backTemplate: backTemplateId,  // Use template ID
-        size: selectedSize, // Ensure this matches the API's expected format
-        sendDate: sendDateValue || undefined,
-        description: descriptionValue || "Postcard created via API"
-    };
-
-    console.log("Sending postcard creation request...", requestBody);
-
-    try {
-        const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-api-key": apiKey
-            },
-            body: JSON.stringify(requestBody)
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("API Error Response:", errorData);
-            throw new Error(`API request failed with status ${response.status}`);
-        }
-
-        const responseData = await response.json();
-        console.log("Postcard created successfully:", responseData);
-
-        return responseData.id; // Return the postcard ID for further use
-
-    } catch (error) {
-        console.error("Error creating postcard:", error);
-        throw error; // Re-throw the error to handle it in the calling function
-    }
-}
-
-
-
-async function fetchAndShowPostcardPreview(postcardId) {
-    console.log(`Fetching preview for postcard ID: ${postcardId}`);
-
-    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";  // Replace with actual API Key
-    const apiUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}?expand[]=frontTemplate&expand[]=backTemplate`;
-
-    try {
-        const response = await fetch(apiUrl, {
-            method: "GET",
-            headers: { "x-api-key": apiKey }
-        });
-
-        if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
-
-        const postcardData = await response.json();
-        console.log("Fetched Postcard Data:", postcardData);
-        displayPreview(postcardData);
-
-    } catch (error) {
-        console.error("Error fetching postcard preview:", error);
-        document.querySelector(".template-preview-content").innerHTML = 
-            `<p class="error-message">Failed to load preview. Please try again.</p>`;
-    }
-}
-
-function displayPreview(postcardData) {
-    const previewContainer = document.querySelector(".template-preview-content");
-    if (!previewContainer) {
-        console.error("Preview container not found.");
-        return;
-    }
-    previewContainer.innerHTML = ''; // Clear previous content
-
-    // Show HTML templates only (Images removed)
-    if (postcardData.frontTemplate || postcardData.backTemplate) {
-        if (postcardData.frontTemplate) {
-            const frontDiv = document.createElement("div");
-            frontDiv.classList.add("template-section");
-            frontDiv.innerHTML = `<h3>Front Template</h3>${postcardData.frontTemplate.html}`;
-            previewContainer.appendChild(frontDiv);
-        }
-
-        if (postcardData.backTemplate) {
-            const backDiv = document.createElement("div");
-            backDiv.classList.add("template-section");
-            backDiv.innerHTML = `<h3>Back Template</h3>${postcardData.backTemplate.html}`;
-            previewContainer.appendChild(backDiv);
-        }
-    } 
-    // If no template is available, show a message
-    else {
-        previewContainer.innerHTML = `<p class="no-preview-message">No preview available for this postcard.</p>`;
-    }
-}
-
-
-
 });
+    
