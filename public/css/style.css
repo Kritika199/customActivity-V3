@@ -444,7 +444,7 @@ input[type="text"] {
 /** exsting template preview screen css  **/
 
 /* Step 5: Preview Section - Unique Classes */
-.template-preview-container {
+.pdf-preview-container {
     width: 100%;
     max-width: 600px;
     background: white;

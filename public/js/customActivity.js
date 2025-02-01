@@ -424,7 +424,7 @@ define([
         }
     }
 
-    // Function to show the loading screen
+   // Function to show the loading screen
 function showLoadingScreen() {
     $("#step5").html(`
         <div class="loading-screen">
@@ -439,7 +439,7 @@ function showPreviewScreen(postcardId) {
         <div class="preview-screen">
             <p>Postcard created successfully!</p>
             <p>Postcard ID: ${postcardId}</p>
-            <div class="template-preview-content"></div>
+            <div id="pdf-preview-container" class="template-preview-content"></div>
         </div>
     `);
 }
@@ -618,7 +618,7 @@ async function fetchPostcardDetails(postcardId) {
 
 // Function to show the PDF preview
 function showPdfPreview(pdfUrl) {
-    const previewContainer = document.querySelector(".template-preview-content");
+    const previewContainer = document.getElementById("pdf-preview-container");
 
     if (!pdfUrl) {
         console.error('PDF URL is missing.');
