@@ -444,29 +444,44 @@ input[type="text"] {
 /** exsting template preview screen css  **/
 
 /* Step 5: Preview Section - Unique Classes */
-.template-preview-content {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+.template-preview-container {
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: center;
+    margin: auto;
 }
 
-.error-message {
-    color: red;
+.template-preview-label {
+    font-size: 18px;
     font-weight: bold;
+    margin-bottom: 10px;
 }
 
-.no-preview-message {
-    color: #888;
-    font-style: italic;
-}
-
-.template-content {
+.template-preview-box {
+    max-height: 400px; /* Prevents overflow */
+    overflow-y: auto;  /* Enables scrolling for large previews */
+    border: 1px solid #ddd;
     padding: 10px;
+    background: #fff;
+    text-align: center;
 }
 
-.template-html {
+.postcard-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.template-section {
+    border: 1px solid #ddd;
     padding: 10px;
-    border: 1px solid #ccc;
-    margin: 10px 0;
+    background: #f9f9f9;
+    text-align: left;
+    margin-top: 10px;
 }

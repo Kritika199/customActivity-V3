@@ -578,60 +578,38 @@ async function createPostcard() {
 async function fetchAndShowPostcardPreview(postcardId) {
     console.log(`Fetching preview for postcard ID: ${postcardId}`);
 
-    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
+    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";  // Replace with actual API Key
     const apiUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}?expand[]=frontTemplate&expand[]=backTemplate`;
 
     try {
         const response = await fetch(apiUrl, {
             method: "GET",
-            headers: {
-                "x-api-key": apiKey
-            }
+            headers: { "x-api-key": apiKey }
         });
 
-        if (!response.ok) {
-            throw new Error(`API request failed with status ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
 
         const postcardData = await response.json();
         console.log("Fetched Postcard Data:", postcardData);
-
-        // Display the preview in the template-preview-content div
         displayPreview(postcardData);
 
     } catch (error) {
         console.error("Error fetching postcard preview:", error);
-        const previewContainer = document.querySelector(".template-preview-content");
-        if (previewContainer) {
-            previewContainer.innerHTML = `<p class="error-message">Failed to load preview. Please try again.</p>`;
-        }
+        document.querySelector(".template-preview-content").innerHTML = 
+            `<p class="error-message">Failed to load preview. Please try again.</p>`;
     }
 }
 
-// Function to display the preview
 function displayPreview(postcardData) {
     const previewContainer = document.querySelector(".template-preview-content");
-
     if (!previewContainer) {
         console.error("Preview container not found.");
         return;
     }
+    previewContainer.innerHTML = ''; // Clear previous content
 
-    // Clear existing content
-    previewContainer.innerHTML = '';
-
-    // Check if the postcard has a URL for preview (e.g., PDF or image)
-    if (postcardData.url) {
-        // Create an iframe to show the PDF preview
-        const iframe = document.createElement("iframe");
-        iframe.src = postcardData.url;
-        iframe.width = "50%";
-        iframe.height = "250px";
-        iframe.classList.add("iframe-preview");
-        previewContainer.appendChild(iframe);
-        console.log("Preview displayed successfully.");
-    } else if (postcardData.frontImageUrl || postcardData.backImageUrl) {
-        // If the API provides image URLs for front and back, display them
+    // Show front & back images if available
+    if (postcardData.frontImageUrl || postcardData.backImageUrl) {
         if (postcardData.frontImageUrl) {
             const frontImage = document.createElement("img");
             frontImage.src = postcardData.frontImageUrl;
@@ -647,26 +625,30 @@ function displayPreview(postcardData) {
             backImage.classList.add("postcard-image");
             previewContainer.appendChild(backImage);
         }
+    } 
+    // If images are not available, show HTML templates
+    else if (postcardData.frontTemplate || postcardData.backTemplate) {
+        if (postcardData.frontTemplate) {
+            const frontDiv = document.createElement("div");
+            frontDiv.classList.add("template-section");
+            frontDiv.innerHTML = `<h3>Front Template</h3>${postcardData.frontTemplate.html}`;
+            previewContainer.appendChild(frontDiv);
+        }
 
-        console.log("Image preview displayed successfully.");
-    } else if (postcardData.frontTemplate || postcardData.backTemplate) {
-        // If templates exist, show a fallback message or the template content
-        previewContainer.innerHTML = `
-            <p class="no-preview-message">
-                No image preview available. Here is the template content:
-            </p>
-            <div class="template-content">
-                <p><strong>Front Template:</strong></p>
-                <div class="template-html">${postcardData.frontTemplate ? postcardData.frontTemplate.html : 'No content available'}</div>
-                <p><strong>Back Template:</strong></p>
-                <div class="template-html">${postcardData.backTemplate ? postcardData.backTemplate.html : 'No content available'}</div>
-            </div>
-        `;
-        console.log("Template preview displayed.");
-    } else {
-        // If no preview is available, show a message
+        if (postcardData.backTemplate) {
+            const backDiv = document.createElement("div");
+            backDiv.classList.add("template-section");
+            backDiv.innerHTML = `<h3>Back Template</h3>${postcardData.backTemplate.html}`;
+            previewContainer.appendChild(backDiv);
+        }
+    } 
+    // If nothing is available, show a message
+    else {
         previewContainer.innerHTML = `<p class="no-preview-message">No preview available for this postcard.</p>`;
     }
 }
+
+
+
 
 });
