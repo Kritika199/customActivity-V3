@@ -608,6 +608,7 @@ async function fetchAndShowPostcardPreview(postcardId) {
     }
 }
 
+// Function to display the preview
 function displayPreview(postcardData) {
     const previewContainer = document.querySelector(".template-preview-content");
 
@@ -619,22 +620,53 @@ function displayPreview(postcardData) {
     // Clear existing content
     previewContainer.innerHTML = '';
 
-    // Check if the postcard is ready and has a URL for preview (e.g., PDF)
-    if (postcardData.status === "ready" && postcardData.url) {
+    // Check if the postcard has a URL for preview (e.g., PDF or image)
+    if (postcardData.url) {
         // Create an iframe to show the PDF preview
         const iframe = document.createElement("iframe");
         iframe.src = postcardData.url;
         iframe.width = "100%";
         iframe.height = "500px";
-        iframe.style.border = "1px solid #ddd";
+        iframe.classList.add("iframe-preview");
         previewContainer.appendChild(iframe);
         console.log("Preview displayed successfully.");
-    } else if (postcardData.status !== "ready") {
-        // If postcard is not ready, show an appropriate message
-        previewContainer.innerHTML = `<p class="no-preview-message">Postcard is not ready for preview yet.</p>`;
+    } else if (postcardData.frontImageUrl || postcardData.backImageUrl) {
+        // If the API provides image URLs for front and back, display them
+        if (postcardData.frontImageUrl) {
+            const frontImage = document.createElement("img");
+            frontImage.src = postcardData.frontImageUrl;
+            frontImage.alt = "Front of Postcard";
+            frontImage.classList.add("postcard-image");
+            previewContainer.appendChild(frontImage);
+        }
+
+        if (postcardData.backImageUrl) {
+            const backImage = document.createElement("img");
+            backImage.src = postcardData.backImageUrl;
+            backImage.alt = "Back of Postcard";
+            backImage.classList.add("postcard-image");
+            previewContainer.appendChild(backImage);
+        }
+
+        console.log("Image preview displayed successfully.");
+    } else if (postcardData.frontTemplate || postcardData.backTemplate) {
+        // If templates exist, show a fallback message or the template content
+        previewContainer.innerHTML = `
+            <p class="no-preview-message">
+                No image preview available. Here is the template content:
+            </p>
+            <div class="template-content">
+                <p><strong>Front Template:</strong></p>
+                <div class="template-html">${postcardData.frontTemplate ? postcardData.frontTemplate.html : 'No content available'}</div>
+                <p><strong>Back Template:</strong></p>
+                <div class="template-html">${postcardData.backTemplate ? postcardData.backTemplate.html : 'No content available'}</div>
+            </div>
+        `;
+        console.log("Template preview displayed.");
     } else {
-        // If no preview URL is available, show a message
+        // If no preview is available, show a message
         previewContainer.innerHTML = `<p class="no-preview-message">No preview available for this postcard.</p>`;
     }
 }
+
 });
