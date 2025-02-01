@@ -478,6 +478,7 @@ async function handlePostcardCreation() {
 
 // Function to create the postcard
 // Function to create the postcard
+// Function to create the postcard
 async function createPostcard() {
     console.log("Starting postcard creation...");
 
@@ -563,11 +564,8 @@ async function createPostcard() {
         const responseData = await response.json();
         console.log("Postcard created successfully:", responseData);
 
-        // Wait for 5 seconds before fetching the preview
-        await new Promise(resolve => setTimeout(resolve, 5000));
-
-        // Fetch and show the preview after postcard creation
-        await fetchAndShowPostcardPreview(responseData.id);
+        // Now, we check if the postcard is ready before fetching the preview
+        await checkPostcardStatusAndFetchPreview(responseData.id);
 
     } catch (error) {
         console.error("Error creating postcard:", error);
@@ -575,59 +573,42 @@ async function createPostcard() {
     }
 }
 
-// Function to fetch and show the postcard preview
-async function fetchAndShowPostcardPreview(postcardId) {
-    console.log(`Fetching preview for postcard ID: ${postcardId}`);
+// Function to check postcard status and fetch preview
+async function checkPostcardStatusAndFetchPreview(postcardId) {
+    console.log(`Checking postcard status for ID: ${postcardId}`);
 
     const apiKey = 'test_sk_uQXxwmGMghWwG5wEfezZVN'; // Replace with your actual API key
     const apiUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}?expand[]=frontTemplate&expand[]=backTemplate`;
 
-    let attempts = 0;
-    const maxAttempts = 5; // Maximum retry attempts
-    const retryDelay = 5000; // Retry delay in milliseconds (5 seconds)
-
-    while (attempts < maxAttempts) {
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'GET',
-                headers: {
-                    'x-api-key': apiKey
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'x-api-key': apiKey
             }
+        });
 
-            const postcardData = await response.json();
-            console.log("Fetched Postcard Data:", postcardData);
-
-            // Check if the postcard is ready and if a URL is available
-            if (postcardData.status === "ready" && postcardData.url) {
-                // If ready, show the PDF preview
-                showPdfPreview(postcardData.url);
-                return; // Exit the function as the preview is displayed
-            }
-
-            // If the postcard is not ready, retry
-            console.log(`Postcard is not ready. Status: ${postcardData.status}. Retrying...`);
-            attempts++;
-
-            if (attempts < maxAttempts) {
-                // Wait before retrying
-                await new Promise(resolve => setTimeout(resolve, retryDelay));
-            }
-
-        } catch (error) {
-            console.error('Error fetching postcard preview:', error);
-            break; // Exit the loop if there's an error
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-    }
 
-    // If max attempts reached and no preview is available, show a message
-    const previewContainer = document.querySelector(".template-preview-content");
-    if (previewContainer) {
-        previewContainer.innerHTML = `<p class="no-preview-message">Postcard is still not ready after multiple attempts.</p>`;
+        const postcardData = await response.json();
+        console.log("Fetched Postcard Data:", postcardData);
+
+        // Check if the postcard is ready
+        if (postcardData.status === "ready" && postcardData.url) {
+            console.log("Postcard is ready, fetching the preview.");
+            // If ready, show the PDF preview
+            showPdfPreview(postcardData.url);
+        } else {
+            // If not ready, log and retry after waiting a few seconds
+            console.log(`Postcard is not ready. Status: ${postcardData.status}. Retrying in 5 seconds...`);
+            // Retry after 5 seconds (you can adjust as needed)
+            setTimeout(() => checkPostcardStatusAndFetchPreview(postcardId), 5000);
+        }
+
+    } catch (error) {
+        console.error('Error fetching postcard status:', error);
     }
 }
 
