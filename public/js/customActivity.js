@@ -349,6 +349,7 @@ fetchTemplates();
 
 // Create a new contact
 async function createContact() {
+    console.log("Creating contact..."); // Debugging
     const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
     const apiUrl = "https://api.postgrid.com/print-mail/v1/contacts";
 
@@ -391,7 +392,6 @@ async function createContact() {
     }
 }
 
-// Create a new postcard
 async function createPostcard() {
     console.log("Starting postcard creation...");
 
@@ -453,16 +453,6 @@ async function createPostcard() {
         }
     } catch (error) {
         console.error("Error creating postcard:", error);
-    }
-}
-
-// Display postcard preview
-async function displayPostcardPreview(postcardId) {
-    console.log("Displaying preview for postcard ID:", postcardId);
-    const previewUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}/preview`;
-    const previewContainer = document.querySelector(".template-preview-content");
-    if (previewContainer) {
-        previewContainer.innerHTML = `<iframe src="${previewUrl}" width="100%" height="500px"></iframe>`;
     }
 }
 });
