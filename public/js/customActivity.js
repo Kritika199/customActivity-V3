@@ -349,95 +349,105 @@ $(document).ready(function () {
 
 });
 
+async function createContact() {
+    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
+    const apiUrl = "https://api.postgrid.com/print-mail/v1/contacts";
 
-// Fetch templates on page load
-fetchTemplates();
-
-// Store selected template data
-let selectedFrontTemplate = null;
-let selectedBackTemplate = null;
-
-// Handle template selection
-function selectTemplate(listId, template) {
-    const inputId = listId === "frontTemplateList" ? "frontTemplateInput" : "backTemplateInput";
-    const inputElement = document.getElementById(inputId);
-    if (inputElement) {
-        inputElement.value = template.description || 'No description';
-        inputElement.dataset.id = template.id; // Store template ID in dataset
-
-        // Store the selected template data
-        if (listId === "frontTemplateList") {
-            selectedFrontTemplate = template;
-        } else if (listId === "backTemplateList") {
-            selectedBackTemplate = template;
-        }
-    } else {
-        console.error(`Input element with ID ${inputId} not found.`);
-    }
-}
-
-// Collect form data
-function getFormData() {
-    const formData = {
-        name: document.getElementById('nameInput').value,
-        address: document.getElementById('addressInput').value,
-        // Add more fields as needed
+    const contactData = {
+        firstName: "Kevin",
+        lastName: "Smith",
+        companyName: "PostGrid",
+        addressLine1: "20-20 bay st",
+        addressLine2: "floor 11",
+        city: "Toronto",
+        provinceOrState: "ON",
+        countryCode: "CA",
+        postalOrZip: "M5J 2N8",
+        email: "kevinsmith@postgrid.com",
+        phoneNumber: "9059059059",
+        jobTitle: "Manager",
+        description: "Kevin Smith's contact information"
     };
-    return formData;
-}
 
-// Update preview screen
-function updatePreviewScreen() {
-    // Get form data
-    const formData = getFormData();
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-api-key": apiKey
+            },
+            body: JSON.stringify(contactData)
+        });
 
-    // Get selected template data
-    const frontTemplateData = selectedFrontTemplate ? selectedFrontTemplate.html : '';
-    const backTemplateData = selectedBackTemplate ? selectedBackTemplate.html : '';
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+        }
 
-    // Combine template data with form data
-    const combinedFrontData = injectFormDataIntoTemplate(frontTemplateData, formData);
-    const combinedBackData = injectFormDataIntoTemplate(backTemplateData, formData);
-
-    // Display combined data in the preview screen
-    const previewTextarea = document.querySelector('#step5 .html-editor');
-    if (previewTextarea) {
-        previewTextarea.value = `${combinedFrontData}\n\n${combinedBackData}`;
-    } else {
-        console.error("Preview textarea not found.");
+        const responseData = await response.json();
+        console.log("Contact created:", responseData);
+        return responseData.id;
+    } catch (error) {
+        console.error("Error creating contact:", error);
     }
 }
 
-// Inject form data into template
-function injectFormDataIntoTemplate(template, formData) {
-    if (!template) return '';
+async function createPostcard() {
+    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
+    const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards?expand[]=frontTemplate&expand[]=backTemplate";
 
-    // Replace placeholders in the template with form data
-    let updatedTemplate = template;
-    for (const key in formData) {
-        const placeholder = `{{${key}}}`;
-        updatedTemplate = updatedTemplate.replace(new RegExp(placeholder, 'g'), formData[key]);
+    const toContact = await createContact();
+    const fromContact = await createContact();
+    const frontTemplate = document.getElementById("frontTemplateInput").dataset.id;
+    const backTemplate = document.getElementById("backTemplateInput").dataset.id;
+    const size = document.getElementById("postcardSize").value;
+    const sendDate = document.getElementById("sendDate").value;
+    const description = document.getElementById("description").value;
+    
+    if (!toContact || !fromContact || !frontTemplate || !backTemplate || !size) {
+        alert("Please fill all required fields.");
+        return;
     }
 
-    return updatedTemplate;
+    const requestBody = {
+        to: toContact,
+        from: fromContact,
+        frontTemplate: frontTemplate,
+        backTemplate: backTemplate,
+        size: size,
+        sendDate: sendDate || undefined,
+        description: description || "Postcard created via API"
+    };
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-api-key": apiKey
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        console.log("Postcard created:", responseData);
+        
+        if (responseData.id) {
+            displayPostcardPreview(responseData.id);
+        }
+    } catch (error) {
+        console.error("Error creating postcard:", error);
+    }
 }
 
-// Show step and update preview screen for step5
-function showStep(stepId) {
-    console.log("showStep() - Showing step:", stepId);
-
-    // Hide all steps
-    const steps = document.querySelectorAll('.step');
-    steps.forEach(step => step.style.display = 'none');
-
-    // Show the selected step
-    const selectedStep = document.getElementById(stepId);
-    if (selectedStep) {
-        selectedStep.style.display = 'block';
-    }
-
-    // If the selected step is step5, update the preview screen
-    if (stepId === 'step5') {
-        updatePreviewScreen();
+async function displayPostcardPreview(postcardId) {
+    const previewUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}/download`; // PDF preview URL
+    const previewContainer = document.querySelector(".template-preview-content");
+    if (previewContainer) {
+        previewContainer.innerHTML = `<iframe src="${previewUrl}" width="100%" height="500px"></iframe>`;
     }
 }
+
