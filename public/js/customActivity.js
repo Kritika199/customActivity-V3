@@ -496,8 +496,7 @@ async function createPostcard() {
 
     sizeInputs.forEach(input => {
         if (input.checked) {
-            console.log("Checked input ID:", input.id); // Log the checked size
-            // Map the input IDs directly to valid size values
+            console.log("Checked input ID:", input.id);
             if (input.id === "six-four") {
                 selectedSize = "6x4";
             } else if (input.id === "nine-six") {
@@ -508,7 +507,6 @@ async function createPostcard() {
         }
     });
 
-    // Debugging: Log the selected size
     console.log("Selected Size:", selectedSize);
 
     // Validate required fields
@@ -517,8 +515,8 @@ async function createPostcard() {
         return;
     }
 
-    const frontTemplateId = frontTemplateInput.dataset.id; // Get the template ID for the front
-    const backTemplateId = backTemplateInput.dataset.id; // Get the template ID for the back
+    const frontTemplateId = frontTemplateInput.dataset.id;
+    const backTemplateId = backTemplateInput.dataset.id;
     const sendDateValue = sendDate.value;
     const descriptionValue = description.value;
 
@@ -535,11 +533,11 @@ async function createPostcard() {
 
     // Request body for creating the postcard
     const requestBody = {
-        to: recipientContactId, // Use stored recipient contact ID
-        from: senderContactId,  // Use stored sender contact ID
-        frontTemplate: frontTemplateId, // Use template ID
-        backTemplate: backTemplateId,  // Use template ID
-        size: selectedSize, // Ensure this matches the API's expected format
+        to: recipientContactId,
+        from: senderContactId,
+        frontTemplate: frontTemplateId,
+        backTemplate: backTemplateId,
+        size: selectedSize,
         sendDate: sendDateValue || undefined,
         description: descriptionValue || "Postcard created via API"
     };
@@ -565,15 +563,15 @@ async function createPostcard() {
         const responseData = await response.json();
         console.log("Postcard created successfully:", responseData);
 
-        // Wait for a few seconds before fetching the preview
+        // Wait for 5 seconds before fetching the preview
         await new Promise(resolve => setTimeout(resolve, 5000));
 
         // Fetch and show the preview after postcard creation
-        fetchAndShowPostcardPreview(responseData.id); // Pass the created postcard ID to the preview function
+        await fetchAndShowPostcardPreview(responseData.id);
 
     } catch (error) {
         console.error("Error creating postcard:", error);
-        throw error; // Re-throw the error to handle it in the calling function
+        throw error;
     }
 }
 
