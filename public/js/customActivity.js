@@ -384,26 +384,37 @@ async function createContact() {
         }
 
         const responseData = await response.json();
-        console.log("Contact created:", responseData);
+        console.log("Contact created successfully:", responseData);
         return responseData.id;
     } catch (error) {
         console.error("Error creating contact:", error);
+        return null;
     }
 }
 
 async function createPostcard() {
+    console.log("Starting postcard creation...");
+    
     const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
     const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards?expand[]=frontTemplate&expand[]=backTemplate";
 
+    console.log("Creating recipient contact...");
     const toContact = await createContact();
+    console.log("Creating sender contact...");
     const fromContact = await createContact();
+    
+    if (!toContact || !fromContact) {
+        console.error("Failed to create required contacts. Aborting postcard creation.");
+        return;
+    }
+
     const frontTemplate = document.getElementById("frontTemplateInput").dataset.id;
     const backTemplate = document.getElementById("backTemplateInput").dataset.id;
     const size = document.getElementById("postcardSize").value;
     const sendDate = document.getElementById("sendDate").value;
     const description = document.getElementById("description").value;
     
-    if (!toContact || !fromContact || !frontTemplate || !backTemplate || !size) {
+    if (!frontTemplate || !backTemplate || !size) {
         alert("Please fill all required fields.");
         return;
     }
@@ -417,6 +428,8 @@ async function createPostcard() {
         sendDate: sendDate || undefined,
         description: description || "Postcard created via API"
     };
+
+    console.log("Sending postcard creation request...");
 
     try {
         const response = await fetch(apiUrl, {
@@ -433,7 +446,7 @@ async function createPostcard() {
         }
 
         const responseData = await response.json();
-        console.log("Postcard created:", responseData);
+        console.log("Postcard created successfully:", responseData);
         
         if (responseData.id) {
             displayPostcardPreview(responseData.id);
@@ -444,10 +457,10 @@ async function createPostcard() {
 }
 
 async function displayPostcardPreview(postcardId) {
-    const previewUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}/download`; // PDF preview URL
+    console.log("Displaying preview for postcard ID:", postcardId);
+    const previewUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}/download`;
     const previewContainer = document.querySelector(".template-preview-content");
     if (previewContainer) {
         previewContainer.innerHTML = `<iframe src="${previewUrl}" width="100%" height="500px"></iframe>`;
     }
 }
-
