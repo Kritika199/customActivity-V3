@@ -576,7 +576,6 @@ async function createPostcard() {
 
 
 // Function to fetch and display the postcard preview
-// Function to fetch and display the postcard preview
 async function fetchAndShowPostcardPreview(postcardId) {
     console.log(`Fetching preview for postcard ID: ${postcardId}`);
 
@@ -598,20 +597,23 @@ async function fetchAndShowPostcardPreview(postcardId) {
         const postcardData = await response.json();
         console.log("Fetched Postcard Data:", postcardData);
 
-        // Display the preview in the template-preview-content div
-        displayPreview(postcardData);
+        // Check if the postcard has a URL for the preview PDF
+        if (postcardData.url) {
+            // Display the preview with dynamic PDF URL
+            displayPreview(postcardData.url);
+        } else {
+            // Handle case where no preview URL is found
+            displayError("No preview available for this postcard.");
+        }
 
     } catch (error) {
         console.error("Error fetching postcard preview:", error);
-        const previewContainer = document.querySelector(".template-preview-content");
-        if (previewContainer) {
-            previewContainer.innerHTML = `<p class="error-message">Failed to load preview. Please try again.</p>`;
-        }
+        displayError("Failed to load preview. Please try again.");
     }
 }
 
-// Function to display the preview
-function displayPreview(postcardData) {
+// Function to display the preview using a dynamic PDF URL
+function displayPreview(pdfUrl) {
     const previewContainer = document.querySelector(".template-preview-content");
 
     if (!previewContainer) {
@@ -622,38 +624,23 @@ function displayPreview(postcardData) {
     // Clear existing content
     previewContainer.innerHTML = '';
 
-    // Check if the postcard has a URL for preview (e.g., PDF or image)
-    if (postcardData.url) {
-        // Create an iframe to show the PDF preview
-        const iframe = document.createElement("iframe");
-        iframe.src = postcardData.url;
-        iframe.width = "100%";
-        iframe.height = "500px";
-        iframe.classList.add("iframe-preview");
-        previewContainer.appendChild(iframe);
-        console.log("Preview displayed successfully.");
-    } else if (postcardData.frontImageUrl || postcardData.backImageUrl) {
-        // If the API provides image URLs for front and back, display them
-        if (postcardData.frontImageUrl) {
-            const frontImage = document.createElement("img");
-            frontImage.src = postcardData.frontImageUrl;
-            frontImage.alt = "Front of Postcard";
-            frontImage.classList.add("postcard-image");
-            previewContainer.appendChild(frontImage);
-        }
+    // Create an iframe to show the PDF preview
+    const iframe = document.createElement("iframe");
+    iframe.src = pdfUrl;  // Use the dynamic PDF URL
+    iframe.width = "100%";
+    iframe.height = "500px";
+    iframe.classList.add("iframe-preview");
 
-        if (postcardData.backImageUrl) {
-            const backImage = document.createElement("img");
-            backImage.src = postcardData.backImageUrl;
-            backImage.alt = "Back of Postcard";
-            backImage.classList.add("postcard-image");
-            previewContainer.appendChild(backImage);
-        }
-        
-        console.log("Image preview displayed successfully.");
-    } else {
-        // If no preview is available, show a message
-        previewContainer.innerHTML = `<p class="no-preview-message">No preview available for this postcard.</p>`;
+    previewContainer.appendChild(iframe);
+    console.log("Preview displayed successfully.");
+}
+
+// Function to display an error message if preview fails
+function displayError(message) {
+    const previewContainer = document.querySelector(".template-preview-content");
+
+    if (previewContainer) {
+        previewContainer.innerHTML = `<p class="error-message">${message}</p>`;
     }
 }
 });
