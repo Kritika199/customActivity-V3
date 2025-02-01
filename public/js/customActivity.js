@@ -578,57 +578,81 @@ async function createPostcard() {
 async function fetchAndShowPostcardPreview(postcardId) {
     console.log(`Fetching preview for postcard ID: ${postcardId}`);
 
-    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";  // Replace with actual API Key
+    const apiKey = 'test_sk_uQXxwmGMghWwG5wEfezZVN'; // Replace with your actual API key
     const apiUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}?expand[]=frontTemplate&expand[]=backTemplate`;
 
-    try {
-        const response = await fetch(apiUrl, {
-            method: "GET",
-            headers: { "x-api-key": apiKey }
-        });
+    let attempts = 0;
+    const maxAttempts = 5; // Maximum retry attempts
+    const retryDelay = 5000; // Retry delay in milliseconds (5 seconds)
 
-        if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+    while (attempts < maxAttempts) {
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'x-api-key': apiKey
+                }
+            });
 
-        const postcardData = await response.json();
-        console.log("Fetched Postcard Data:", postcardData);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
 
-        displayPreview(postcardData);
+            const postcardData = await response.json();
+            console.log("Fetched Postcard Data:", postcardData);
 
-    } catch (error) {
-        console.error("Error fetching postcard preview:", error);
-        const previewContainer = document.querySelector(".template-preview-content");
-        if (previewContainer) {
-            previewContainer.innerHTML = `<p class="error-message">Failed to load preview. Please try again.</p>`;
+            // Check if the postcard is ready and if a URL is available
+            if (postcardData.status === "ready" && postcardData.url) {
+                // If ready, show the PDF preview
+                showPdfPreview(postcardData.url);
+                return; // Exit the function as the preview is displayed
+            }
+
+            // If the postcard is not ready, retry
+            console.log(`Postcard is not ready. Status: ${postcardData.status}. Retrying...`);
+            attempts++;
+
+            if (attempts < maxAttempts) {
+                // Wait before retrying
+                await new Promise(resolve => setTimeout(resolve, retryDelay));
+            }
+
+        } catch (error) {
+            console.error('Error fetching postcard preview:', error);
+            break; // Exit the loop if there's an error
         }
+    }
+
+    // If max attempts reached and no preview is available, show a message
+    const previewContainer = document.querySelector(".template-preview-content");
+    if (previewContainer) {
+        previewContainer.innerHTML = `<p class="no-preview-message">Postcard is still not ready after multiple attempts.</p>`;
     }
 }
 
-function displayPreview(postcardData) {
+function showPdfPreview(pdfUrl) {
     const previewContainer = document.querySelector(".template-preview-content");
-    if (!previewContainer) {
-        console.error("Preview container not found.");
+
+    if (!pdfUrl) {
+        console.error('PDF URL is missing.');
         return;
     }
 
-    // Clear previous content
-    previewContainer.innerHTML = '';
+    try {
+        // Clear previous content in the preview container
+        previewContainer.innerHTML = '';
 
-    // Show PDF preview if available
-    if (postcardData.url) {
-        const iframe = document.createElement("iframe");
-        iframe.src = postcardData.url;
-        iframe.width = "100%";
-        iframe.height = "500px";
-        iframe.style.border = "1px solid #ddd";
+        // Create an iframe to show the PDF preview
+        const iframe = document.createElement('iframe');
+        iframe.src = pdfUrl;
+        iframe.width = '100%';
+        iframe.height = '500px';
+        iframe.style.border = '1px solid #ddd';
+
+        // Append the iframe to the preview container
         previewContainer.appendChild(iframe);
-        console.log("PDF Preview displayed successfully.");
-    }
-    // If no preview available
-    else {
-        previewContainer.innerHTML = `<p class="no-preview-message">No preview available for this postcard.</p>`;
+    } catch (error) {
+        console.log('PDF preview error: ' + error);
     }
 }
-
-
-
 });
