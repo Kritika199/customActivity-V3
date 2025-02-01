@@ -625,8 +625,8 @@ function displayPreview(postcardData) {
         // Create an iframe to show the PDF preview
         const iframe = document.createElement("iframe");
         iframe.src = postcardData.url;
-        iframe.width = "100%";
-        iframe.height = "500px";
+        iframe.width = "50%";
+        iframe.height = "250px";
         iframe.classList.add("iframe-preview");
         previewContainer.appendChild(iframe);
         console.log("Preview displayed successfully.");
