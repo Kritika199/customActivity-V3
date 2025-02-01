@@ -63,8 +63,7 @@ define([
                 connection.trigger("updateButton", { button: "back", visible: true });
                 connection.trigger('ready');
                 break;
-
-                case "step5":
+            case "step5":
                 $("#step5").show();
                 connection.trigger("updateButton", { button: "next", visible: true });
                 connection.trigger("updateButton", { button: "back", visible: true });
@@ -201,7 +200,6 @@ define([
         }
 
         // Validate Front Template
-    
         if (!$("#frontTemplateInput").val()) {
             $("#frontTemplateInput").after('<span class="error-message">Please select the Front Template this is required.</span>');
             isValid = false;
@@ -211,248 +209,245 @@ define([
             isValid = false;
         }
 
-
         return isValid;
     } 
 
-    //Set default date to today when the page loads
-$(document).ready(function () {
-    let today = new Date().toISOString().split('T')[0];
-    $("#sendDate3").val(today); // Set default value
-    $("#sendDate3").attr("min", today); // Restrict past dates
-
-    
-});
+    // Set default date to today when the page loads
+    $(document).ready(function () {
+        let today = new Date().toISOString().split('T')[0];
+        $("#sendDate3").val(today); // Set default value
+        $("#sendDate3").attr("min", today); // Restrict past dates
+    });
 
     // Fetch templates from the API
     // Debounce function to limit API calls while typing
-function debounce(func, delay) {
-    let timeoutId;
-    return function (...args) {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => func.apply(this, args), delay);
-    };
-}
+    function debounce(func, delay) {
+        let timeoutId;
+        return function (...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
 
-// Fetch templates with optional search query
-async function fetchTemplates(searchQuery = '') {
-    console.log("Fetching templates...");
-    const requestOptions = {
-        method: 'GET',
-        headers: { "x-api-key": "test_sk_qraE3RyxvpGQbAjQfngQbb" },
-        redirect: 'follow'
-    };
+    // Fetch templates with optional search query
+    async function fetchTemplates(searchQuery = '') {
+        console.log("Fetching templates...");
+        const requestOptions = {
+            method: 'GET',
+            headers: { "x-api-key": "test_sk_qraE3RyxvpGQbAjQfngQbb" },
+            redirect: 'follow'
+        };
 
-    try {
-        const response = await fetch(`https://api.postgrid.com/print-mail/v1/templates?limit=10&search=${encodeURIComponent(searchQuery)}`, requestOptions);
-        if (!response.ok) {
-            throw new Error(`API request failed with status ${response.status}`);
+        try {
+            const response = await fetch(`https://api.postgrid.com/print-mail/v1/templates?limit=10&search=${encodeURIComponent(searchQuery)}`, requestOptions);
+            if (!response.ok) {
+                throw new Error(`API request failed with status ${response.status}`);
+            }
+            const dataJson = await response.json();
+            const data = dataJson.data;
+
+            // Sort data by description
+            const sortedData = data.sort((a, b) => {
+                const descriptionA = a.description ? a.description.toString().toLowerCase() : '';
+                const descriptionB = b.description ? b.description.toString().toLowerCase() : '';
+                return descriptionA.localeCompare(descriptionB);
+            });
+
+            // Populate dropdowns with sorted data
+            populateDropdown('frontTemplateList', sortedData);
+            populateDropdown('backTemplateList', sortedData);
+        } catch (error) {
+            console.error("Error fetching templates:", error);
         }
-        const dataJson = await response.json();
-        const data = dataJson.data;
+    }
 
-        // Sort data by description
-        const sortedData = data.sort((a, b) => {
-            const descriptionA = a.description ? a.description.toString().toLowerCase() : '';
-            const descriptionB = b.description ? b.description.toString().toLowerCase() : '';
-            return descriptionA.localeCompare(descriptionB);
+    // Populate dropdown with templates
+    function populateDropdown(listId, templates) {
+        const list = document.getElementById(listId);
+        if (!list) {
+            console.error(`Dropdown list with ID ${listId} not found.`);
+            return;
+        }
+        list.innerHTML = '';
+
+        templates.forEach(template => {
+            const listItem = document.createElement('li');
+            listItem.textContent = template.description || 'No description';
+            listItem.dataset.id = template.id;
+            listItem.classList.add('dropdown-item');
+            listItem.addEventListener('click', function () {
+                selectTemplate(listId, template);
+                list.style.display = 'none'; // Hide dropdown after selection
+            });
+            list.appendChild(listItem);
         });
 
-        // Populate dropdowns with sorted data
-        populateDropdown('frontTemplateList', sortedData);
-        populateDropdown('backTemplateList', sortedData);
-    } catch (error) {
-        console.error("Error fetching templates:", error);
+        console.log(`${listId} populated with templates.`);
     }
-}
 
-// Populate dropdown with templates
-function populateDropdown(listId, templates) {
-    const list = document.getElementById(listId);
-    if (!list) {
-        console.error(`Dropdown list with ID ${listId} not found.`);
-        return;
+    // Handle template selection
+    function selectTemplate(listId, template) {
+        const inputId = listId === "frontTemplateList" ? "frontTemplateInput" : "backTemplateInput";
+        const inputElement = document.getElementById(inputId);
+        if (inputElement) {
+            inputElement.value = template.description || 'No description';
+            inputElement.dataset.id = template.id; // Set the template ID in the input element
+        } else {
+            console.error(`Input element with ID ${inputId} not found.`);
+        }
     }
-    list.innerHTML = '';
 
-    templates.forEach(template => {
-        const listItem = document.createElement('li');
-        listItem.textContent = template.description || 'No description';
-        listItem.dataset.id = template.id;
-        listItem.classList.add('dropdown-item');
-        listItem.addEventListener('click', function () {
-            selectTemplate(listId, template);
-            list.style.display = 'none'; // Hide dropdown after selection
-        });
-        list.appendChild(listItem);
+    // Show dropdown when input is focused
+    document.getElementById('frontTemplateInput')?.addEventListener('focus', function () {
+        document.getElementById('frontTemplateList').style.display = 'block';
     });
 
-    console.log(`${listId} populated with templates.`);
-}
+    document.getElementById('backTemplateInput')?.addEventListener('focus', function () {
+        document.getElementById('backTemplateList').style.display = 'block';
+    });
 
-// Handle template selection
-function selectTemplate(listId, template) {
-    const inputId = listId === "frontTemplateList" ? "frontTemplateInput" : "backTemplateInput";
-    const inputElement = document.getElementById(inputId);
-    if (inputElement) {
-        inputElement.value = template.description || 'No description';
-        inputElement.dataset.id = template.id; // Set the template ID in the input element
-    } else {
-        console.error(`Input element with ID ${inputId} not found.`);
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', function (event) {
+        const frontTemplateList = document.getElementById('frontTemplateList');
+        const backTemplateList = document.getElementById('backTemplateList');
+        const isClickInsideFront = event.target.closest('#frontTemplateList') || event.target.closest('#frontTemplateInput');
+        const isClickInsideBack = event.target.closest('#backTemplateList') || event.target.closest('#backTemplateInput');
+
+        if (!isClickInsideFront && frontTemplateList) {
+            frontTemplateList.style.display = 'none';
+        }
+        if (!isClickInsideBack && backTemplateList) {
+            backTemplateList.style.display = 'none';
+        }
+    });
+
+    // Add event listener for search input
+    const frontSearchInput = document.getElementById('frontTemplateInput');
+    const backSearchInput = document.getElementById('backTemplateInput');
+
+    if (frontSearchInput) {
+        frontSearchInput.addEventListener('input', debounce(function (event) {
+            const searchQuery = event.target.value.trim();
+            fetchTemplates(searchQuery);
+        }, 300)); // Debounce with 300ms delay
     }
-}
 
-// Show dropdown when input is focused
-document.getElementById('frontTemplateInput')?.addEventListener('focus', function () {
-    document.getElementById('frontTemplateList').style.display = 'block';
-});
-
-document.getElementById('backTemplateInput')?.addEventListener('focus', function () {
-    document.getElementById('backTemplateList').style.display = 'block';
-});
-
-// Hide dropdown when clicking outside
-document.addEventListener('click', function (event) {
-    const frontTemplateList = document.getElementById('frontTemplateList');
-    const backTemplateList = document.getElementById('backTemplateList');
-    const isClickInsideFront = event.target.closest('#frontTemplateList') || event.target.closest('#frontTemplateInput');
-    const isClickInsideBack = event.target.closest('#backTemplateList') || event.target.closest('#backTemplateInput');
-
-    if (!isClickInsideFront && frontTemplateList) {
-        frontTemplateList.style.display = 'none';
+    if (backSearchInput) {
+        backSearchInput.addEventListener('input', debounce(function (event) {
+            const searchQuery = event.target.value.trim();
+            fetchTemplates(searchQuery);
+        }, 300)); // Debounce with 300ms delay
     }
-    if (!isClickInsideBack && backTemplateList) {
-        backTemplateList.style.display = 'none';
+
+    // Fetch templates on page load
+    fetchTemplates();
+
+    // Create a new contact
+    async function createContact() {
+        console.log("Creating contact..."); // Debugging
+        const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
+        const apiUrl = "https://api.postgrid.com/print-mail/v1/contacts";
+
+        const contactData = {
+            firstName: "Kevin",
+            lastName: "Smith",
+            companyName: "PostGrid",
+            addressLine1: "20-20 bay st",
+            addressLine2: "floor 11",
+            city: "Toronto",
+            provinceOrState: "ON",
+            countryCode: "CA",
+            postalOrZip: "M5J 2N8",
+            email: "kevinsmith@postgrid.com",
+            phoneNumber: "9059059059",
+            jobTitle: "Manager",
+            description: "Kevin Smith's contact information"
+        };
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-api-key": apiKey
+                },
+                body: JSON.stringify(contactData)
+            });
+
+            if (!response.ok) {
+                throw new Error(`API request failed with status ${response.status}`);
+            }
+
+            const responseData = await response.json();
+            console.log("Contact created successfully:", responseData);
+            return responseData.id;
+        } catch (error) {
+            console.error("Error creating contact:", error);
+            return null;
+        }
     }
-});
 
-// Add event listener for search input
-const frontSearchInput = document.getElementById('frontTemplateInput');
-const backSearchInput = document.getElementById('backTemplateInput');
+    async function createPostcard() {
+        console.log("Starting postcard creation...");
 
-if (frontSearchInput) {
-    frontSearchInput.addEventListener('input', debounce(function (event) {
-        const searchQuery = event.target.value.trim();
-        fetchTemplates(searchQuery);
-    }, 300)); // Debounce with 300ms delay
-}
+        const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
+        const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards?expand[]=frontTemplate&expand[]=backTemplate";
 
-if (backSearchInput) {
-    backSearchInput.addEventListener('input', debounce(function (event) {
-        const searchQuery = event.target.value.trim();
-        fetchTemplates(searchQuery);
-    }, 300)); // Debounce with 300ms delay
-}
+        console.log("Creating recipient contact...");
+        const toContact = await createContact();
+        console.log("Creating sender contact...");
+        const fromContact = await createContact();
 
-// Fetch templates on page load
-fetchTemplates();
-
-// Create a new contact
-async function createContact() {
-    console.log("Creating contact..."); // Debugging
-    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
-    const apiUrl = "https://api.postgrid.com/print-mail/v1/contacts";
-
-    const contactData = {
-        firstName: "Kevin",
-        lastName: "Smith",
-        companyName: "PostGrid",
-        addressLine1: "20-20 bay st",
-        addressLine2: "floor 11",
-        city: "Toronto",
-        provinceOrState: "ON",
-        countryCode: "CA",
-        postalOrZip: "M5J 2N8",
-        email: "kevinsmith@postgrid.com",
-        phoneNumber: "9059059059",
-        jobTitle: "Manager",
-        description: "Kevin Smith's contact information"
-    };
-
-    try {
-        const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-api-key": apiKey
-            },
-            body: JSON.stringify(contactData)
-        });
-
-        if (!response.ok) {
-            throw new Error(`API request failed with status ${response.status}`);
+        if (!toContact || !fromContact) {
+            console.error("Failed to create required contacts. Aborting postcard creation.");
+            return;
         }
 
-        const responseData = await response.json();
-        console.log("Contact created successfully:", responseData);
-        return responseData.id;
-    } catch (error) {
-        console.error("Error creating contact:", error);
-        return null;
-    }
-}
+        const frontTemplate = document.getElementById("frontTemplateInput").dataset.id;
+        const backTemplate = document.getElementById("backTemplateInput").dataset.id;
+        const size = document.getElementById("postcardSize").value;
+        const sendDate = document.getElementById("sendDate").value;
+        const description = document.getElementById("description").value;
 
-async function createPostcard() {
-    console.log("Starting postcard creation...");
-
-    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
-    const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards?expand[]=frontTemplate&expand[]=backTemplate";
-
-    console.log("Creating recipient contact...");
-    const toContact = await createContact();
-    console.log("Creating sender contact...");
-    const fromContact = await createContact();
-
-    if (!toContact || !fromContact) {
-        console.error("Failed to create required contacts. Aborting postcard creation.");
-        return;
-    }
-
-    const frontTemplate = document.getElementById("frontTemplateInput").dataset.id;
-    const backTemplate = document.getElementById("backTemplateInput").dataset.id;
-    const size = document.getElementById("postcardSize").value;
-    const sendDate = document.getElementById("sendDate").value;
-    const description = document.getElementById("description").value;
-
-    if (!frontTemplate || !backTemplate || !size) {
-        alert("Please fill all required fields.");
-        return;
-    }
-
-    const requestBody = {
-        to: toContact,
-        from: fromContact,
-        frontTemplate: frontTemplate,
-        backTemplate: backTemplate,
-        size: size,
-        sendDate: sendDate || undefined,
-        description: description || "Postcard created via API"
-    };
-
-    console.log("Sending postcard creation request...");
-
-    try {
-        const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-api-key": apiKey
-            },
-            body: JSON.stringify(requestBody)
-        });
-
-        if (!response.ok) {
-            throw new Error(`API request failed with status ${response.status}`);
+        if (!frontTemplate || !backTemplate || !size) {
+            alert("Please fill all required fields.");
+            return;
         }
 
-        const responseData = await response.json();
-        console.log("Postcard created successfully:", responseData);
+        const requestBody = {
+            to: toContact,
+            from: fromContact,
+            frontTemplate: frontTemplate,
+            backTemplate: backTemplate,
+            size: size,
+            sendDate: sendDate || undefined,
+            description: description || "Postcard created via API"
+        };
 
-        if (responseData.id) {
-            displayPostcardPreview(responseData.id);
+        console.log("Sending postcard creation request...");
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-api-key": apiKey
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                throw new Error(`API request failed with status ${response.status}`);
+            }
+
+            const responseData = await response.json();
+            console.log("Postcard created successfully:", responseData);
+
+            if (responseData.id) {
+                displayPostcardPreview(responseData.id);
+            }
+        } catch (error) {
+            console.error("Error creating postcard:", error);
         }
-    } catch (error) {
-        console.error("Error creating postcard:", error);
     }
-}
 });
