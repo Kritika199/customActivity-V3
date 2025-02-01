@@ -477,6 +477,7 @@ async function handlePostcardCreation() {
 }
 
 // Function to create the postcard
+// Function to create the postcard
 async function createPostcard() {
     console.log("Starting postcard creation...");
 
@@ -492,12 +493,17 @@ async function createPostcard() {
     // Fetch selected size radio button
     const sizeInputs = document.querySelectorAll('input[name="size"]');
     let selectedSize = null;
+
     sizeInputs.forEach(input => {
         if (input.checked) {
-            // Convert size to the correct format (e.g., "sixxfour" -> "6x4")
-            selectedSize = input.id.replace("sixxfour", "6x4")
-                                  .replace("ninexsix", "6x9")
-                                  .replace("fourxsix", "4x6");
+            // Map the input IDs directly to valid size values
+            if (input.id === "fourxsix") {
+                selectedSize = "4x6";
+            } else if (input.id === "sixxnine") {
+                selectedSize = "6x9";
+            } else if (input.id === "sixxeleven") {
+                selectedSize = "6x11";
+            }
         }
     });
 
