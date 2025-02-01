@@ -576,6 +576,7 @@ async function createPostcard() {
 
 
 // Function to fetch and display the postcard preview
+// Function to fetch and display the postcard preview
 async function fetchAndShowPostcardPreview(postcardId) {
     console.log(`Fetching preview for postcard ID: ${postcardId}`);
 
@@ -628,24 +629,27 @@ function displayPreview(postcardData) {
         iframe.src = postcardData.url;
         iframe.width = "100%";
         iframe.height = "500px";
-        iframe.style.border = "1px solid #ddd";
+        iframe.classList.add("iframe-preview");
         previewContainer.appendChild(iframe);
         console.log("Preview displayed successfully.");
     } else if (postcardData.frontImageUrl || postcardData.backImageUrl) {
         // If the API provides image URLs for front and back, display them
-        const frontImage = document.createElement("img");
-        frontImage.src = postcardData.frontImageUrl;
-        frontImage.alt = "Front of Postcard";
-        frontImage.style.width = "100%";
-        frontImage.style.marginBottom = "20px";
+        if (postcardData.frontImageUrl) {
+            const frontImage = document.createElement("img");
+            frontImage.src = postcardData.frontImageUrl;
+            frontImage.alt = "Front of Postcard";
+            frontImage.classList.add("postcard-image");
+            previewContainer.appendChild(frontImage);
+        }
 
-        const backImage = document.createElement("img");
-        backImage.src = postcardData.backImageUrl;
-        backImage.alt = "Back of Postcard";
-        backImage.style.width = "100%";
-
-        previewContainer.appendChild(frontImage);
-        previewContainer.appendChild(backImage);
+        if (postcardData.backImageUrl) {
+            const backImage = document.createElement("img");
+            backImage.src = postcardData.backImageUrl;
+            backImage.alt = "Back of Postcard";
+            backImage.classList.add("postcard-image");
+            previewContainer.appendChild(backImage);
+        }
+        
         console.log("Image preview displayed successfully.");
     } else {
         // If no preview is available, show a message
