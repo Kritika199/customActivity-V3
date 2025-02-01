@@ -444,26 +444,19 @@ input[type="text"] {
 /** exsting template preview screen css  **/
 
 /* Step 5: Preview Section - Unique Classes */
-/* Styles for iframe preview */
-.iframe-preview {
+.template-preview-content {
+    padding: 20px;
+    background-color: #f9f9f9;
     border: 1px solid #ddd;
-    margin-bottom: 20px;
+    border-radius: 8px;
 }
 
-/* Styles for postcard images */
-.postcard-image {
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-/* Error message styling */
 .error-message {
     color: red;
     font-weight: bold;
 }
 
-/* No preview message styling */
 .no-preview-message {
-    color: gray;
+    color: #888;
     font-style: italic;
 }
