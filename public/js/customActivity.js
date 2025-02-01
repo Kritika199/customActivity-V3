@@ -478,14 +478,13 @@ async function handlePostcardCreation() {
 
 // Function to create the postcard
 // Function to create the postcard
-// Function to create the postcard
 async function createPostcard() {
     console.log("Starting postcard creation...");
 
     const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
     const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards?expand[]=frontTemplate&expand[]=backTemplate";
 
-    // Retrieve DOM elements
+    // Retrieve selected template IDs from the input fields
     const frontTemplateInput = document.getElementById("frontTemplateInput");
     const backTemplateInput = document.getElementById("backTemplateInput");
     const sendDate = document.getElementById("sendDate3");
@@ -518,12 +517,12 @@ async function createPostcard() {
         return;
     }
 
-    const frontTemplate = frontTemplateInput.value.trim();
-    const backTemplate = backTemplateInput.value.trim();
+    const frontTemplateId = frontTemplateInput.dataset.id; // Get the template ID for the front
+    const backTemplateId = backTemplateInput.dataset.id; // Get the template ID for the back
     const sendDateValue = sendDate.value;
     const descriptionValue = description.value;
 
-    if (!frontTemplate || !backTemplate || !selectedSize) {
+    if (!frontTemplateId || !backTemplateId || !selectedSize) {
         alert("Please fill all required fields.");
         return;
     }
@@ -538,8 +537,8 @@ async function createPostcard() {
     const requestBody = {
         to: recipientContactId, // Use stored recipient contact ID
         from: senderContactId,  // Use stored sender contact ID
-        frontTemplate: frontTemplate, // Use template ID
-        backTemplate: backTemplate,  // Use template ID
+        frontTemplate: frontTemplateId, // Use template ID
+        backTemplate: backTemplateId,  // Use template ID
         size: selectedSize, // Ensure this matches the API's expected format
         sendDate: sendDateValue || undefined,
         description: descriptionValue || "Postcard created via API"
@@ -573,6 +572,7 @@ async function createPostcard() {
         throw error; // Re-throw the error to handle it in the calling function
     }
 }
+
 
 
 // Function to fetch and display the postcard preview
