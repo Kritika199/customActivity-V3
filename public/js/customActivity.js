@@ -482,7 +482,7 @@ async function createPostcard() {
     console.log("Starting postcard creation...");
 
     const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
-    const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards?expand[]=frontTemplate&expand[]=backTemplate";
+    const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards";
 
     // Retrieve selected template IDs from the input fields
     const frontTemplateInput = document.getElementById("frontTemplateInput");
@@ -565,7 +565,8 @@ async function createPostcard() {
         const responseData = await response.json();
         console.log("Postcard created successfully:", responseData);
 
-        return responseData.id; // Return the postcard ID for further use
+        // Fetch and show the preview after postcard creation
+        fetchAndShowPostcardPreview(responseData.id); // Pass the created postcard ID to the preview function
 
     } catch (error) {
         console.error("Error creating postcard:", error);
@@ -573,8 +574,7 @@ async function createPostcard() {
     }
 }
 
-
-
+// Function to fetch and show the postcard preview
 async function fetchAndShowPostcardPreview(postcardId) {
     console.log(`Fetching preview for postcard ID: ${postcardId}`);
 
@@ -630,6 +630,7 @@ async function fetchAndShowPostcardPreview(postcardId) {
     }
 }
 
+// Function to show PDF preview
 function showPdfPreview(pdfUrl) {
     const previewContainer = document.querySelector(".template-preview-content");
 
