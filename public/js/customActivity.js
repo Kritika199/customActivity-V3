@@ -579,7 +579,7 @@ async function fetchAndShowPostcardPreview(postcardId) {
     console.log(`Fetching preview for postcard ID: ${postcardId}`);
 
     const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";  // Replace with actual API Key
-    const apiUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}?expand[]=frontTemplate&expand[]=backTemplate`;
+    const apiUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}`;
 
     try {
         const response = await fetch(apiUrl, {
@@ -591,7 +591,15 @@ async function fetchAndShowPostcardPreview(postcardId) {
 
         const postcardData = await response.json();
         console.log("Fetched Postcard Data:", postcardData);
-        displayPreview(postcardData);
+
+        // Ensure the live preview URL exists
+        if (postcardData.url) {
+            displayPreview(postcardData.url);
+        } else {
+            console.error("Live Postcard URL not found.");
+            document.querySelector(".template-preview-content").innerHTML = 
+                `<p class="error-message">No live preview available.</p>`;
+        }
 
     } catch (error) {
         console.error("Error fetching postcard preview:", error);
@@ -600,34 +608,18 @@ async function fetchAndShowPostcardPreview(postcardId) {
     }
 }
 
-function displayPreview(postcardData) {
+// Function to display the live postcard preview
+function displayPreview(postcardUrl) {
     const previewContainer = document.querySelector(".template-preview-content");
     if (!previewContainer) {
         console.error("Preview container not found.");
         return;
     }
-    previewContainer.innerHTML = ''; // Clear previous content
-
-    // Show HTML templates only (Images removed)
-    if (postcardData.frontTemplate || postcardData.backTemplate) {
-        if (postcardData.frontTemplate) {
-            const frontDiv = document.createElement("div");
-            frontDiv.classList.add("template-section");
-            frontDiv.innerHTML = `<h3>Front Template</h3>${postcardData.frontTemplate.html}`;
-            previewContainer.appendChild(frontDiv);
-        }
-
-        if (postcardData.backTemplate) {
-            const backDiv = document.createElement("div");
-            backDiv.classList.add("template-section");
-            backDiv.innerHTML = `<h3>Back Template</h3>${postcardData.backTemplate.html}`;
-            previewContainer.appendChild(backDiv);
-        }
-    } 
-    // If no template is available, show a message
-    else {
-        previewContainer.innerHTML = `<p class="no-preview-message">No preview available for this postcard.</p>`;
-    }
+    
+    previewContainer.innerHTML = `
+        <iframe src="${postcardUrl}" width="100%" height="500px" style="border: none;"></iframe>
+        <p><a href="${postcardUrl}" target="_blank">View Full Postcard</a></p>
+    `;
 }
 
 
