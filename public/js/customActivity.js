@@ -456,6 +456,11 @@ async function handlePostcardCreation() {
 
         if (postcardId) {
             showPreviewScreen(postcardId); // Show preview screen
+
+            // Add a delay to allow the server to process the postcard
+            console.log("Waiting for postcard processing...");
+            await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+
             await fetchAndShowPostcardPreview(postcardId); // Fetch and display preview
         } else {
             $("#step5").html(`
@@ -573,35 +578,33 @@ async function createPostcard() {
 async function fetchAndShowPostcardPreview(postcardId) {
     try {
         const postcardDetails = await fetchPostcardDetails(postcardId);
-        console.log(postcardDetails);
-        console.log('Postcard creation details: ' + JSON.stringify(postcardDetails));
+        console.log("Postcard Details:", postcardDetails);
 
-        const pdfUrl = postcardDetails.url;
-        console.log('pdfurl: ' + pdfUrl);
-
-        if (pdfUrl) {
+        if (postcardDetails && postcardDetails.url) {
+            const pdfUrl = postcardDetails.url;
+            console.log("PDF URL:", pdfUrl);
             showPdfPreview(pdfUrl);
         } else {
-            console.error('PDF URL not found in the response.');
-            $('#pdf-preview-container').html('<p>PDF URL not found.</p>');
+            console.error("PDF URL not found in the response.");
+            $("#pdf-preview-container").html("<p>PDF URL not found.</p>");
         }
     } catch (error) {
-        console.error('Failed to fetch postcard details:', error);
-        $('#pdf-preview-container').html('<p>Failed to fetch PDF preview.</p>');
+        console.error("Failed to fetch postcard details:", error);
+        $("#pdf-preview-container").html("<p>Failed to fetch PDF preview.</p>");
     }
 }
 
 // Function to fetch postcard details by ID
 async function fetchPostcardDetails(postcardId) {
     const apiUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}?expand[]=frontTemplate&expand[]=backTemplate`;
-    const apiKey = 'test_sk_uQXxwmGMghWwG5wEfezZVN'; // Replace with your actual API key
+    const apiKey = "test_sk_uQXxwmGMghWwG5wEfezZVN"; // Replace with your actual API key
 
     try {
         const response = await fetch(apiUrl, {
-            method: 'GET',
+            method: "GET",
             headers: {
-                'x-api-key': apiKey
-            }
+                "x-api-key": apiKey,
+            },
         });
 
         if (!response.ok) {
@@ -611,7 +614,7 @@ async function fetchPostcardDetails(postcardId) {
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error fetching postcard details:', error);
+        console.error("Error fetching postcard details:", error);
         throw error;
     }
 }
