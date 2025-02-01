@@ -449,12 +449,10 @@ async function handlePostcardCreation() {
     showLoadingScreen(); // Show loading screen
 
     try {
-        // Simulate processing time (optional)
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
         // Create the postcard
         console.log("Creating postcard...");
-        const postcardId = await createPostcard();
+        const postcardResponse = await createPostcard();
+        const postcardId = postcardResponse.id;
 
         if (postcardId) {
             showPreviewScreen(postcardId); // Show preview screen
@@ -476,8 +474,6 @@ async function handlePostcardCreation() {
     }
 }
 
-// Function to create the postcard
-// Function to create the postcard
 // Function to create the postcard
 async function createPostcard() {
     console.log("Starting postcard creation...");
@@ -564,8 +560,8 @@ async function createPostcard() {
         const responseData = await response.json();
         console.log("Postcard created successfully:", responseData);
 
-        // Now, we check if the postcard is ready before fetching the preview
-        await checkPostcardStatusAndFetchPreview(responseData.id);
+        // Return the postcard response
+        return responseData;
 
     } catch (error) {
         console.error("Error creating postcard:", error);
@@ -573,12 +569,32 @@ async function createPostcard() {
     }
 }
 
-// Function to check postcard status and fetch preview
-async function checkPostcardStatusAndFetchPreview(postcardId) {
-    console.log(`Checking postcard status for ID: ${postcardId}`);
+// Function to fetch postcard details and show preview
+async function fetchAndShowPostcardPreview(postcardId) {
+    try {
+        const postcardDetails = await fetchPostcardDetails(postcardId);
+        console.log(postcardDetails);
+        console.log('Postcard creation details: ' + JSON.stringify(postcardDetails));
 
-    const apiKey = 'test_sk_uQXxwmGMghWwG5wEfezZVN'; // Replace with your actual API key
+        const pdfUrl = postcardDetails.url;
+        console.log('pdfurl: ' + pdfUrl);
+
+        if (pdfUrl) {
+            showPdfPreview(pdfUrl);
+        } else {
+            console.error('PDF URL not found in the response.');
+            $('#pdf-preview-container').html('<p>PDF URL not found.</p>');
+        }
+    } catch (error) {
+        console.error('Failed to fetch postcard details:', error);
+        $('#pdf-preview-container').html('<p>Failed to fetch PDF preview.</p>');
+    }
+}
+
+// Function to fetch postcard details by ID
+async function fetchPostcardDetails(postcardId) {
     const apiUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}?expand[]=frontTemplate&expand[]=backTemplate`;
+    const apiKey = 'test_sk_uQXxwmGMghWwG5wEfezZVN'; // Replace with your actual API key
 
     try {
         const response = await fetch(apiUrl, {
@@ -592,27 +608,15 @@ async function checkPostcardStatusAndFetchPreview(postcardId) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        const postcardData = await response.json();
-        console.log("Fetched Postcard Data:", postcardData);
-
-        // Check if the postcard is ready
-        if (postcardData.status === "ready" && postcardData.url) {
-            console.log("Postcard is ready, fetching the preview.");
-            // If ready, show the PDF preview
-            showPdfPreview(postcardData.url);
-        } else {
-            // If not ready, log and retry after waiting a few seconds
-            console.log(`Postcard is not ready. Status: ${postcardData.status}. Retrying in 5 seconds...`);
-            // Retry after 5 seconds (you can adjust as needed)
-            setTimeout(() => checkPostcardStatusAndFetchPreview(postcardId), 5000);
-        }
-
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.error('Error fetching postcard status:', error);
+        console.error('Error fetching postcard details:', error);
+        throw error;
     }
 }
 
-// Function to show PDF preview
+// Function to show the PDF preview
 function showPdfPreview(pdfUrl) {
     const previewContainer = document.querySelector(".template-preview-content");
 
