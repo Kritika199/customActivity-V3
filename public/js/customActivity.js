@@ -465,39 +465,66 @@ define([
 
     async function createPostcard() {
         console.log("Starting postcard creation...");
-
+    
         const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
         const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards?expand[]=frontTemplate&expand[]=backTemplate";
-
-        const frontTemplate = document.getElementById("frontTemplateInput").dataset.id;
-        const backTemplate = document.getElementById("backTemplateInput").dataset.id;
-        const size = document.getElementById("postcardSize").value;
-        const sendDate = document.getElementById("sendDate").value;
-        const description = document.getElementById("description").value;
-
-        console.log("Front Template ID:", frontTemplate);
-        console.log("Back Template ID:", backTemplate);
-        console.log("Postcard Size:", size);
+    
+        // Retrieve DOM elements based on correct IDs from your HTML
+        const frontTemplateInput = document.getElementById("frontTemplateInput");
+        const backTemplateInput = document.getElementById("backTemplateInput");
+        const sendDate = document.getElementById("sendDate3");  // Corrected ID
+        const description = document.getElementById("description3");  // Corrected ID
+    
+        // Fetch selected size radio button
+        const sizeInputs = document.querySelectorAll('input[name="size"]');
+        let selectedSize = null;
+        sizeInputs.forEach(input => {
+            if (input.checked) {
+                selectedSize = input.id.replace("-", "x"); // Converts "six-four" to "6x4"
+            }
+        });
+    
+        // Debugging: Log the DOM elements
+        console.log("Front Template Input:", frontTemplateInput);
+        console.log("Back Template Input:", backTemplateInput);
         console.log("Send Date:", sendDate);
         console.log("Description:", description);
-
-        if (!frontTemplate || !backTemplate || !size) {
-            alert("Please fill all required fields.");
-            return null;
+        console.log("Selected Size:", selectedSize);
+    
+        // Check if required elements exist
+        if (!frontTemplateInput || !backTemplateInput || !sendDate || !description || !selectedSize) {
+            console.error("One or more required DOM elements are missing.");
+            return;
         }
-
+    
+        const frontTemplate = frontTemplateInput.value.trim();
+        const backTemplate = backTemplateInput.value.trim();
+        const sendDateValue = sendDate.value;
+        const descriptionValue = description.value;
+    
+        console.log("Front Template:", frontTemplate);
+        console.log("Back Template:", backTemplate);
+        console.log("Send Date:", sendDateValue);
+        console.log("Description:", descriptionValue);
+    
+        if (!frontTemplate || !backTemplate || !selectedSize) {
+            alert("Please fill all required fields.");
+            return;
+        }
+    
+        // Request body for creating the postcard
         const requestBody = {
             to: recipientContactId, // Use stored recipient contact ID
-            from: senderContactId, // Use stored sender contact ID
-            frontTemplate: frontTemplate,
-            backTemplate: backTemplate,
-            size: size,
-            sendDate: sendDate || undefined,
-            description: description || "Postcard created via API"
+            from: senderContactId,  // Use stored sender contact ID
+            frontHTML: frontTemplate, // Use HTML instead of template ID
+            backHTML: backTemplate,  // Use HTML instead of template ID
+            size: selectedSize,
+            sendDate: sendDateValue || undefined,
+            description: descriptionValue || "Postcard created via API"
         };
-
+    
         console.log("Sending postcard creation request...", requestBody);
-
+    
         try {
             const response = await fetch(apiUrl, {
                 method: "POST",
@@ -507,17 +534,74 @@ define([
                 },
                 body: JSON.stringify(requestBody)
             });
-
+    
             if (!response.ok) {
                 throw new Error(`API request failed with status ${response.status}`);
             }
-
+    
             const responseData = await response.json();
             console.log("Postcard created successfully:", responseData);
-            return responseData.id; // Return the postcard ID
+    
+            // Fetch and show the preview
+            await fetchAndShowPostcardPreview(responseData.id);
+    
         } catch (error) {
             console.error("Error creating postcard:", error);
-            return null;
         }
     }
-});
+
+    async function fetchAndShowPostcardPreview(postcardId) {
+        console.log(`Fetching preview for postcard ID: ${postcardId}`);
+    
+        const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
+        const apiUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}?expand[]=frontTemplate&expand[]=backTemplate`;
+    
+        try {
+            const response = await fetch(apiUrl, {
+                method: "GET",
+                headers: {
+                    "x-api-key": apiKey
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error(`API request failed with status ${response.status}`);
+            }
+    
+            const postcardData = await response.json();
+            console.log("Fetched Postcard Data:", postcardData);
+    
+            // Display PDF preview
+            if (postcardData.url) {
+                displayPreview(postcardData.url);
+            } else {
+                console.error("No PDF URL found for the postcard.");
+            }
+    
+        } catch (error) {
+            console.error("Error fetching postcard preview:", error);
+        }
+    }
+
+    function displayPreview(pdfUrl) {
+        const previewContainer = document.querySelector(".template-preview-content");
+    
+        if (!previewContainer) {
+            console.error("Preview container not found.");
+            return;
+        }
+    
+        // Clear existing content
+        previewContainer.innerHTML = '';
+    
+        // Create an iframe to show the PDF preview
+        const iframe = document.createElement("iframe");
+        iframe.src = pdfUrl;
+        iframe.width = "100%";
+        iframe.height = "500px";
+        iframe.style.border = "1px solid #ddd";
+    
+        previewContainer.appendChild(iframe);
+        console.log("Preview displayed successfully.");
+    }
+});    
