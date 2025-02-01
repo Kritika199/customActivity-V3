@@ -478,6 +478,7 @@ async function handlePostcardCreation() {
 
 // Function to create the postcard
 // Function to create the postcard
+// Function to create the postcard
 async function createPostcard() {
     console.log("Starting postcard creation...");
 
@@ -496,13 +497,14 @@ async function createPostcard() {
 
     sizeInputs.forEach(input => {
         if (input.checked) {
+            console.log("Checked input ID:", input.id); // Log the checked size
             // Map the input IDs directly to valid size values
-            if (input.id === "fourxsix") {
-                selectedSize = "4x6";
-            } else if (input.id === "sixxnine") {
-                selectedSize = "6x9";
-            } else if (input.id === "sixxeleven") {
-                selectedSize = "6x11";
+            if (input.id === "six-four") {
+                selectedSize = "6x4";
+            } else if (input.id === "nine-six") {
+                selectedSize = "9x6";
+            } else if (input.id === "eleven-eight") {
+                selectedSize = "11x8";
             }
         }
     });
@@ -571,6 +573,7 @@ async function createPostcard() {
         throw error; // Re-throw the error to handle it in the calling function
     }
 }
+
 
 // Function to fetch and display the postcard preview
 async function fetchAndShowPostcardPreview(postcardId) {
