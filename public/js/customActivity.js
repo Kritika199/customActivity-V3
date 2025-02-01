@@ -494,9 +494,15 @@ async function createPostcard() {
     let selectedSize = null;
     sizeInputs.forEach(input => {
         if (input.checked) {
-            selectedSize = input.id.replace("-", "x"); // Converts "six-four" to "6x4"
+            // Convert size to the correct format (e.g., "sixxfour" -> "6x4")
+            selectedSize = input.id.replace("sixxfour", "6x4")
+                                  .replace("ninexsix", "6x9")
+                                  .replace("fourxsix", "4x6");
         }
     });
+
+    // Debugging: Log the selected size
+    console.log("Selected Size:", selectedSize);
 
     // Validate required fields
     if (!frontTemplateInput || !backTemplateInput || !sendDate || !description || !selectedSize) {
@@ -526,7 +532,7 @@ async function createPostcard() {
         from: senderContactId,  // Use stored sender contact ID
         frontTemplate: frontTemplate, // Use template ID
         backTemplate: backTemplate,  // Use template ID
-        size: selectedSize,
+        size: selectedSize, // Ensure this matches the API's expected format
         sendDate: sendDateValue || undefined,
         description: descriptionValue || "Postcard created via API"
     };
