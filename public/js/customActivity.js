@@ -608,26 +608,8 @@ function displayPreview(postcardData) {
     }
     previewContainer.innerHTML = ''; // Clear previous content
 
-    // Show front & back images if available
-    if (postcardData.frontImageUrl || postcardData.backImageUrl) {
-        if (postcardData.frontImageUrl) {
-            const frontImage = document.createElement("img");
-            frontImage.src = postcardData.frontImageUrl;
-            frontImage.alt = "Front of Postcard";
-            frontImage.classList.add("postcard-image");
-            previewContainer.appendChild(frontImage);
-        }
-
-        if (postcardData.backImageUrl) {
-            const backImage = document.createElement("img");
-            backImage.src = postcardData.backImageUrl;
-            backImage.alt = "Back of Postcard";
-            backImage.classList.add("postcard-image");
-            previewContainer.appendChild(backImage);
-        }
-    } 
-    // If images are not available, show HTML templates
-    else if (postcardData.frontTemplate || postcardData.backTemplate) {
+    // Show HTML templates only (Images removed)
+    if (postcardData.frontTemplate || postcardData.backTemplate) {
         if (postcardData.frontTemplate) {
             const frontDiv = document.createElement("div");
             frontDiv.classList.add("template-section");
@@ -642,12 +624,11 @@ function displayPreview(postcardData) {
             previewContainer.appendChild(backDiv);
         }
     } 
-    // If nothing is available, show a message
+    // If no template is available, show a message
     else {
         previewContainer.innerHTML = `<p class="no-preview-message">No preview available for this postcard.</p>`;
     }
 }
-
 
 
 

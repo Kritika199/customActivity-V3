@@ -449,7 +449,7 @@ input[type="text"] {
     max-width: 600px;
     background: white;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 15px;
     text-align: center;
     margin: auto;
@@ -470,18 +470,27 @@ input[type="text"] {
     text-align: center;
 }
 
+/* Ensuring images scale properly without overflow */
 .postcard-image {
     width: 100%;
     height: auto;
-    margin-bottom: 10px;
+    margin-bottom: 5px; /* Reduced margin */
     border: 1px solid #ddd;
     border-radius: 5px;
 }
 
+/* Template sections with reduced spacing */
 .template-section {
     border: 1px solid #ddd;
-    padding: 10px;
+    padding: 8px; /* Reduced padding */
     background: #f9f9f9;
     text-align: left;
-    margin-top: 10px;
+    margin-top: 5px; /* Reduced margin */
+}
+
+/* Ensuring template previews don't take up too much space */
+.template-preview-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Reduced gap */
 }
