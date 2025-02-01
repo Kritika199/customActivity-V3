@@ -565,6 +565,9 @@ async function createPostcard() {
         const responseData = await response.json();
         console.log("Postcard created successfully:", responseData);
 
+        // Wait for a few seconds before fetching the preview
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
         // Fetch and show the preview after postcard creation
         fetchAndShowPostcardPreview(responseData.id); // Pass the created postcard ID to the preview function
 
