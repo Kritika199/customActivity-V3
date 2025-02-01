@@ -591,12 +591,15 @@ async function fetchAndShowPostcardPreview(postcardId) {
 
         const postcardData = await response.json();
         console.log("Fetched Postcard Data:", postcardData);
+
         displayPreview(postcardData);
 
     } catch (error) {
         console.error("Error fetching postcard preview:", error);
-        document.querySelector(".template-preview-content").innerHTML = 
-            `<p class="error-message">Failed to load preview. Please try again.</p>`;
+        const previewContainer = document.querySelector(".template-preview-content");
+        if (previewContainer) {
+            previewContainer.innerHTML = `<p class="error-message">Failed to load preview. Please try again.</p>`;
+        }
     }
 }
 
@@ -606,25 +609,21 @@ function displayPreview(postcardData) {
         console.error("Preview container not found.");
         return;
     }
-    previewContainer.innerHTML = ''; // Clear previous content
 
-    // Show HTML templates only (Images removed)
-    if (postcardData.frontTemplate || postcardData.backTemplate) {
-        if (postcardData.frontTemplate) {
-            const frontDiv = document.createElement("div");
-            frontDiv.classList.add("template-section");
-            frontDiv.innerHTML = `<h3>Front Template</h3>${postcardData.frontTemplate.html}`;
-            previewContainer.appendChild(frontDiv);
-        }
+    // Clear previous content
+    previewContainer.innerHTML = '';
 
-        if (postcardData.backTemplate) {
-            const backDiv = document.createElement("div");
-            backDiv.classList.add("template-section");
-            backDiv.innerHTML = `<h3>Back Template</h3>${postcardData.backTemplate.html}`;
-            previewContainer.appendChild(backDiv);
-        }
-    } 
-    // If no template is available, show a message
+    // Show PDF preview if available
+    if (postcardData.url) {
+        const iframe = document.createElement("iframe");
+        iframe.src = postcardData.url;
+        iframe.width = "100%";
+        iframe.height = "500px";
+        iframe.style.border = "1px solid #ddd";
+        previewContainer.appendChild(iframe);
+        console.log("PDF Preview displayed successfully.");
+    }
+    // If no preview available
     else {
         previewContainer.innerHTML = `<p class="no-preview-message">No preview available for this postcard.</p>`;
     }
