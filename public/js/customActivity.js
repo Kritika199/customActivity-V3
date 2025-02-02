@@ -340,7 +340,6 @@ define([
           $('#card-insert-type').removeClass('hidden'); // Show Card Insert Type section
         } else {
           $('#card-insert-type').addClass('hidden'); // Hide Card Insert Type section
-          $('input[name=\'cardType\']').prop('checked', false); // Reset Card Insert Type radio buttons
         }
       });
     }
