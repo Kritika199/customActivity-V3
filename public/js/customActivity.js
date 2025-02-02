@@ -337,7 +337,7 @@ define([
   
         // Hide Card Insert Type section & Reset Radio Buttons
         $('#card-insert-type').addClass('hidden');
-        $('input[name=\'cardType\']').prop('checked', false); // ✅ Corrected selector
+        $('input[name=\'cardType\']').prop('checked', true); // ✅ Corrected selector
       });
   
       // Show/Hide Card Insert Type section when Card Insert is checked/unchecked
