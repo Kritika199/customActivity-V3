@@ -957,14 +957,16 @@ async function fetchPostcardDetails(postcardId) {
     }
 }
 
-function showPdfPreview(pdfUrl) {
+function showPdfPreview(pdfUrl, apiKey) {
     if (!pdfUrl) {
         console.error('PDF URL is missing.');
         return;
     }
 
     try {
-        $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
+        // Append the API key as a query parameter
+        const authenticatedPdfUrl = `${pdfUrl}?x-api-key=${apiKey}`;
+        $('#pdf-preview').attr('src', authenticatedPdfUrl + '#toolbar=0&navpanes=0');
     } catch (error) {
         console.log('pdf preview error: ' + error);
     }
@@ -1039,6 +1041,8 @@ async function createPostcard(previewPayload) {
 }
 
 async function getPreviewURL() {
+    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb"; // Your API key
+
     try {
         const previewPayload = await setPreviewPayload();
         if (!previewPayload) throw new Error('Preview payload is missing');
@@ -1058,8 +1062,8 @@ async function getPreviewURL() {
             console.warn('PDF URL not found in response. Constructed URL:', pdfUrl);
         }
 
-        // Show the PDF preview
-        showPdfPreview(pdfUrl);
+        // Show the PDF preview with authentication
+        showPdfPreview(pdfUrl, apiKey);
     } catch (error) {
         console.error('Failed to fetch postcard details:', error);
     }
