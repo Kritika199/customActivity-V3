@@ -319,40 +319,31 @@ define([
     });
   
     function executeScreenTwoMethods() {
-  
       // Handle showing Card Insert checkbox when "Letters" or "Self-Mailer" is selected
       $('input[name=\'msgType\']').change(function () {
         console.log('Radio button changed:', this.id);
-  
+    
         if (this.id === 'letters' || this.id === 'self-mailer') {
-          $('#card-insert-container').addClass('visible');
-          $('.card-insert-wrapper').addClass('visible');
+          $('#card-insert-container').addClass('visible'); // Show Card Insert checkbox
+          $('.card-insert-wrapper').addClass('visible'); // Show Card Insert wrapper (if needed)
         } else {
-          $('#card-insert-container').removeClass('visible');
-          $('.card-insert-wrapper').removeClass('visible');
+          $('#card-insert-container').removeClass('visible'); // Hide Card Insert checkbox
+          $('.card-insert-wrapper').removeClass('visible'); // Hide Card Insert wrapper (if needed)
         }
-  
-        // Reset Card Insert checkbox
-        $('#card-insert').prop('checked', false);
-  
-        // Hide Card Insert Type section & Reset Radio Buttons
-        $('#card-insert-type').addClass('hidden');
-        $('input[name=\'cardType\']').prop('checked', true); // ✅ Corrected selector
       });
-  
+    
       // Show/Hide Card Insert Type section when Card Insert is checked/unchecked
       $('#card-insert').change(function () {
         console.log('Card Insert checkbox changed:', this.checked);
-        $('#card-insert-type').removeClass('hidden');
-  
-        if (!this.checked) {
-          $('#card-insert-type').addClass('hidden');
-          // Reset all Card Insert Type radio buttons when unchecked
-          $('input[name=\'cardType\']').prop('checked', false); // ✅ Corrected selector
+    
+        if (this.checked) {
+          $('#card-insert-type').removeClass('hidden'); // Show Card Insert Type section
+        } else {
+          $('#card-insert-type').addClass('hidden'); // Hide Card Insert Type section
+          $('input[name=\'cardType\']').prop('checked', false); // Reset Card Insert Type radio buttons
         }
       });
     }
-  
   
     /* end of step 2 functions kritika */
   
