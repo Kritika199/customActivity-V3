@@ -960,22 +960,20 @@ async function fetchPostcardDetails(postcardId) {
 
 function showPdfPreview(pdfUrl) {
     if (!pdfUrl) {
-      console.error('PDF URL is missing.');
-      return;
+        console.error('PDF URL is missing.');
+        return;
     }
 
     try {
         $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
     } catch (error) {
-        console.log('pdf preview error: '+error);
-        
+        console.log('pdf preview error: ' + error);
     }
 
     $('#pdf-preview').on('error', function () {
-      $('#pdf-preview-container').html('<p>Unable to load PDF preview.</p>');
+        $('#pdf-preview-container').html('<p>Unable to load PDF preview.</p>');
     });
-  }
-
+}
 
 async function setPreviewPayload() {
     const description = document.querySelector('#description3').value;
@@ -988,8 +986,8 @@ async function setPreviewPayload() {
     sizeInputs.forEach(input => {
         if (input.checked) {
             selectedSize = input.id === 'six-four' ? '6x4' :
-                           input.id === 'nine-six' ? '9x6' :
-                           input.id === 'eleven-eight' ? '11x8' : null;
+                input.id === 'nine-six' ? '9x6' :
+                    input.id === 'eleven-eight' ? '11x8' : null;
         }
     });
 
@@ -1010,7 +1008,7 @@ async function setPreviewPayload() {
 async function createPostcard(previewPayload) {
     const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards";
 
-    const requestBody = new URLSearchParams ({
+    const requestBody = new URLSearchParams({
         to: "contact_5GFnGoGySA8f9n73AToLXw",
         from: "contact_5GFnGoGySA8f9n73AToLXw",
         frontTemplate: previewPayload.frontTemplateId,
@@ -1024,15 +1022,11 @@ async function createPostcard(previewPayload) {
         const response = await fetch(apiUrl, {
             method: "POST",
             headers: {
-                
-                "x-api-key":previewPayload.API_KEY,
+                "x-api-key": API_KEY,
                 "Content-Type": 'application/x-www-form-urlencoded'
             },
             body: requestBody
         });
-
-
-      
 
         if (!response.ok) {
             const errorResponse = await response.json();
@@ -1041,39 +1035,44 @@ async function createPostcard(previewPayload) {
 
         const result = await response.json();
         console.log("Postcard created successfully:", result);
-        return result.id;
+        return result;
     } catch (error) {
         console.error("Error creating postcard:", error);
         throw error;
     }
 }
 
-async function getPreviewURL () {
+async function getPreviewURL() {
     try {
-      const postcardResponse = await createPostcard();
-      const postcardId = postcardResponse.id;
-      connection.trigger('request:spinnerShow');
-      setTimeout(async function() {
-        const postcardDetails = await fetchPostcardDetails(postcardId);
-        console.log(postcardDetails);
-        console.log('postcard creation details: '+JSON.stringify(postcardDetails));
-    
-        const pdfUrl = postcardDetails.url;
-        console.log('pdfurl: '+pdfUrl);
-        
-        if (pdfUrl) {
-          showPdfPreview(pdfUrl);
-          connection.trigger('request:spinnerHide');
-        } else {
-          console.error('PDF URL not found in the response.');
-          $('#pdf-preview-container').html('<p>PDF URL not found.</p>');
+        const previewPayload = await setPreviewPayload();
+        if (!previewPayload) {
+            console.error("Preview payload is missing.");
+            return;
         }
-      }, 3000);
+
+        const postcardResponse = await createPostcard(previewPayload);
+        const postcardId = postcardResponse.id;
+        connection.trigger('request:spinnerShow');
+        setTimeout(async function () {
+            const postcardDetails = await fetchPostcardDetails(postcardId);
+            console.log(postcardDetails);
+            console.log('postcard creation details: ' + JSON.stringify(postcardDetails));
+
+            const pdfUrl = postcardDetails.url;
+            console.log('pdfurl: ' + pdfUrl);
+
+            if (pdfUrl) {
+                showPdfPreview(pdfUrl);
+                connection.trigger('request:spinnerHide');
+            } else {
+                console.error('PDF URL not found in the response.');
+                $('#pdf-preview-container').html('<p>PDF URL not found.</p>');
+            }
+        }, 3000);
 
     } catch (error) {
-      console.error('Failed to fetch postcard details:', error);
-      $('#pdf-preview-container').html('<p>Failed to fetch PDF preview.</p>');
+        console.error('Failed to fetch postcard details:', error);
+        $('#pdf-preview-container').html('<p>Failed to fetch PDF preview.</p>');
     }
-  }
-
+}
   });
