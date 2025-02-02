@@ -1050,11 +1050,16 @@ async function getPreviewURL() {
         const postcardDetails = await fetchPostcardDetails(postcardId);
         console.log('Postcard details:', postcardDetails);
 
-        if (postcardDetails.pdf) {
-            showPdfPreview(postcardDetails.pdf);
-        } else {
-            console.error('PDF URL not found in postcard details');
+        // Check if the PDF URL is available in the response
+        let pdfUrl = postcardDetails.pdf;
+        if (!pdfUrl) {
+            // If the PDF URL is not available, construct it manually
+            pdfUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}/pdf`;
+            console.warn('PDF URL not found in response. Constructed URL:', pdfUrl);
         }
+
+        // Show the PDF preview
+        showPdfPreview(pdfUrl);
     } catch (error) {
         console.error('Failed to fetch postcard details:', error);
     }
@@ -1064,5 +1069,4 @@ async function getPreviewURL() {
 document.getElementById('nextButton').addEventListener('click', async () => {
     await getPreviewURL();
 });
-
-});
+  });
