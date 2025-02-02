@@ -933,15 +933,16 @@ fetchTemplates();
 
 /** screen 3C script */
 
+const API_KEY = "test_sk_qraE3RyxvpGQbAjQfngQbb"; // Store API key in a single place
+
 async function fetchPostcardDetails(postcardId) {
     const apiUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}?expand[]=frontTemplate&expand[]=backTemplate`;
-    const apiKey = 'test_sk_qraE3RyxvpGQbAjQfngQbb';
 
     try {
         const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
-                'x-api-key': apiKey
+                'x-api-key': API_KEY
             }
         });
 
@@ -957,7 +958,7 @@ async function fetchPostcardDetails(postcardId) {
     }
 }
 
-function showPdfPreview(pdfUrl, apiKey) {
+function showPdfPreview(pdfUrl) {
     if (!pdfUrl) {
         console.error('PDF URL is missing.');
         return;
@@ -965,10 +966,10 @@ function showPdfPreview(pdfUrl, apiKey) {
 
     try {
         // Append the API key as a query parameter
-        const authenticatedPdfUrl = `${pdfUrl}?x-api-key=${apiKey}`;
+        const authenticatedPdfUrl = `${pdfUrl}?x-api-key=${API_KEY}`;
         $('#pdf-preview').attr('src', authenticatedPdfUrl + '#toolbar=0&navpanes=0');
     } catch (error) {
-        console.log('pdf preview error: ' + error);
+        console.error('PDF preview error:', error);
     }
 
     $('#pdf-preview').on('error', function () {
@@ -1008,7 +1009,6 @@ async function setPreviewPayload() {
 
 async function createPostcard(previewPayload) {
     const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards";
-    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
 
     const requestBody = {
         to: "contact_5GFnGoGySA8f9n73AToLXw",
@@ -1025,24 +1025,26 @@ async function createPostcard(previewPayload) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "x-api-key": apiKey
+                "x-api-key": API_KEY
             },
             body: JSON.stringify(requestBody)
         });
 
-        if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(`API request failed with status ${response.status}: ${JSON.stringify(errorResponse)}`);
+        }
+
         const result = await response.json();
         console.log("Postcard created successfully:", result);
         return result.id;
     } catch (error) {
         console.error("Error creating postcard:", error);
-        return null;
+        throw error;
     }
 }
 
 async function getPreviewURL() {
-    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb"; // Your API key
-
     try {
         const previewPayload = await setPreviewPayload();
         if (!previewPayload) throw new Error('Preview payload is missing');
@@ -1063,9 +1065,10 @@ async function getPreviewURL() {
         }
 
         // Show the PDF preview with authentication
-        showPdfPreview(pdfUrl, apiKey);
+        showPdfPreview(pdfUrl);
     } catch (error) {
         console.error('Failed to fetch postcard details:', error);
+        $('#pdf-preview-container').html('<p>Error loading PDF preview. Please try again.</p>');
     }
 }
 
