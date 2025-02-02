@@ -814,247 +814,210 @@ define([
       };
     }
   
-    // Fetch templates with optional search query
-    async function fetchTemplates(searchQuery = '') {
-      console.log('Fetching templates...');
-      const requestOptions = {
+    // Global previewPayload
+
+
+// Fetch templates with optional search query
+async function fetchTemplates(searchQuery = '') {
+    console.log('Fetching templates...');
+    const requestOptions = {
         method: 'GET',
         headers: { 'x-api-key': 'test_sk_qraE3RyxvpGQbAjQfngQbb' },
         redirect: 'follow'
-      };
-  
-      try {
+    };
+
+    try {
         const response = await fetch(`https://api.postgrid.com/print-mail/v1/templates?limit=10&search=${encodeURIComponent(searchQuery)}`, requestOptions);
         if (!response.ok) {
-          throw new Error(`API request failed with status ${response.status}`);
+            throw new Error(`API request failed with status ${response.status}`);
         }
         const dataJson = await response.json();
         const data = dataJson.data;
-  
+
         // Sort data by description
         const sortedData = data.sort((a, b) => {
-          const descriptionA = a.description ? a.description.toString().toLowerCase() : '';
-          const descriptionB = b.description ? b.description.toString().toLowerCase() : '';
-          return descriptionA.localeCompare(descriptionB);
+            const descriptionA = a.description ? a.description.toString().toLowerCase() : '';
+            const descriptionB = b.description ? b.description.toString().toLowerCase() : '';
+            return descriptionA.localeCompare(descriptionB);
         });
-  
+
         // Populate dropdowns with sorted data
         populateDropdown('frontTemplateList', sortedData);
         populateDropdown('backTemplateList', sortedData);
-      } catch (error) {
+    } catch (error) {
         console.error('Error fetching templates:', error);
-      }
     }
-  
-    // Populate dropdown with templates
-    function populateDropdown(listId, templates) {
-      const list = document.getElementById(listId);
-      if (!list) {
+}
+
+// Populate dropdown with templates
+function populateDropdown(listId, templates) {
+    const list = document.getElementById(listId);
+    if (!list) {
         console.error(`Dropdown list with ID ${listId} not found.`);
         return;
-      }
-      list.innerHTML = '';
-  
-      templates.forEach(template => {
+    }
+    list.innerHTML = '';
+
+    templates.forEach(template => {
         const listItem = document.createElement('li');
         listItem.textContent = template.description || 'No description';
         listItem.dataset.id = template.id;
         listItem.classList.add('dropdown-item');
         listItem.addEventListener('click', function () {
-          selectTemplate(listId, template);
-          list.style.display = 'none'; // Hide dropdown after selection
+            selectTemplate(listId, template);
+            list.style.display = 'none'; // Hide dropdown after selection
         });
         list.appendChild(listItem);
-      });
-  
-      console.log(`${listId} populated with templates.`);
-    }
-  
-    // Handle template selection
-    function selectTemplate(listId, template) {
-      const inputId = listId === 'frontTemplateList' ? 'frontTemplateInput' : 'backTemplateInput';
-      const inputElement = document.getElementById(inputId);
-      if (inputElement) {
+    });
+
+    console.log(`${listId} populated with templates.`);
+}
+
+// Handle template selection
+function selectTemplate(listId, template) {
+    const inputId = listId === 'frontTemplateList' ? 'frontTemplateInput' : 'backTemplateInput';
+    const inputElement = document.getElementById(inputId);
+    if (inputElement) {
         inputElement.value = template.description || 'No description';
-      } else {
+        inputElement.dataset.id = template.id; // Store ID for later use
+    } else {
         console.error(`Input element with ID ${inputId} not found.`);
-      }
     }
-  
-    // Show dropdown when input is focused
-    document.getElementById('frontTemplateInput')?.addEventListener('focus', function () {
-      document.getElementById('frontTemplateList').style.display = 'block';
-    });
-  
-    document.getElementById('backTemplateInput')?.addEventListener('focus', function () {
-      document.getElementById('backTemplateList').style.display = 'block';
-    });
-  
-    // Hide dropdown when clicking outside
-    document.addEventListener('click', function (event) {
-      const frontTemplateList = document.getElementById('frontTemplateList');
-      const backTemplateList = document.getElementById('backTemplateList');
-      const isClickInsideFront = event.target.closest('#frontTemplateList') || event.target.closest('#frontTemplateInput');
-      const isClickInsideBack = event.target.closest('#backTemplateList') || event.target.closest('#backTemplateInput');
-  
-      if (!isClickInsideFront && frontTemplateList) {
+}
+
+// Show dropdown when input is focused
+document.getElementById('frontTemplateInput')?.addEventListener('focus', function () {
+    document.getElementById('frontTemplateList').style.display = 'block';
+});
+
+document.getElementById('backTemplateInput')?.addEventListener('focus', function () {
+    document.getElementById('backTemplateList').style.display = 'block';
+});
+
+// Hide dropdown when clicking outside
+document.addEventListener('click', function (event) {
+    const frontTemplateList = document.getElementById('frontTemplateList');
+    const backTemplateList = document.getElementById('backTemplateList');
+    const isClickInsideFront = event.target.closest('#frontTemplateList') || event.target.closest('#frontTemplateInput');
+    const isClickInsideBack = event.target.closest('#backTemplateList') || event.target.closest('#backTemplateInput');
+
+    if (!isClickInsideFront && frontTemplateList) {
         frontTemplateList.style.display = 'none';
-      }
-      if (!isClickInsideBack && backTemplateList) {
+    }
+    if (!isClickInsideBack && backTemplateList) {
         backTemplateList.style.display = 'none';
-      }
-    });
-  
-    // Add event listener for search input
-    const frontSearchInput = document.getElementById('frontTemplateInput');
-    const backSearchInput = document.getElementById('backTemplateInput');
-  
-    if (frontSearchInput) {
-      frontSearchInput.addEventListener('input', lazyInvoke(function (event) {
+    }
+});
+
+// Add event listener for search input
+const frontSearchInput = document.getElementById('frontTemplateInput');
+const backSearchInput = document.getElementById('backTemplateInput');
+
+if (frontSearchInput) {
+    frontSearchInput.addEventListener('input', lazyInvoke(function (event) {
         const searchQuery = event.target.value.trim();
         fetchTemplates(searchQuery);
-      }, 300)); // lazyInvoke with 300ms delay
-    }
-  
-    if (backSearchInput) {
-      backSearchInput.addEventListener('input', lazyInvoke(function (event) {
+    }, 300)); // lazyInvoke with 300ms delay
+}
+
+if (backSearchInput) {
+    backSearchInput.addEventListener('input', lazyInvoke(function (event) {
         const searchQuery = event.target.value.trim();
         fetchTemplates(searchQuery);
-      }, 300)); // lazyInvoke with 300ms delay
-    }
-  
-    // Fetch templates on page load
-    fetchTemplates();
-  
-    /** screen 3C script */
+    }, 300)); // lazyInvoke with 300ms delay
+}
 
+// Fetch templates on page load
+fetchTemplates();
 
-    /* screen 3C payload **/
+/** screen 3C script */
 
-    async function setPreviewPayload() {
-        if (document.querySelector('#postcardScreen .screen-1').style.display === 'block') {
-            console.log('Screen-1: HTML preview should be shown');
-    
-            const description = document.querySelector('#description3').value;
-            const sendDate = document.querySelector('#sendDate3').value;
-            const frontTemplateId = document.querySelector('#frontTemplateInput')?.dataset.id;
-            const backTemplateId = document.querySelector('#backTemplateInput')?.dataset.id;
-            
-            const sizeInputs = document.querySelectorAll('input[name="size"]');
-            let selectedSize = null;
-            sizeInputs.forEach(input => {
-                if (input.checked) {
-                    selectedSize = input.id === 'six-four' ? '6x4' : 
-                                   input.id === 'nine-six' ? '9x6' : 
-                                   input.id === 'eleven-eight' ? '11x8' : null;
-                }
-            });
-    
-            previewPayload = {
-                screen: 'existing template ',
-                description,
-                sendDate,
-                frontTemplateId,
-                backTemplateId,
-                size: selectedSize,
-            };
-    
-            console.log('Preview Payload:', JSON.stringify(previewPayload));
-        } else if (document.querySelector('#postcardScreen .screen-2').style.display === 'block') {
-            console.log('Screen-2: PDF preview should be shown');
-        }
-    }
-    
-    async function getPreviewURL() {
-        try {
-            const postcardId = await createPostcard();
-            if (!postcardId) throw new Error('Postcard ID not received');
-            
-            console.log('Fetching postcard details...');
-            setTimeout(async () => {
-                const postcardDetails = await fetchPostcardDetails(postcardId);
-                console.log('Postcard details:', postcardDetails);
-    
-                const pdfUrl = postcardDetails.url;
-                if (pdfUrl) {
-                    showPdfPreview(pdfUrl);
-                } else {
-                    console.error('PDF URL not found in the response.');
-                    document.querySelector('#pdf-preview-container').innerHTML = '<p>PDF URL not found.</p>';
-                }
-            }, 3000);
-        } catch (error) {
-            console.error('Failed to fetch postcard details:', error);
-            document.querySelector('#pdf-preview-container').innerHTML = '<p>Failed to fetch PDF preview.</p>';
-        }
-    }
-    
-    async function createPostcard() {
-        const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards";
-        const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
-    
-        if (!previewPayload.frontTemplateId || !previewPayload.backTemplateId || !previewPayload.size) {
-            console.error("Missing required fields for postcard creation.");
-            return null;
-        }
-    
-        const requestBody = {
-            to: "contact_5GFnGoGySA8f9n73AToLXw",
-            from: "contact_5GFnGoGySA8f9n73AToLXw",
-            frontTemplate: previewPayload.frontTemplateId,
-            backTemplate: previewPayload.backTemplateId,
-            size: previewPayload.size,
-            sendDate: previewPayload.sendDate || undefined,
-            description: previewPayload.description || "Postcard created via API",
-        };
-    
-        try {
-            const response = await fetch(apiUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": apiKey
-                },
-                body: JSON.stringify(requestBody)
-            });
-    
-            if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
-            const result = await response.json();
-            console.log("Postcard created successfully:", result);
-            return result.id;
-        } catch (error) {
-            console.error("Error creating postcard:", error);
-            return null;
-        }
-    }
-    
-    async function fetchPostcardDetails(postcardId) {
-        const apiUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}`;
-        const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
-    
-        try {
-            const response = await fetch(apiUrl, {
-                method: "GET",
-                headers: { "x-api-key": apiKey }
-            });
-            if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
-            return await response.json();
-        } catch (error) {
-            console.error("Error fetching postcard details:", error);
-            return null;
-        }
-    }
-    
-    function showPdfPreview(pdfUrl) {
-        if (!pdfUrl) {
-            console.error("PDF URL is missing.");
-            return;
-        }
-    
-        document.querySelector('#pdf-preview').setAttribute('src', pdfUrl + '#toolbar=0&navpanes=0');
-        document.querySelector('#pdf-preview').addEventListener('error', () => {
-            document.querySelector('#pdf-preview-container').innerHTML = '<p>Unable to load PDF preview.</p>';
+// Screen 3C payload
+async function setPreviewPayload() {
+    if (document.querySelector('#postcardScreen .screen-1').style.display === 'block') {
+        console.log('Screen-1: HTML preview should be shown');
+
+        const description = document.querySelector('#description3').value;
+        const sendDate = document.querySelector('#sendDate3').value;
+        const frontTemplateId = document.querySelector('#frontTemplateInput')?.dataset.id;
+        const backTemplateId = document.querySelector('#backTemplateInput')?.dataset.id;
+
+        const sizeInputs = document.querySelectorAll('input[name="size"]');
+        let selectedSize = null;
+        sizeInputs.forEach(input => {
+            if (input.checked) {
+                selectedSize = input.id === 'six-four' ? '6x4' :
+                               input.id === 'nine-six' ? '9x6' :
+                               input.id === 'eleven-eight' ? '11x8' : null;
+            }
         });
+
+        previewPayload = {
+            screen: 'existing template',
+            description,
+            sendDate,
+            frontTemplateId,
+            backTemplateId,
+            size: selectedSize,
+        };
+
+        console.log('Preview Payload:', JSON.stringify(previewPayload));
     }
-    
+}
+
+// Create postcard
+async function createPostcard() {
+    const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards";
+    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
+
+    if (!previewPayload.frontTemplateId || !previewPayload.backTemplateId || !previewPayload.size) {
+        console.error("Missing required fields for postcard creation.");
+        return null;
+    }
+
+    const requestBody = {
+        to: "contact_5GFnGoGySA8f9n73AToLXw",
+        from: "contact_5GFnGoGySA8f9n73AToLXw",
+        frontTemplate: previewPayload.frontTemplateId,
+        backTemplate: previewPayload.backTemplateId,
+        size: previewPayload.size,
+        sendDate: previewPayload.sendDate || undefined,
+        description: previewPayload.description || "Postcard created via API",
+    };
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-api-key": apiKey
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+        const result = await response.json();
+        console.log("Postcard created successfully:", result);
+        return result.id;
+    } catch (error) {
+        console.error("Error creating postcard:", error);
+        return null;
+    }
+}
+
+// Fetch and display preview
+async function getPreviewURL() {
+    try {
+        const postcardId = await createPostcard();
+        if (!postcardId) throw new Error('Postcard ID not received');
+
+        console.log('Fetching postcard details...');
+        setTimeout(async () => {
+            const postcardDetails = await fetchPostcardDetails(postcardId);
+            console.log('Postcard details:', postcardDetails);
+        }, 3000);
+    } catch (error) {
+        console.error('Failed to fetch postcard details:', error);
+    }
+}
   });
