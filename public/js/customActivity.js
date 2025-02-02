@@ -570,6 +570,7 @@ define([
         });
   
         if (!response.ok) {
+
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
   
@@ -932,48 +933,80 @@ fetchTemplates();
 
 /** screen 3C script */
 
-// Screen 3C payload
-async function setPreviewPayload() {
-    if (document.querySelector('#postcardScreen .screen-1').style.display === 'block') {
-        console.log('Screen-1: HTML preview should be shown');
+async function fetchPostcardDetails(postcardId) {
+    const apiUrl = `https://api.postgrid.com/print-mail/v1/postcards/${postcardId}?expand[]=frontTemplate&expand[]=backTemplate`;
+    const apiKey = 'test_sk_qraE3RyxvpGQbAjQfngQbb';
 
-        const description = document.querySelector('#description3').value;
-        const sendDate = document.querySelector('#sendDate3').value;
-        const frontTemplateId = document.querySelector('#frontTemplateInput')?.dataset.id;
-        const backTemplateId = document.querySelector('#backTemplateInput')?.dataset.id;
-
-        const sizeInputs = document.querySelectorAll('input[name="size"]');
-        let selectedSize = null;
-        sizeInputs.forEach(input => {
-            if (input.checked) {
-                selectedSize = input.id === 'six-four' ? '6x4' :
-                               input.id === 'nine-six' ? '9x6' :
-                               input.id === 'eleven-eight' ? '11x8' : null;
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'x-api-key': apiKey
             }
         });
 
-        previewPayload = {
-            screen: 'existing template',
-            description,
-            sendDate,
-            frontTemplateId,
-            backTemplateId,
-            size: selectedSize,
-        };
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-        console.log('Preview Payload:', JSON.stringify(previewPayload));
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching postcard details:', error);
+        throw error;
     }
 }
 
-// Create postcard
-async function createPostcard() {
-    const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards";
-    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
+function showPdfPreview(pdfUrl) {
+    if (!pdfUrl) {
+        console.error('PDF URL is missing.');
+        return;
+    }
 
-    if (!previewPayload.frontTemplateId || !previewPayload.backTemplateId || !previewPayload.size) {
+    try {
+        $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
+    } catch (error) {
+        console.log('pdf preview error: ' + error);
+    }
+
+    $('#pdf-preview').on('error', function () {
+        $('#pdf-preview-container').html('<p>Unable to load PDF preview.</p>');
+    });
+}
+
+async function setPreviewPayload() {
+    const description = document.querySelector('#description3').value;
+    const sendDate = document.querySelector('#sendDate3').value;
+    const frontTemplateId = document.querySelector('#frontTemplateInput')?.dataset.id;
+    const backTemplateId = document.querySelector('#backTemplateInput')?.dataset.id;
+
+    const sizeInputs = document.querySelectorAll('input[name="size"]');
+    let selectedSize = null;
+    sizeInputs.forEach(input => {
+        if (input.checked) {
+            selectedSize = input.id === 'six-four' ? '6x4' :
+                           input.id === 'nine-six' ? '9x6' :
+                           input.id === 'eleven-eight' ? '11x8' : null;
+        }
+    });
+
+    if (!frontTemplateId || !backTemplateId || !selectedSize) {
         console.error("Missing required fields for postcard creation.");
         return null;
     }
+
+    return {
+        description,
+        sendDate,
+        frontTemplateId,
+        backTemplateId,
+        size: selectedSize,
+    };
+}
+
+async function createPostcard(previewPayload) {
+    const apiUrl = "https://api.postgrid.com/print-mail/v1/postcards";
+    const apiKey = "test_sk_qraE3RyxvpGQbAjQfngQbb";
 
     const requestBody = {
         to: "contact_5GFnGoGySA8f9n73AToLXw",
@@ -1005,19 +1038,31 @@ async function createPostcard() {
     }
 }
 
-// Fetch and display preview
 async function getPreviewURL() {
     try {
-        const postcardId = await createPostcard();
+        const previewPayload = await setPreviewPayload();
+        if (!previewPayload) throw new Error('Preview payload is missing');
+
+        const postcardId = await createPostcard(previewPayload);
         if (!postcardId) throw new Error('Postcard ID not received');
 
         console.log('Fetching postcard details...');
-        setTimeout(async () => {
-            const postcardDetails = await fetchPostcardDetails(postcardId);
-            console.log('Postcard details:', postcardDetails);
-        }, 3000);
+        const postcardDetails = await fetchPostcardDetails(postcardId);
+        console.log('Postcard details:', postcardDetails);
+
+        if (postcardDetails.pdf) {
+            showPdfPreview(postcardDetails.pdf);
+        } else {
+            console.error('PDF URL not found in postcard details');
+        }
     } catch (error) {
         console.error('Failed to fetch postcard details:', error);
     }
 }
-  });
+
+// Example usage
+document.getElementById('nextButton').addEventListener('click', async () => {
+    await getPreviewURL();
+});
+
+});
