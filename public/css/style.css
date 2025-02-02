@@ -103,6 +103,7 @@
 .screen-3 .five-checkboxes {
 	display: grid;
 	grid-template-columns: repeat(5, auto);
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	justify-content: space-between;
 	margin-bottom: 15px;
 	margin-bottom: 40px;
@@ -189,7 +190,7 @@
 	max-height: 200px;
 	overflow-y: auto;
 	border: 1px solid #ccc;
-	background: rgb(37, 150, 190);
+	background: white;
 	display: none;
 	z-index: 1000;
 	border-radius: 4px; /* Rounded corners */
@@ -203,7 +204,7 @@
 }
 .screen-3 .dropdown-options div:hover,
 .screen-3 .dropdown-options li:hover {
-	background: #f0f0f0;
+	background: rgb(37, 150, 190);
 }
 
 /* STEP 3 - SCREEN 3C CSS*/
