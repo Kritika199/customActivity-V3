@@ -105,6 +105,7 @@
 	grid-template-columns: repeat(5, auto);
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	justify-content: space-between;
+	font-size: 14px;
 	margin-bottom: 15px;
 	margin-bottom: 40px;
 }
