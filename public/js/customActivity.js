@@ -1057,20 +1057,20 @@ async function getPreviewURL() {
         const postcardResponse = await createPostcard(previewPayload);
         const postcardId = postcardResponse.id;
         connection.trigger('request:spinnerShow');
+
         setTimeout(async function () {
             try {
                 const postcardDetails = await fetchPostcardDetails(postcardId);
-                console.log(postcardDetails);
-                console.log('postcard creation details: ' + JSON.stringify(postcardDetails));
+                console.log('Postcard creation details:', postcardDetails);
 
                 const pdfUrl = postcardDetails.url;
-                console.log('pdfurl: ' + pdfUrl);
+                console.log('PDF URL:', pdfUrl);
 
                 if (pdfUrl) {
                     showPdfPreview(pdfUrl);
                 } else {
-                    console.error('PDF URL not found in the response.');
-                    $('#pdf-preview-container').html('<p>PDF URL not found.</p>');
+                    console.warn('PDF URL not found in the response. Displaying postcard data instead.');
+                    displayPostcardData(postcardDetails);
                 }
             } catch (error) {
                 console.error('Failed to fetch postcard details:', error);
@@ -1087,5 +1087,24 @@ async function getPreviewURL() {
     }
 }
 
+function displayPostcardData(postcardDetails) {
+    const container = $('#pdf-preview-container');
+    container.empty(); // Clear the container
 
+    // Display front template HTML
+    if (postcardDetails.frontTemplate?.html) {
+        container.append('<h3>Front Template</h3>');
+        container.append(`<div>${postcardDetails.frontTemplate.html}</div>`);
+    }
+
+    // Display back template HTML
+    if (postcardDetails.backTemplate?.html) {
+        container.append('<h3>Back Template</h3>');
+        container.append(`<div>${postcardDetails.backTemplate.html}</div>`);
+    }
+
+    // Display other postcard details
+    container.append('<h3>Postcard Details</h3>');
+    container.append(`<pre>${JSON.stringify(postcardDetails, null, 2)}</pre>`);
+}
     });
