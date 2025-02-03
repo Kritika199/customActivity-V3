@@ -393,7 +393,7 @@ define([
         }
 
         // If "Self-Mailer" is selected, uncheck "Card Insert"
-        if (this.id === 'self-mailer') {
+        if (this.id === 'letters' || this.id === 'self-mailer') {
             $('#card-insert').prop('checked', false).trigger('change'); // Uncheck and trigger change event
         }
     });
