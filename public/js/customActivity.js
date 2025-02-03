@@ -957,21 +957,19 @@ function validateStep3() {
 $(document).ready(function () {
   $('#expDelivery').change(function () {
       if ($(this).is(':checked')) {
-          $('#mailingClass3').addClass('hidden-options'); // Hide options
+          $('#mailingClass3').addClass('hidden-options'); // Hide dropdown
       } else {
-          $('#mailingClass3').removeClass('hidden-options'); // Show options
+          $('#mailingClass3').removeClass('hidden-options'); // Show dropdown
       }
   });
-});
 
-
-// Remove error messages dynamically when the user starts typing
-$(document).ready(function() {
-  $('input, textarea, select').on('input change', function() {
+  // Remove error messages dynamically when the user starts typing
+  $('input, textarea, select').on('input change', function () {
       $(this).removeClass('error-field'); // Remove red border
       $(this).next('.error-message').remove(); // Remove error message
   });
 });
+
 
 
 
