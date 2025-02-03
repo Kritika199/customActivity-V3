@@ -177,7 +177,8 @@
     padding: 3px;
     position: absolute;
     right: 12px; 
-    top: 50%;
+	left: 30px;
+    top: 15%;
     transform: translateY(-50%) rotate(45deg); 
     pointer-events: none; 
     width: 8px; 
