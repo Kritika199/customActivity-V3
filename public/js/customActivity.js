@@ -407,7 +407,8 @@ define([
             $('#card-insert-type').addClass('hidden'); // Hide Card Insert Type section
         }
     });
-}
+  }
+
 
 
   /* end of step 2 functions kritika */
