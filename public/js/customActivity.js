@@ -957,11 +957,12 @@ function validateStep3() {
 $(document).ready(function () {
   $('#expDelivery').change(function () {
       if ($(this).is(':checked')) {
-          $('#mailingClass3').removeClass('visible'); // Hide the entire field
+          $('#mailingClass3').addClass('hidden'); // Hide the entire field
       } else {
-          $('#mailingClass3').addClass('visible');  // Show the entire field
+          $('#mailingClass3').removeClass('hidden'); // Show the entire field
       }
   });
+});
 
 
 
@@ -971,7 +972,7 @@ $(document).ready(function () {
       $(this).removeClass('error-field'); // Remove red border
       $(this).next('.error-message').remove(); // Remove error message
   });
-});
+
 
 
 

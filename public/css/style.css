@@ -150,10 +150,9 @@ body {
 	padding: 8px;
 	box-sizing: border-box;
 }
-.hidden-options option {
+.hidden {
     display: none;
 }
-
 
 /* Basic styling for dropdowns */
 .screen-3 #search-contact,
