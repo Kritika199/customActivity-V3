@@ -751,6 +751,7 @@ async function getPreviewURL() {
 $('.preview-container .retry-preview-btn').click(async function () {
     await showPdfPreview(previewPayload.postcardId);
 });
+
   /** screen 4 script */
   let timeoutId;
   function fetchContacts(searchQuery) {
@@ -953,6 +954,16 @@ function validateStep3() {
 
   return isValid;
 }
+$(document).ready(function () {
+  $('#expDelivery').change(function () {
+      if ($(this).is(':checked')) {
+          $('#mailingClass3').addClass('hidden-options'); // Hide options
+      } else {
+          $('#mailingClass3').removeClass('hidden-options'); // Show options
+      }
+  });
+});
+
 
 // Remove error messages dynamically when the user starts typing
 $(document).ready(function() {
