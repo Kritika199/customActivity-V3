@@ -967,12 +967,13 @@ $(document).ready(function() {
 $(document).ready(function () {
   $('#expDelivery').change(function () {
       if ($(this).is(':checked')) {
-          $('#mailingClass3').hide(); // Hide the dropdown
+          $('#mailingClass3').closest('.input-box').hide(); // Hide the entire field
       } else {
-          $('#mailingClass3').show(); // Show the dropdown
+          $('#mailingClass3').closest('.input-box').show(); // Show the entire field
       }
   });
 });
+
 
 
   $(document).ready(function () {
