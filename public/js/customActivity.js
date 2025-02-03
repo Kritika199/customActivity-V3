@@ -957,9 +957,9 @@ function validateStep3() {
 $(document).ready(function () {
   $('#expDelivery').change(function () {
       if ($(this).is(':checked')) {
-          $('#mailingClass3').closest('.input-box').addClass('hidden'); // Hide the entire field
+          $('#mailingClass3').removeClass('visible'); // Hide the entire field
       } else {
-          $('#mailingClass3').closest('.input-box').removeClass('visible'); // Show the entire field
+          $('#mailingClass3').addClass('visible');  // Show the entire field
       }
   });
 
