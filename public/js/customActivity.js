@@ -795,9 +795,9 @@ define([
       $('#sendDate3').attr('min', today); // Restrict past dates
 
       // Open date picker when clicking anywhere on the input box
-      $('#dateContainer').on('click', function() {
-          $('#sendDate3').focus();
-      });
+      sendDate3.addEventListener("click", function () {
+        this.showPicker();
+    });
   });
     // Fetch templates from the API
     // Debounce function to limit API calls while typing
