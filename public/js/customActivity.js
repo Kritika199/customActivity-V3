@@ -708,51 +708,49 @@ define([
 
   async function showPdfPreview(postcardId) {
     try {
-      const postcardDetails = await fetchPostcardDetails(postcardId);
-      const pdfUrl = postcardDetails.url;
-      console.log('postcard details: '+pdfUrl);
-    
-      connection.trigger('nextStep');
-      if (pdfUrl) {
-        $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
-        $('.preview-container .retry-preview-btn').removeClass('show');
-      } else {
-        $('.preview-container .retry-preview-btn').addClass('show');
-        $('#pdf-preview-container').html('<p>Preview not found.</p>');
-      }
+        const postcardDetails = await fetchPostcardDetails(postcardId);
+        const pdfUrl = postcardDetails.url;
+        console.log('Postcard details: ' + pdfUrl);
+
+        connection.trigger('nextStep');
+        if (pdfUrl) {
+            $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
+            $('.preview-container .retry-preview-btn').removeClass('show');
+        } else {
+            $('.preview-container .retry-preview-btn').addClass('show');
+            $('#pdf-preview-container').html('<p>Preview not found.</p>');
+        }
     } catch (error) {
-      $('.preview-container .retry-preview-btn').addClass('show');
-      console.log('preview error: '+error);
+        $('.preview-container .retry-preview-btn').addClass('show');
+        console.log('Preview error: ' + error);
     }
 
     $('#pdf-preview').on('error', function () {
-      $('.preview-container .retry-preview-btn').addClass('show');
-      $('#pdf-preview-container').html('<p>Unable to load preview.</p>');
+        $('.preview-container .retry-preview-btn').addClass('show');
+        $('#pdf-preview-container').html('<p>Unable to load preview.</p>');
     });
-  }
+}
 
-  async function getPreviewURL () {
+async function getPreviewURL() {
     try {
-      const postcardResponse = await createPostcard();
-      const postcardId = postcardResponse.id;
-      previewPayload.postcardId = postcardId;
+        const postcardResponse = await createPostcard();
+        const postcardId = postcardResponse.id;
+        previewPayload.postcardId = postcardId;
 
-      setTimeout(async function() {
-        await showPdfPreview(postcardId);
-      }, 4000);
-
+        setTimeout(async function () {
+            await showPdfPreview(postcardId);
+        }, 4000);
     } catch (error) {
-      $('#pdf-preview-container').html('<p>Failed to fetch preview.</p>');
-      console.log('error: '+JSON.stringify(error));
-      
-      $('.preview-container .retry-preview-btn').addClass('show');
+        $('#pdf-preview-container').html('<p>Failed to fetch preview.</p>');
+        console.log('Error: ' + JSON.stringify(error));
+
+        $('.preview-container .retry-preview-btn').addClass('show');
     }
-  }
+}
 
-  $('.preview-container .retry-preview-btn').click(async function() {
+$('.preview-container .retry-preview-btn').click(async function () {
     await showPdfPreview(previewPayload.postcardId);
-  });
-
+});
   /** screen 4 script */
   let timeoutId;
   function fetchContacts(searchQuery) {
