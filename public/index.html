@@ -3,8 +3,9 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>TESTING: Custom Journey Builder Activity</title>
+    <title>Custom Journey Builder Activity</title>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>
     <script type="text/javascript" src="./js/require.js"></script>
     <script type="text/javascript">
         (function () {
@@ -22,105 +23,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link href="https://fonts.googleapis.com/css?family=Inter" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="./css/styles.css" />
-    <style type="text/css">
-        body {
-            padding: 0;
-            margin: 0;
-            font-family: inter;
-        }
-
-        /* below is the css for step 4 */
-
-        .mapping-container {
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 20px;
-            gap: 20px;
-        }
-
-        .mapping-left,
-        .mapping-right {
-            flex: 1;
-            background: white;
-        }
-
-        .mapping-radio-group {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .mapping-radio-group label {
-            display: flex;
-            align-items: center;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .mapping-radio-group input {
-            display: none;
-        }
-
-        .mapping-radio {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border: 2px solid #ccc;
-            display: inline-block;
-            margin-right: 5px;
-            position: relative;
-        }
-
-        .mapping-radio-group input:checked+.mapping-radio {
-            border-color: #007bff;
-            background: #007bff;
-        }
-
-        .mapping-dropdown {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-        }
-
-        #step4 label {
-            font-size: 1rem;
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-
-        .mapping-divider {
-            width: 1px;
-            background: #cce4ff;
-            height: 100vh;
-            min-height: 250px;
-        }
-
-        .mapping-fields-group {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .mapping-fields-group label {
-            font-weight: bold;
-            font-size: 14px;
-            color: #333;
-        }
-
-        .mapping-fields-group select,
-        #from-contact {
-            width: 70%;
-            padding: 8px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
     <link rel="stylesheet" href="./css/style.css" />
 </head>
 
@@ -196,7 +98,7 @@
                         <div class="section-label">Creation Type *</div>
                         <div class="input-container">
                             <div class="html-radio-wrap radio-label-wrap">
-                                <input type="radio" class="radio-input step2radioBTN" id="htmlId" name="createType"/>
+                                <input type="radio" class="radio-input step2radioBTN" id="htmlId" name="createType" />
                                 <label for="htmlId" class="radio-label">HTML</label>
                             </div>
                             <div class="pdf-radio-wrap radio-label-wrap">
@@ -244,9 +146,12 @@
                                 </div>
                                 <div class="input-box">
                                     <label for="sendDate" class="input-label">Send Date *</label>
-                                    <input type="date" placeholder="" class="input-field" id="sendDate"
+                                    <div class="date-wrap">
+                                        <input type="date" placeholder="" class="input-field" id="sendDate"
                                         name="sendDate" />
-                                    <span class="error-msg">Please enter required field</span>
+                                        <i class="fa fa-calendar calendar-icon"></i>
+                                        <span class="error-msg">Please enter required field</span>
+                                    </div>
                                 </div>
                                 <div class="input-box">
                                     <label for="mailingClass" class="input-label">Mailing Class *</label>
@@ -267,16 +172,16 @@
                             <div class="size-radio-buttons-wrap">
                                 <div class="radio-buttons">
                                     <label class="radio-label size_radio_label">
-                                        <input type="radio" class="radio-input" id="six-four" name="size" value="6x4"
+                                        <input type="radio" class="radio-input" id="six-four" name="postcardHtmlSize" value="6x4"
                                             checked />
                                         <span>6x4</span>
                                     </label>
                                     <label class="radio-label size_radio_label">
-                                        <input type="radio" class="radio-input" id="nine-six" name="size" value="9x6" />
+                                        <input type="radio" class="radio-input" id="nine-six" name="postcardHtmlSize" value="9x6" />
                                         <span>9x6</span>
                                     </label>
                                     <label class="radio-label size_radio_label">
-                                        <input type="radio" class="radio-input" id="eleven-eight" name="size"
+                                        <input type="radio" class="radio-input" id="eleven-eight" name="postcardHtmlSize"
                                             value="11x8" />
                                         <span>11x8</span>
                                     </label>
@@ -296,12 +201,14 @@
 
                     <!-- Postcard HTML Editor -->
                     <div class="postcard-html-editor">
-                        <button type="button" class="btn btn-light html__btn--front">
-                            Front
-                        </button>
-                        <button type="button" class="btn btn-light html__btn--back">
-                            Back
-                        </button>
+                        <div class="html-btn-wrap">
+                            <button type="button" class="btn btn-light html__btn--front show">
+                                Front
+                            </button>
+                            <button type="button" class="btn btn-light html__btn--back">
+                                Back
+                            </button>
+                        </div>
                         <textarea class="html-editor-front show"></textarea>
                         <textarea class="html-editor-back"></textarea>
                         <span class="error-msg">Please enter required field</span>
@@ -322,8 +229,12 @@
                             </div>
                             <div class="input-box">
                                 <label for="sendDate" class="input-label">Send Date *</label>
-                                <input type="date" placeholder="" class="input-field" id="sendDate" name="sendDate" />
-                                <span class="error-msg">Please enter required field</span>
+                                <div class="date-wrap">
+                                    <input type="date" placeholder="" class="input-field" id="sendDate"
+                                    name="sendDate" />
+                                    <i class="fa fa-calendar calendar-icon"></i>
+                                    <span class="error-msg">Please enter required field</span>
+                                </div>
                             </div>
                             <div class="input-box">
                                 <label for="mailingClass" class="input-label">Mailing Class *</label>
@@ -342,17 +253,17 @@
                             <div class="size-radio-buttons-wrap">
                                 <div class="radio-buttons">
                                     <label class="radio-label size_radio_label">
-                                        <input type="radio" class="radio-input" id="six-four" name="size" value="6x4"
+                                        <input type="radio" class="radio-input" id="six-four" name="postcardPDFSize" value="6x4" data-dimentions="6.25x4.25"
                                             checked />
                                         <span>6x4</span>
                                     </label>
                                     <label class="radio-label size_radio_label">
-                                        <input type="radio" class="radio-input" id="nine-six" name="size" value="9x6" />
+                                        <input type="radio" class="radio-input" id="nine-six" name="postcardPDFSize" value="9x6" data-dimentions="9.25x6.25"/>
                                         <span>9x6</span>
                                     </label>
                                     <label class="radio-label size_radio_label">
-                                        <input type="radio" class="radio-input" id="eleven-eight" name="size"
-                                            value="11x8" />
+                                        <input type="radio" class="radio-input" id="eleven-eight" name="postcardPDFSize"
+                                            value="11x6" data-dimentions="11.25x6.25"/>
                                         <span>11x8</span>
                                     </label>
                                 </div>
@@ -385,10 +296,13 @@
                             <input type="text" class="input-field" id="description3" name="description3">
                             <span class="error-message"></span>
                         </div>
-                        <div class="input-box" id="dateContainer">
+                        <div class="input-box">
                             <label for="sendDate3" class="input-label">Send Date *</label>
-                            <input type="date" placeholder="" class="input-field" id="sendDate3" name="sendDate3">
-                            <span class="error-message"></span>
+                            <div class="date-wrap">
+                                <input type="date" placeholder="" class="input-field" id="sendDate3" name="sendDate3"> 
+                                <i class="fa fa-calendar calendar-icon"></i>
+                                <span class="error-message"></span>
+                            </div>                           
                         </div>
                         <div class="input-box">
                             <label for="mailingClass3" class="input-label">Mailing *</label>
@@ -402,52 +316,48 @@
                         <div class="input-box">
                             <label for="frontTemplateInput" class="input-label">Front Template *</label>
                             <div class="mapping-dropdown">
-                                <input type="text" id="frontTemplateInput" placeholder="Search or enter template"
-                                    autocomplete="off" aria-describedby="frontTemplateList" aria-haspopup="listbox"
-                                    aria-expanded="false" />
-                                  
-                                   
-                               
+                                <div class="template-dropdown-wrap">
+                                    <input type="text" id="frontTemplateInput" placeholder="Search or enter template"
+                                        autocomplete="off" aria-describedby="frontTemplateList" aria-haspopup="listbox"
+                                        aria-expanded="false" />
+                                        <i class="fa fa-angle-right dropdown-icon"></i>
+                                </div>
                                 <div id="frontTemplateList" class="dropdown-options" role="listbox"
                                     aria-labelledby="frontTemplateInput"></div>
-                                    
-                                
+                                <span class="error-message"></span>
                             </div>
-                            <span class="error-message"></span> 
                         </div>
                         <!-- Back Template -->
                         <div class="input-box">
                             <label for="backTemplateInput" class="input-label">Back Template *</label>
                             <div class="mapping-dropdown">
-                                <input type="text" id="backTemplateInput" placeholder="Search or enter template"
-                                    autocomplete="off" aria-describedby="backTemplateList" aria-haspopup="listbox"
-                                    aria-expanded="false" />
-                                    
-                                   
-
-                                
+                                <div class="template-dropdown-wrap">
+                                    <input type="text" id="backTemplateInput" placeholder="Search or enter template"
+                                        autocomplete="off" aria-describedby="backTemplateList" aria-haspopup="listbox"
+                                        aria-expanded="false" />
+                                        <i class="fa fa-angle-right dropdown-icon"></i>
+                                </div>
+                                 <!-- Add down arrow here -->
                                 <div id="backTemplateList" class="dropdown-options" role="listbox"
                                     aria-labelledby="backTemplateInput"></div>
-                                    
-                                
+                                <span class="error-message"></span>
                             </div>
-                            <span class="error-message"></span> 
                         </div>
                     </div>
 
                     <div class="input-label-radio">Size *</div>
                     <div class="radio-buttons width-50">
                         <label class="radio-label size_radio_label">
-                            <input type="radio" class="radio-input" id="six-four" name="size" checked>
+                            <input type="radio" class="radio-input" id="six-four" name="size" value="6x4" checked>
                             6x4
                         </label>
                         <label class="radio-label size_radio_label">
-                            <input type="radio" class="radio-input" id="nine-six" name="size">
+                            <input type="radio" class="radio-input" id="nine-six" name="size" value="9x6">
                             9x6
                         </label>
                         <label class="radio-label size_radio_label">
-                            <input type="radio" class="radio-input" id="eleven-eight" name="size">
-                            11x8
+                            <input type="radio" class="radio-input" id="eleven-eight" name="size" value="11x6">
+                            11x6
                         </label>
                         <span class="error-message"></span>
                     </div>
@@ -471,10 +381,12 @@
             <!-- Left Section -->
             <div class="mapping-left">
                 <h2 class="step4-heading" id="step4-heading">From Contact</h2>
-                <div class="mapping-dropdown">
-                    <input type="text" id="search-contact" placeholder="Search and select a contact...">
+                <div class="mapping-dropdown contact-dropdown-wrap">
+                    <div class="dropdown-wrap">
+                        <input type="text" id="search-contact" placeholder="Search and select a contact...">
+                        <i class="fa fa-angle-right dropdown-icon"></i>
+                    </div>
                     <div id="dropdown-options" class="dropdown-options">
-
                     </div>
                 </div>
             </div>
@@ -501,7 +413,7 @@
                     </div>
 
                     <div class="mapping-fields-group">
-                        <label for="company">Company</label>
+                        <label for="company">Company *</label>
                         <select id="company">
                             <option>Select</option>
                         </select>
@@ -565,13 +477,13 @@
 
     <div id="step5" class="step">
         <div class="container spacer">
-            <!-- Left Section -->
-            <div>
+            <div class="preview-container">
                 <div class="section-label">Preview Post</div>
                 <div class="preview-box">
                     <div id="pdf-preview-container">
                         <iframe id="pdf-preview" style="border: 1px solid #ccc;"></iframe>
                     </div>
+                    <button class="retry-preview-btn">Retry</button>
                 </div>
             </div>
         </div>
