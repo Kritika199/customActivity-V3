@@ -964,6 +964,16 @@ $(document).ready(function() {
   });
 });
 
+$(document).ready(function () {
+  $('#expDelivery').change(function () {
+      if ($(this).is(':checked')) {
+          $('#mailingClass3').hide(); // Hide the dropdown
+      } else {
+          $('#mailingClass3').show(); // Show the dropdown
+      }
+  });
+});
+
 
   $(document).ready(function () {
     let today = new Date().toISOString().split('T')[0];
