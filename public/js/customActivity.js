@@ -225,11 +225,11 @@ define([
     const icon = $('#toggle-password-live-key i'); // Select the icon inside the button
     const liveKeyInput = $('#live-api-key'); // Select the input field
 
-    if (liveKeyInput.attr('type') === 'password') {
-      liveKeyInput.attr('type', 'text'); // Change input type to text
+    if (liveKeyInput.attr('type') === 'text') {
+      liveKeyInput.attr('type', 'password'); // Change input type to text
       icon.removeClass('fa-eye').addClass('fa-eye-slash'); // Update icon class
     } else {
-      liveKeyInput.attr('type', 'password'); // Change input type back to password
+      liveKeyInput.attr('type', 'text'); // Change input type back to password
       icon.removeClass('fa-eye-slash').addClass('fa-eye'); // Update icon class
     }
   }
@@ -239,11 +239,11 @@ define([
     const icon = $('#toggle-password-test-key i'); // Select the icon inside the button
     const testKeyInput = $('#test-api-key'); // Select the input field
 
-    if (testKeyInput.attr('type') === 'password') {
-      testKeyInput.attr('type', 'text'); // Change input type to text
+    if (testKeyInput.attr('type') === 'text') {
+      testKeyInput.attr('type', 'password'); // Change input type to text
       icon.removeClass('fa-eye').addClass('fa-eye-slash'); // Update icon class
     } else {
-      testKeyInput.attr('type', 'password'); // Change input type back to password
+      testKeyInput.attr('type', 'text'); // Change input type back to password
       icon.removeClass('fa-eye-slash').addClass('fa-eye'); // Update icon class
     }
 
@@ -895,43 +895,66 @@ define([
   /** screen 4 script */
 
   /** screen 3C script */
-  function validateStep3() {
-    let isValid = true;
-    $('.error-message').remove();
-    let today = new Date().toISOString().split('T')[0];
-    $('#sendDate3').attr('min', today);
-    if (!$('#description3').val().trim()) {
+  /** screen 3C script */
+function validateStep3() {
+  let isValid = true;
+
+  // Remove previous error messages and red borders
+  $('.error-message').remove();
+  $('.error-field').removeClass('error-field'); 
+
+  let today = new Date().toISOString().split('T')[0];
+  $('#sendDate3').attr('min', today);
+
+  if (!$('#description3').val().trim()) {
       $('#description3').after('<span class="error-message">Please write the description.</span>');
-      $('#description3').addClass('error-field');
+      $('#description3').addClass('error-field'); 
       isValid = false;
-    }
-    let selectedDate = $('#sendDate3').val();
-    if (!selectedDate || selectedDate < today) {
+  }
+
+  let selectedDate = $('#sendDate3').val();
+  if (!selectedDate || selectedDate < today) {
       $('#sendDate3').after('<span class="error-message">Send Date cannot be in the past.</span>');
+      $('#sendDate3').addClass('error-field'); 
       isValid = false;
-    }
-    if (!$('#mailingClass3').val()) {
+  }
+
+  if (!$('#mailingClass3').val()) {
       $('#mailingClass3').after('<span class="error-message">Mailing Class is required.</span>');
+      $('#mailingClass3').addClass('error-field'); 
       isValid = false;
-    }
-    if (!$('input[name=\'size\']:checked').length) {
+  }
+
+  if (!$('input[name="size"]:checked').length) {
       $('.radio-buttons').after('<span class="error-message">Please select at least one size.</span>');
       isValid = false;
-    }
-    // Validate Front Template
-
-    if (!$('#frontTemplateInput').val()) {
-      $('#frontTemplateInput').after('<span class="error-message">Please select the Front Template this is required.</span>');
-      $('#frontTemplateInput').addClass('error-field');
-      isValid = false;
-    }
-    if (!$('#backTemplateInput').val()) {
-      $('#backTemplateInput').after('<span class="error-message">Please select the Back Template this is required.</span>');
-      $('#backTemplateInput').addClass('error-field');
-      isValid = false;
-    }
-    return isValid;
   }
+
+  // Validate Front Template
+  if (!$('#frontTemplateInput').val().trim()) {
+      $('#frontTemplateInput').after('<span class="error-message">Please select the Front Template, this is required.</span>');
+      $('#frontTemplateInput').addClass('error-field'); 
+      isValid = false;
+  }
+
+  // Validate Back Template
+  if (!$('#backTemplateInput').val().trim()) {
+      $('#backTemplateInput').after('<span class="error-message">Please select the Back Template, this is required.</span>');
+      $('#backTemplateInput').addClass('error-field'); 
+      isValid = false;
+  }
+
+  return isValid;
+}
+
+// Remove error messages dynamically when the user starts typing
+$(document).ready(function() {
+  $('input, textarea, select').on('input change', function() {
+      $(this).removeClass('error-field'); // Remove red border
+      $(this).next('.error-message').remove(); // Remove error message
+  });
+});
+
 
   $(document).ready(function () {
     let today = new Date().toISOString().split('T')[0];
