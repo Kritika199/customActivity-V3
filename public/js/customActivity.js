@@ -957,9 +957,9 @@ function validateStep3() {
 $(document).ready(function () {
   $('#expDelivery').change(function () {
       if ($(this).is(':checked')) {
-          $('#mailingClass3').addClass('hidden-options'); // Hide dropdown
+          $('.input-box:has(#mailingClass3)').addClass('hidden-options'); // Hide the entire field
       } else {
-          $('#mailingClass3').removeClass('hidden-options'); // Show dropdown
+          $('.input-box:has(#mailingClass3)').removeClass('hidden-options'); // Show the entire field
       }
   });
 
@@ -969,6 +969,7 @@ $(document).ready(function () {
       $(this).next('.error-message').remove(); // Remove error message
   });
 });
+
 
 
 
