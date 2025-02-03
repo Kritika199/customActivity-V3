@@ -789,22 +789,15 @@ define([
       return isValid;
     }
     // Set default date to today when the page loads
-    // Set default date to today when the page loads
     $(document).ready(function () {
       let today = new Date().toISOString().split('T')[0];
       $('#sendDate3').val(today); // Set default value
       $('#sendDate3').attr('min', today); // Restrict past dates
-  });
 
-  // Open date picker when clicking anywhere on the input field
-  document.getElementById('sendDate3').addEventListener('click', function() {
-      if (typeof this.showPicker === 'function') {
-          this.showPicker(); // Use native date picker if supported
-      } else {
-          // Fallback for older browsers
-          this.type = 'text'; // Temporarily change type to text
-          this.type = 'date'; // Change back to date to trigger the picker
-      }
+      // Open date picker when clicking anywhere on the input box
+      $('#dateContainer').on('click', function() {
+          $('#sendDate3').focus();
+      });
   });
     // Fetch templates from the API
     // Debounce function to limit API calls while typing
