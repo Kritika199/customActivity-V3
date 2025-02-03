@@ -139,8 +139,7 @@
 	margin-top: 4px;
 }
 .screen-3 .error-field {
-    border: 2px solid red !important; /* Ensure red border is applied */
-    background-color: #ffe6e6; /* Light red background for better visibility */
+	border: 1px solid red;
 }
 .screen-3 .mapping-dropdown {
 	position: relative;
