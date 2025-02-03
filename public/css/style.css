@@ -164,6 +164,9 @@ body {
     font-size: 14px;
     background: transparent;
 }
+.screen-3 .error-field {
+	border: 1px solid red;
+}
 
 /* Arrow CSS */
 .screen-3 .arrow {
