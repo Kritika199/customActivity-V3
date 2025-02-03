@@ -766,10 +766,12 @@ define([
       let selectedDate = $('#sendDate3').val();
       if (!selectedDate || selectedDate < today) {
         $('#sendDate3').after('<span class="error-message">Send Date cannot be in the past.</span>');
+        $('#description3').addClass('error-field');
         isValid = false;
       }
       if (!$('#mailingClass3').val()) {
         $('#mailingClass3').after('<span class="error-message">Mailing Class is required.</span>');
+        $('#description3').addClass('error-field');
         isValid = false;
       }
       if (!$('input[name=\'size\']:checked').length) {
@@ -780,10 +782,12 @@ define([
   
       if (!$('#frontTemplateInput').val()) {
         $('#frontTemplateInput').after('<span class="error-message">Please select the Front Template this is required.</span>');
+        $('#description3').addClass('error-field');
         isValid = false;
       }
       if (!$('#backTemplateInput').val()) {
         $('#backTemplateInput').after('<span class="error-message">Please select the Back Template this is required.</span>');
+        $('#description3').addClass('error-field');
         isValid = false;
       }
       return isValid;
