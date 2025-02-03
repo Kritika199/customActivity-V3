@@ -902,6 +902,7 @@ define([
     $('#sendDate3').attr('min', today);
     if (!$('#description3').val().trim()) {
       $('#description3').after('<span class="error-message">Please write the description.</span>');
+      $('#description3').addClass('error-field');
       isValid = false;
     }
     let selectedDate = $('#sendDate3').val();
@@ -921,10 +922,12 @@ define([
 
     if (!$('#frontTemplateInput').val()) {
       $('#frontTemplateInput').after('<span class="error-message">Please select the Front Template this is required.</span>');
+      $('#frontTemplateInput').addClass('error-field');
       isValid = false;
     }
     if (!$('#backTemplateInput').val()) {
       $('#backTemplateInput').after('<span class="error-message">Please select the Back Template this is required.</span>');
+      $('#backTemplateInput').addClass('error-field');
       isValid = false;
     }
     return isValid;
