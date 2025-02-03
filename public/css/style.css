@@ -171,18 +171,22 @@
 }
 /* Arrow CSS */
 .screen-3 .arrow {
-	border: solid black;
-	border-width: 0 1.5px 1.5px 0;
-	display: inline-block;
-	padding: 3px;
-	position: absolute;
-	right: 10px; /* Position the arrow inside the input field */
-	top: 50%;
-	transform: translateY(-50%) rotate(45deg); /* Center and rotate the arrow */
-	pointer-events: none; /* Ensure the arrow doesn't block clicks */
+    border: solid black;
+    border-width: 0 1.5px 1.5px 0;
+    display: inline-block;
+    padding: 3px;
+    position: absolute;
+    right: 12px; 
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg); 
+    pointer-events: none; 
+    width: 8px; 
+    height: 8px; 
 }
+
+/* Ensure consistency for down arrow */
 .screen-3 .down {
-	transform: translateY(-50%) rotate(45deg); /* Down arrow rotation */
+    transform: translateY(-50%) rotate(45deg);
 }
 .screen-3 .dropdown-options {
 	position: absolute;
