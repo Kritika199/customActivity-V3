@@ -957,11 +957,14 @@ function validateStep3() {
 $(document).ready(function () {
   $('#expDelivery').change(function () {
       if ($(this).is(':checked')) {
-          $('.input-box:has(#mailingClass3)').addClass('hidden-options'); // Hide the entire field
+          $('#mailingClass3').closest('.input-box').addClass('hidden-options'); // Hide the entire field
       } else {
-          $('.input-box:has(#mailingClass3)').removeClass('hidden-options'); // Show the entire field
+          $('#mailingClass3').closest('.input-box').removeClass('hidden-options'); // Show the entire field
       }
   });
+
+
+
 
   // Remove error messages dynamically when the user starts typing
   $('input, textarea, select').on('input change', function () {
