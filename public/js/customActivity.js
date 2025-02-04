@@ -399,6 +399,8 @@ function toggleLiveMode(apiKey) {
       console.error('Invalid API key provided');
   }
 }
+const currentApiKey = 'test_sk_uQXxwmGMghWwG5wEfezZVN'; // Replace with the actual key in use
+toggleLiveMode(currentApiKey)
 
   function executeScreenTwoMethods() {
     // Handle showing Card Insert checkbox when "Letters" or "Self-Mailer" is selected
