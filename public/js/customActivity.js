@@ -350,6 +350,22 @@ define([
     } else {
       $('#createType-error').text('');  // Clear error if valid
     }
+    // Get API Key from localStorage (saved in Step 1)
+    const apiKey = localStorage.getItem("selectedApiKey");
+    const liveModeToggle = document.querySelector("#liveModeToggle");
+
+    if (!apiKey) {
+        errorMessages.push("API Key is missing.");
+        isValid = false;
+    } else {
+        if (apiKey.startsWith("test_")) {
+            liveModeToggle.disabled = true; // Disable toggle for test key
+            liveModeToggle.checked = false; // Ensure it's off
+        } else if (apiKey.startsWith("live_")) {
+            liveModeToggle.disabled = false; // Enable toggle for live key
+        }
+    }
+
 
     // Show general error message if any
     if (!errorMessages.length) {
@@ -384,22 +400,7 @@ define([
   });
 
   
-  document.addEventListener("DOMContentLoaded", function () {
-    const apiKey = "test_sk_uQXxwmGMghWwG5wEfezZVN"; // Replace with dynamic key if needed
-    const liveModeToggle = document.querySelector(".test-to-live-switch input");
-
-    function updateLiveModeToggle() {
-        if (apiKey.startsWith("test_")) {
-            liveModeToggle.disabled = true; // Disable toggle for test key
-            liveModeToggle.checked = false; // Ensure it's off
-        } else if (apiKey.startsWith("live_")) {
-            liveModeToggle.disabled = false; // Enable toggle for live key
-        }
-    }
-
-    updateLiveModeToggle(); // Run on page load
-});
-
+  
 
     
   
