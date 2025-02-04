@@ -350,6 +350,11 @@ define([
     } else {
       $('#createType-error').text('');  // Clear error if valid
     }
+    // Handle API Key toggle logic
+    if (!handleApiKeyToggle()) {
+      errorMessages.push("API Key is missing.");
+      isValid = false;
+  }
     
 
     // Show general error message if any
