@@ -383,34 +383,26 @@ define([
     });
   });
 
-  document.addEventListener('DOMContentLoaded', function () {
-    // Define your API keys
-    const apiKeys = {
-        test_api_key: 'test_sk_uQXxwmGMghWwG5wEfezZVN',
-        live_api_key: 'live_sk_mj3Bjf4wcMBwdPk9qeXZvx',
-    };
+  
+  document.addEventListener("DOMContentLoaded", function () {
+    const apiKey = "test_sk_uQXxwmGMghWwG5wEfezZVN"; // Replace with dynamic key if needed
+    const liveModeToggle = document.querySelector(".test-to-live-switch input");
 
-    // Function to check the API key and toggle the checkbox
-    function toggleLiveMode(apiKey) {
-        const liveModeCheckbox = document.getElementById('liveModeCheckbox');
-
-        if (apiKey === apiKeys.test_api_key) {
-            // If the key is the test key, disable the checkbox
-            liveModeCheckbox.disabled = true;
-            liveModeCheckbox.checked = false; // Ensure it's unchecked
-        } else if (apiKey === apiKeys.live_api_key) {
-            // If the key is the live key, enable the checkbox
-            liveModeCheckbox.disabled = false;
-        } else {
-            // Handle any other cases (e.g., invalid key)
-            console.error('Invalid API key provided');
+    function updateLiveModeToggle() {
+        if (apiKey.startsWith("test_")) {
+            liveModeToggle.disabled = true; // Disable toggle for test key
+            liveModeToggle.checked = false; // Ensure it's off
+        } else if (apiKey.startsWith("live_")) {
+            liveModeToggle.disabled = false; // Enable toggle for live key
         }
     }
 
-    // Example usage:
-    const currentApiKey = 'test_sk_uQXxwmGMghWwG5wEfezZVN'; // Replace with the actual key in use
-    toggleLiveMode(currentApiKey);
+    updateLiveModeToggle(); // Run on page load
 });
+
+
+    
+  
 
   function executeScreenTwoMethods() {
     // Handle showing Card Insert checkbox when "Letters" or "Self-Mailer" is selected
