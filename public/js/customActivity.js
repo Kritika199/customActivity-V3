@@ -350,21 +350,7 @@ define([
     } else {
       $('#createType-error').text('');  // Clear error if valid
     }
-    // Get API Key from previewPayload
-    const apiKey = previewPayload.test_api_key || previewPayload.live_api_key;
-    const liveModeToggle = document.querySelector("#liveModeToggle");
-
-    if (!apiKey) {
-        errorMessages.push("API Key is missing.");
-        isValid = false;
-    } else {
-        if (apiKey.startsWith("test_")) {
-            liveModeToggle.disabled = true; // Disable toggle for test key
-            liveModeToggle.checked = false; // Ensure it's off
-        } else if (apiKey.startsWith("live_")) {
-            liveModeToggle.disabled = false; // Enable toggle for live key
-        }
-    }
+    
 
     // Show general error message if any
     if (!errorMessages.length) {
@@ -398,7 +384,31 @@ define([
     });
   });
 
-  
+
+  function handleApiKeyToggle() {
+    // Get API Key from previewPayload
+    const apiKey = previewPayload.test_api_key || previewPayload.live_api_key;
+    const liveModeToggle = document.querySelector("#liveModeToggle");
+
+    if (!apiKey) {
+        console.error("API Key is missing.");
+        return false;
+    }
+
+    console.log("API Key Found:", apiKey); // Log API key for debugging
+
+    if (apiKey.startsWith("test_")) {
+        liveModeToggle.disabled = true; // Disable toggle for test key
+        liveModeToggle.checked = false; // Ensure it's off
+        console.log("Live Mode Toggle is DISABLED (Test API Key)");
+    } else if (apiKey.startsWith("live_")) {
+        liveModeToggle.disabled = false; // Enable toggle for live key
+        console.log("Live Mode Toggle is ENABLED (Live API Key)");
+    }
+
+    return true;
+}
+
   
 
     
