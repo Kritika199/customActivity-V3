@@ -64,6 +64,8 @@ define([
     switch (currentStep.key) {
     case 'step1':
       if (validateApiKeys()) {
+        // Call the function to check API key and disable/enable toggle
+        handleApiKeyToggle(); 
         connection.trigger('nextStep');
       
       } else {
@@ -74,8 +76,7 @@ define([
     case 'step2':
       if (validateStep2()) {
         console.log('validate--*************' + validateStep2());
-        // ✅ Call the function to check API key and disable/enable toggle
-        handleApiKeyToggle(); 
+        
 
         connection.trigger('nextStep');
       } else {
