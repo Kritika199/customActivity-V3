@@ -11,7 +11,7 @@ define([
   let selectedFieldsForMapping = {};
   let previewPayload = {
     test_api_key: 'test_sk_uQXxwmGMghWwG5wEfezZVN',
-    live_api_key: 'live_sk_mj3Bjf4wcMBwdPk9qeXZvx',
+    live_api_key: '',
     isValid: true
   };
   let fromContact = '';
