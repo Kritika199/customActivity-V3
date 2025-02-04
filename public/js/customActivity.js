@@ -300,6 +300,36 @@ define([
     $('#live-api-key-error').hide();
   }
 
+
+  function storeApiKeys() {
+    const testApiKey = $('#test-api-key').val().trim();
+    const liveApiKey = $('#live-api-key').val().trim();
+
+    // Ensure previewPayload exists
+    if (typeof previewPayload === "undefined") {
+        previewPayload = {};
+    }
+
+    if (testApiKey) {
+        previewPayload.test_api_key = testApiKey;
+        delete previewPayload.live_api_key; // Ensure no conflicting keys
+        console.log("✅ Stored Test API Key:", previewPayload.test_api_key);
+    }
+
+    if (liveApiKey) {
+        previewPayload.live_api_key = liveApiKey;
+        delete previewPayload.test_api_key; // Ensure no conflicting keys
+        console.log("✅ Stored Live API Key:", previewPayload.live_api_key);
+    }
+
+    console.log("🔄 Updated previewPayload:", previewPayload);
+}
+
+// Call storeApiKeys() **after validation** in Step 1
+if (isValid) { 
+    storeApiKeys();
+}
+
   //start of adding * in Company Label 
   $('.mapping-fields-group #first-name').change(function () {
     var firstNameValue = $(this).val();
@@ -390,32 +420,50 @@ define([
   });
 
 
-  function storeApiKey() {
-    const apiKeyInput = document.querySelector("#apiKeyInput").value.trim();
+  
 
-    if (!apiKeyInput) {
-        console.error("User has not entered an API Key.");
-        return;
-    }
-
+  function handleApiKeyToggle() {
     // Ensure previewPayload exists
     if (typeof previewPayload === "undefined") {
-        previewPayload = {};
+        console.error("❌ Error: previewPayload is not defined.");
+        return false;
     }
 
-    // Store in previewPayload based on key type
-    if (apiKeyInput.startsWith("test_")) {
-        previewPayload.test_api_key = apiKeyInput;
-        delete previewPayload.live_api_key; // Ensure no conflicting keys
-    } else if (apiKeyInput.startsWith("live_")) {
-        previewPayload.live_api_key = apiKeyInput;
-        delete previewPayload.test_api_key;
+    // Get API Key from previewPayload
+    const apiKey = previewPayload.test_api_key || previewPayload.live_api_key;
+    const liveModeToggle = document.querySelector("#liveModeToggle");
+
+    // Ensure toggle exists
+    if (!liveModeToggle) {
+        console.error("❌ Error: #liveModeToggle element not found.");
+        return false;
+    }
+
+    if (!apiKey) {
+        console.error("❌ Error: API Key is missing in previewPayload.");
+        return false;
+    }
+
+    console.log("🔍 API Key Found:", apiKey);
+
+    if (apiKey.startsWith("test_")) {
+        liveModeToggle.disabled = true; // Disable toggle for test key
+        liveModeToggle.checked = false; // Ensure it's off
+        console.log("🚫 Live Mode Toggle is DISABLED (Test API Key)");
+    } else if (apiKey.startsWith("live_")) {
+        liveModeToggle.disabled = false; // Enable toggle for live key
+        console.log("✅ Live Mode Toggle is ENABLED (Live API Key)");
     } else {
-        console.warn("Invalid API Key format entered:", apiKeyInput);
+        console.warn("⚠ Unknown API Key format:", apiKey);
     }
 
-    console.log("Updated previewPayload:", previewPayload);
+    return true;
 }
+
+// Call handleApiKeyToggle() when Step 2 loads
+document.addEventListener("DOMContentLoaded", function () {
+    handleApiKeyToggle();
+});
 
 
   
