@@ -434,11 +434,6 @@ define([
     }
 }
 
-// Call handleApiKeyToggle() when Step 2 loads
-document.addEventListener("DOMContentLoaded", function () {
-    handleApiKeyToggle();
-});
-
 
   
 
