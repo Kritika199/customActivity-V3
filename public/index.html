@@ -33,14 +33,14 @@
             <div class="step1-input-group">
                 <label for="test-api-key">Test Api Key*</label>
                 <input type="password" id="test-api-key" placeholder="Enter test API key" required />
-                <span class="toggle-password" id="toggle-password-test-key"><i class="fa fa-eye"></i></span>
+                <span class="toggle-password" id="toggle-password-test-key"><i class="fa fa-eye-slash"></i></span>
                 <span class="error-message" id="test-api-key-error" style="color: red; display: none">Please enter the
                     Test API Key.</span>
             </div>
             <div class="step1-input-group">
                 <label for="live-api-key">Live Api Key</label>
                 <input type="password" id="live-api-key" placeholder="Enter live API key" />
-                <span class="toggle-password" id="toggle-password-live-key"><i class="fa fa-eye"></i></span>
+                <span class="toggle-password" id="toggle-password-live-key"><i class="fa fa-eye-slash"></i></span>
                 <span class="error-message" id="live-api-key-error" style="color: red; display: none">Please enter the
                     Live API Key.</span>
             </div>
@@ -155,7 +155,7 @@
                                 </div>
                                 <div class="input-box">
                                     <label for="mailingClass" class="input-label">Mailing Class *</label>
-                                    <select class="input-field" id="mailingClass" name="mailingClass">
+                                    <select class="input-field mailing-class" id="mailingClass" name="mailingClass">
                                         <option value="first_class" selected>
                                             first_class (7-10 business days)
                                         </option>
@@ -168,7 +168,7 @@
                             </div>
                         </div>
                         <div class="postcard-html-size">
-                            <div class="input-label-radio">Size*</div>
+                            <div class="input-label-radio">Size *</div>
                             <div class="size-radio-buttons-wrap">
                                 <div class="radio-buttons">
                                     <label class="radio-label size_radio_label">
@@ -182,8 +182,8 @@
                                     </label>
                                     <label class="radio-label size_radio_label">
                                         <input type="radio" class="radio-input" id="eleven-eight" name="postcardHtmlSize"
-                                            value="11x8" />
-                                        <span>11x8</span>
+                                            value="11x6" />
+                                        <span>11x6</span>
                                     </label>
                                 </div>
                                 <span class="error-msg">Please Select at least one size.</span>
@@ -192,7 +192,7 @@
                         <div class="postcard-html-express-delivery">
                             <div class="two-checkboxes">
                                 <label class="checkbox-label">
-                                    <input type="checkbox" class="checkbox-input" id="expDelivery" name="expDelivery" />
+                                    <input type="checkbox" class="checkbox-input express-delivery-btn" id="expDelivery" name="expDelivery"/>
                                     <span>Express Delivery</span>
                                 </label>
                             </div>
@@ -238,7 +238,7 @@
                             </div>
                             <div class="input-box">
                                 <label for="mailingClass" class="input-label">Mailing Class *</label>
-                                <select class="input-field" id="mailingClass" name="mailingClass">
+                                <select class="input-field mailing-class" id="mailingClass" name="mailingClass">
                                     <option value="first_class" selected>
                                         first_class (7-10 business days)
                                     </option>
@@ -249,7 +249,7 @@
                             </div>
                         </div>
                         <div class="postcard-pdf-size">
-                            <div class="input-label-radio">Size*</div>
+                            <div class="input-label-radio">Size *</div>
                             <div class="size-radio-buttons-wrap">
                                 <div class="radio-buttons">
                                     <label class="radio-label size_radio_label">
@@ -264,7 +264,7 @@
                                     <label class="radio-label size_radio_label">
                                         <input type="radio" class="radio-input" id="eleven-eight" name="postcardPDFSize"
                                             value="11x6" data-dimentions="11.25x6.25"/>
-                                        <span>11x8</span>
+                                        <span>11x6</span>
                                     </label>
                                 </div>
                                 <span class="error-msg">Please Select at least one size.</span>
@@ -273,7 +273,7 @@
                         <div class="postcard-pdf-express-delivery">
                             <div class="two-checkboxes">
                                 <label class="checkbox-label">
-                                    <input type="checkbox" class="checkbox-input" id="expDelivery" name="expDelivery" />
+                                    <input type="checkbox" class="checkbox-input express-delivery-btn" id="expDelivery" name="expDelivery" />
                                     <span>Express Delivery</span>
                                 </label>
                             </div>
@@ -305,8 +305,8 @@
                             </div>                           
                         </div>
                         <div class="input-box">
-                            <label for="mailingClass3" class="input-label">Mailing Class*</label>
-                            <select class="input-field" id="mailingClass3" name="mailingClass3">
+                            <label for="mailingClass3" class="input-label">Mailing Class *</label>
+                            <select class="input-field mailing-class" id="mailingClass3" name="mailingClass3">
                                 <option value="first_class" selected>first_class (7-10 business days)</option>
                                 <option value="standard_class">standard_class (10-14 business days)</option>
                             </select>
@@ -324,11 +324,8 @@
                                 </div>
                                 <div id="frontTemplateList" class="dropdown-options" role="listbox"
                                     aria-labelledby="frontTemplateInput"></div>
-                                    <span class="error-message"></span>
+                                <span class="error-message"></span>
                             </div>
-                           
-                            
-
                         </div>
                         <!-- Back Template -->
                         <div class="input-box">
@@ -343,10 +340,8 @@
                                  <!-- Add down arrow here -->
                                 <div id="backTemplateList" class="dropdown-options" role="listbox"
                                     aria-labelledby="backTemplateInput"></div>
-                                    <span class="error-message"></span>
-                                
+                                <span class="error-message"></span>
                             </div>
-                            
                         </div>
                     </div>
 
@@ -366,11 +361,10 @@
                         </label>
                         <span class="error-message"></span>
                     </div>
-                    <!-- Express Delivery Checkbox -->
                     <div class="checkboxes">
                         <div class="five-checkboxes">
                             <label class="checkbox-label">
-                                <input type="checkbox" class="checkbox-input" id="expDelivery" name="expDelivery">
+                                <input type="checkbox" class="checkbox-input express-delivery-btn" id="expDelivery" name="expDelivery">
                                 Express Delivery
                             </label>
                         </div>
@@ -388,7 +382,7 @@
                 <h2 class="step4-heading" id="step4-heading">From Contact</h2>
                 <div class="mapping-dropdown contact-dropdown-wrap">
                     <div class="dropdown-wrap">
-                        <input type="text" id="search-contact" placeholder="Search and select a contact...">
+                        <input type="text" id="search-contact" placeholder="Search and select a contact..." autocomplete="off">
                         <i class="fa fa-angle-right dropdown-icon"></i>
                     </div>
                     <div id="dropdown-options" class="dropdown-options">
@@ -487,6 +481,7 @@
                 <div class="preview-box">
                     <div id="pdf-preview-container">
                         <iframe id="pdf-preview" style="border: 1px solid #ccc;"></iframe>
+                        <p class="pdf-preview-error-msg"></p>
                     </div>
                     <button class="retry-preview-btn">Retry</button>
                 </div>

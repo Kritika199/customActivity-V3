@@ -10,7 +10,8 @@ define([
   let deFields;
   let selectedFieldsForMapping = {};
   let previewPayload = {
-    test_api_key: 'test_sk_uQXxwmGMghWwG5wEfezZVN'
+    test_api_key: 'test_sk_uQXxwmGMghWwG5wEfezZVN',
+    isValid: true
   };
   let fromContact = '';
 
@@ -82,7 +83,14 @@ define([
       if ($('.screen-3').css('display') === 'block') {
         validateStep3() ? proceedToNext() : handleValidationFailure();
       } else {
-        validateStep3A() ? proceedToNext() : handleValidationFailure();
+        validateStep3A()
+          .then((isValid) => {
+            isValid ? proceedToNext() : handleValidationFailure();
+          })
+          .catch((error) => {
+            console.error('Error during validation:', error);
+            handleValidationFailure(); // Handle errors gracefully
+          });
       }
       break;
 
@@ -302,22 +310,17 @@ define([
       companyLabel.text('Company *'); // Add * back
     }
   });
-  //end of adding * in Company Label
 
-  //   $('#test-api-key').on('input', hideError);
-  //   function validateApiKeys() {
-  //     console.log('inside validate api keys function');
+  $('#company').change(function () {
+    var selectedValue = $(this).val();
+    let firstNameValue =$('.mapping-fields-group label[for=\'first-name\']');
 
-  //     const testApiKey = $('#test-api-key').val().trim();
-
-  //     if (testApiKey === '') {
-  //       $('#test-api-key').css('border', '1px solid red'); // Highlight input box
-  //       $('#test-api-key-error').show(); // Show error message
-  //       return false;
-  //     }
-  //     return true;
-
-  //   }
+    if (selectedValue !== 'Select') {
+      firstNameValue.text('First Name'); // Remove *
+    } else {
+      firstNameValue.text('First Name *'); // Add * back
+    }
+  });
 
   function hideError() {
     $('#test-api-key').css('border', ''); // Reset border
@@ -382,34 +385,29 @@ define([
   function executeScreenTwoMethods() {
     // Handle showing Card Insert checkbox when "Letters" or "Self-Mailer" is selected
     $('input[name="msgType"]').change(function () {
-        console.log('Radio button changed:', this.id);
-
-        if (this.id === 'letters' || this.id === 'self-mailer') {
-            $('#card-insert-container').addClass('visible'); // Show Card Insert checkbox
-            $('.card-insert-wrapper').addClass('visible'); // Show Card Insert wrapper (if needed)
-        } else {
-            $('#card-insert-container').removeClass('visible'); // Hide Card Insert checkbox
-            $('.card-insert-wrapper').removeClass('visible'); // Hide Card Insert wrapper (if needed)
-        }
-
-        // If "Self-Mailer" is selected, uncheck "Card Insert"
-        if (this.id === 'letters' || this.id === 'self-mailer') {
-            $('#card-insert').prop('checked', false).trigger('change'); // Uncheck and trigger change event
-        }
+      console.log('Radio button changed:', this.id);
+      if (this.id === 'letters' || this.id === 'self-mailer') {
+        $('#card-insert-container').addClass('visible'); // Show Card Insert checkbox
+        $('.card-insert-wrapper').addClass('visible'); // Show Card Insert wrapper (if needed)
+      } else {
+        $('#card-insert-container').removeClass('visible'); // Hide Card Insert checkbox
+        $('.card-insert-wrapper').removeClass('visible'); // Hide Card Insert wrapper (if needed)
+      }
+      // If "Self-Mailer" is selected, uncheck "Card Insert"
+      if (this.id === 'letters' || this.id === 'self-mailer') {
+        $('#card-insert').prop('checked', false).trigger('change'); // Uncheck and trigger change event
+      }
     });
-
     // Show/Hide Card Insert Type section when Card Insert is checked/unchecked
     $('#card-insert').change(function () {
-        console.log('Card Insert checkbox changed:', this.checked);
-        if (this.checked) {
-            $('#card-insert-type').removeClass('hidden'); // Show Card Insert Type section
-        } else {
-            $('#card-insert-type').addClass('hidden'); // Hide Card Insert Type section
-        }
+      console.log('Card Insert checkbox changed:', this.checked);
+      if (this.checked) {
+        $('#card-insert-type').removeClass('hidden'); // Show Card Insert Type section
+      } else {
+        $('#card-insert-type').addClass('hidden'); // Hide Card Insert Type section
+      }
     });
   }
-
-
 
   /* end of step 2 functions kritika */
 
@@ -454,69 +452,59 @@ define([
     });
   }
 
-  function validateStep3A() {
+  async function validateStep3A() {
     let isValid = true;
 
     if ($('.screen-2').css('display') === 'block') {
-      isValid = validateInputField($('.postcard-pdf-container #description'));
-
-      const pdfInput = $('.drop-pdf #pdf-upload')[0]; // Get file input element
-      if (pdfInput.files.length > 0) {
-        const pdfFile = pdfInput.files[0] ;
-
-        const fileReader = new FileReader();
+      let isDescriptionValid = validateInputField($('.postcard-pdf-container #description'));
+      let isSendDateValid = validateInputField($('.postcard-pdf-container #sendDate'));
     
-        fileReader.onload = function(event) {
-          const typedarray = new Uint8Array(event.target.result);
-          pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
-            const numPages = pdf.numPages;
-            pdf.getPage(1).then(function(page) {
-              const viewport = page.getViewport({ scale: 1 });
-              const width = viewport.width;
-              const height = viewport.height;
+      if (!isDescriptionValid || !isSendDateValid) {
+        isValid = false;
+      }
 
-              const pdfDimensions = `${(width / 72).toFixed(2)}x${(height / 72).toFixed(2)}`;
-              const selectedPDFDimention = $('.postcard-pdf-size input[name="postcardPDFSize"]:checked').data('dimentions');
+      const pdfInput = $('.drop-pdf #pdf-upload')[0]; 
+      if (pdfInput.files.length > 0) {
+        const pdfFile = pdfInput.files[0];
 
-              console.log(`PDF Dimensions: ${pdfDimensions} inches`);
-              if(numPages !== 2) {
-                $('.drop-pdf .error-msg').text(`File has an incorrect number of pages ${numPages} when expecting 2.`).addClass('show');
-                isValid = false;
-              } else if (pdfDimensions !== selectedPDFDimention) {
-                $('.drop-pdf .error-msg').text(`File has incorrect page dimensions ${pdfDimensions} when expecting ${selectedPDFDimention}.`).addClass('show');
-                isValid = false;
-              } else {
-                $('.drop-pdf .error-msg').removeClass('show');
-              }
-            });
-          }).catch(function(error) {
-            console.error('Error loading PDF:', error);
-          });
-        };
-        
-        fileReader.readAsArrayBuffer(pdfFile);
+        try {
+          const pdfValidationResult = await validatePDFFile(pdfFile);
+          if (!pdfValidationResult.isValid) {
+            isValid = false;
+            $('.drop-pdf .error-msg').text(pdfValidationResult.errorMessage).addClass('show');
+          } else {
+            $('.drop-pdf .error-msg').removeClass('show');
+          }
+        } catch (error) {
+          console.error('Error validating PDF:', error);
+          isValid = false;
+        }
       } else {
-        console.log('No file selected. Please select a file.');
         $('.drop-pdf .error-msg').addClass('show');
         isValid = false;
       }
     }
-    if ($('.screen-1').css('display') === 'block') {
-      isValid = validateInputField($('.postcard-input-fields #description'));
-      isValid = validateInputField($('.html-screen-wrapper #sendDate'));
 
+    if ($('.screen-1').css('display') === 'block') {
+      let isDescriptionValid = validateInputField($('.postcard-input-fields #description'));
+      let isSendDateValid = validateInputField($('.html-screen-wrapper #sendDate'));
+    
+      if (!isDescriptionValid || !isSendDateValid) {
+        isValid = false;
+      }
+  
       let isPostcardSizeSelected = $('.postcard-html-size input[name="postcardHtmlSize"]:checked').length;
       let frontHtmlContent = $('.html-editor-front').val().trim();
       let backtHtmlContent = $('.html-editor-back').val().trim();
       let postcardHtmlEditorErrorMsg = $('.postcard-html-editor .error-msg');
-
+  
       if (!(isPostcardSizeSelected > 0)) {
         $('.postcard-html-size .error-msg').addClass('show');
         isValid = false;
       } else {
         $('.postcard-html-size .error-msg').removeClass('show');
       }
-
+  
       if (frontHtmlContent === '' || backtHtmlContent === '') {
         isValid = false;
         if (frontHtmlContent === '' && backtHtmlContent === '') {
@@ -529,11 +517,50 @@ define([
       } else { 
         postcardHtmlEditorErrorMsg.removeClass('show');
       }
-    }
+    };
 
-    console.log('isValid: '+isValid);
-    
     return isValid;
+  }
+
+  function validatePDFFile(pdfFile) {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+
+      fileReader.onload = function (event) {
+        const typedarray = new Uint8Array(event.target.result);
+
+        pdfjsLib.getDocument(typedarray).promise.then(function (pdf) {
+          const numPages = pdf.numPages;
+          pdf.getPage(1).then(function (page) {
+            const viewport = page.getViewport({ scale: 1 });
+            const width = viewport.width;
+            const height = viewport.height;
+
+            const pdfDimensions = `${(width / 72).toFixed(2)}x${(height / 72).toFixed(2)}`;
+            const selectedPDFDimension = $('.postcard-pdf-size input[name="postcardPDFSize"]:checked').data('dimentions');
+
+            console.log(`PDF Dimensions: ${pdfDimensions} inches`);
+
+            if (numPages !== 2) {
+              resolve({
+                isValid: false,
+                errorMessage: `File has an incorrect number of pages ${numPages} when expecting 2.`
+              });
+            } else if (pdfDimensions !== selectedPDFDimension) {
+              resolve({
+                isValid: false,
+                errorMessage: `File has incorrect page dimensions ${pdfDimensions} when expecting ${selectedPDFDimension}.`
+              });
+            } else {
+              resolve({ isValid: true });
+            }
+          }).catch(reject);
+        }).catch(reject);
+      };
+
+      fileReader.onerror = reject;
+      fileReader.readAsArrayBuffer(pdfFile);
+    });
   }
 
   /** screen 3A script */
@@ -551,8 +578,6 @@ define([
   }
 
   function setPreviewPayload() {
-    console.log('set preview called');
-    
     if ($('#postcardScreen .screen-1').css('display') === 'block') {
       const description = $('.screen-1 #description').val();
       const sendDate = $('.screen-1 #sendDate').val();
@@ -564,14 +589,13 @@ define([
 
       previewPayload.screen = 'html';
       previewPayload.description = description;
-      previewPayload.sendDate = sendDate;
+      previewPayload.sendDate = getFormattedDate(sendDate);
       previewPayload.mailingClass = mailingClass;
       previewPayload.frontHtmlContent = frontHtmlContent;
       previewPayload.backHtmlContent = backHtmlContent;
       previewPayload.size = size;
       previewPayload.isExpressDelivery = isExpressDelivery;
     } else if ($('#postcardScreen .screen-2').css('display') === 'block') {
-      console.log('screen-2 pdf preview should be shown');
       const description = $('#postcardScreen .screen-2 #description').val();
       const sendDate = $('#postcardScreen .screen-2 #sendDate').val();
       const mailingClass = $('#postcardScreen .screen-2 #mailingClass').val();
@@ -582,33 +606,35 @@ define([
 
       previewPayload.screen = 'pdf';
       previewPayload.description = description;
-      previewPayload.sendDate = sendDate;
+      previewPayload.sendDate = getFormattedDate(sendDate);
       previewPayload.mailingClass = mailingClass;
       previewPayload.size = size;
       previewPayload.isExpressDelivery = isExpressDelivery;
       previewPayload.pdf = pdfFile;
-      console.log('Selected file:', pdfFile.name);
-      console.log('File size:', pdfFile.size, 'bytes');
-      console.log('File type:', pdfFile.type);
     } else if ($('#postcardScreen .screen-3').css('display') === 'block') {
-      console.log('ex template set preview');
-        
       const description = document.querySelector('#description3').value;
       const sendDate = document.querySelector('#sendDate3').value;
       const frontTemplateId = document.querySelector('#frontTemplateInput')?.dataset.id;
       const backTemplateId = document.querySelector('#backTemplateInput')?.dataset.id;
       const size = $('.screen-3 input[name=\'size\']:checked').val();
-      if (!frontTemplateId || !backTemplateId || !size) {
-        console.error('Missing required fields for postcard creation.');
-        return null;
-      }
+      const isExpressDelivery = $('.screen-3 #expDelivery').is(':checked');
+      const mailingClass = $('.screen-3 #mailingClass3').val();
+      
       previewPayload.screen = 'existing-template';
       previewPayload.description = description;
-      previewPayload.sendDate = sendDate;
+      previewPayload.sendDate = getFormattedDate(sendDate);
       previewPayload.frontTemplateId = frontTemplateId;
       previewPayload.backTemplateId = backTemplateId;
       previewPayload.size = size;
+      previewPayload.mailingClass = mailingClass;
+      previewPayload.isExpressDelivery = isExpressDelivery;
     }
+  }
+
+  function getFormattedDate(sendDate) {
+    let now = new Date();
+    let formattedTime = now.toISOString().split('T')[1];
+    return `${sendDate}T${formattedTime}`;
   }
 
   async function createPostcard() {
@@ -619,10 +645,7 @@ define([
       'x-api-key': previewPayload.test_api_key,
     };
 
-    console.log('ex template : '+JSON.stringify(previewPayload));
-
     if(previewPayload.screen === 'pdf'){
-      console.log('inside the create postcard function');
       data = new FormData();
       data.append('to', 'contact_hGsXV82wSiv6wpta1uXf5M');
       data.append('from', fromContact);
@@ -630,7 +653,9 @@ define([
       data.append('express', previewPayload.isExpressDelivery);
       data.append('description', previewPayload.description);
       data.append('size',previewPayload.size);
-      data.append('mailingClass', previewPayload.mailingClass);
+      if(!previewPayload.isExpressDelivery) {
+        data.append('mailingClass', previewPayload.mailingClass);
+      } 
       data.append('pdf', previewPayload.pdf);
     } else if (previewPayload.screen === 'html') {
       headers['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -643,13 +668,14 @@ define([
         'sendDate': previewPayload.sendDate,
         'express': previewPayload.isExpressDelivery,
         'description': previewPayload.description,
-        'mailingClass': previewPayload.mailingClass,
         'mergeVariables[language]': 'english',
         'metadata[company]': 'PostGrid'
       });
+      if (!previewPayload.isExpressDelivery) {
+        data.append('mailingClass', previewPayload.mailingClass);
+      }
     } else if(previewPayload.screen === 'existing-template') {
       headers['Content-Type'] = 'application/x-www-form-urlencoded';
-        
       data = new URLSearchParams({
         'to': 'contact_hGsXV82wSiv6wpta1uXf5M',
         'from': 'contact_hGsXV82wSiv6wpta1uXf5M',
@@ -658,7 +684,11 @@ define([
         size: previewPayload.size,
         sendDate: previewPayload.sendDate,
         description: previewPayload.description,
+        'express': previewPayload.isExpressDelivery,
       });
+      if (!previewPayload.isExpressDelivery) {
+        data.append('mailingClass', previewPayload.mailingClass);
+      }
     }
 
     try {
@@ -708,49 +738,66 @@ define([
 
   async function showPdfPreview(postcardId) {
     try {
-        const postcardDetails = await fetchPostcardDetails(postcardId);
-        const pdfUrl = postcardDetails.url;
-        console.log('Postcard details: ' + pdfUrl);
-
-        connection.trigger('nextStep');
-        if (pdfUrl) {
-            $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
-            $('.preview-container .retry-preview-btn').removeClass('show');
-        } else {
-            $('.preview-container .retry-preview-btn').addClass('show');
-            $('#pdf-preview-container').html('<p>Preview not found.</p>');
-        }
-    } catch (error) {
+      const postcardDetails = await fetchPostcardDetails(postcardId);
+      const pdfUrl = postcardDetails.url;
+      console.log('postcard details: '+pdfUrl);
+    
+      connection.trigger('nextStep');
+      if (pdfUrl) {
+        $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
+        $('#pdf-preview-container').css('display','block');
+        $('.preview-container .retry-preview-btn').removeClass('show');
+        $('.pdf-preview-error-msg').css('display','none');
+      } else {
         $('.preview-container .retry-preview-btn').addClass('show');
-        console.log('Preview error: ' + error);
+        $('#pdf-preview-container').css('display','none');
+        $('.pdf-preview-error-msg').text('Preview not found.').css('display','block');
+      }
+    } catch (error) {
+      $('.preview-container .retry-preview-btn').addClass('show');
+      $('#pdf-preview-container').css('display','none');
+      $('.pdf-preview-error-msg').text('Error while fetching the preview - '+error.message).css('display','block');
     }
 
     $('#pdf-preview').on('error', function () {
-        $('.preview-container .retry-preview-btn').addClass('show');
-        $('#pdf-preview-container').html('<p>Unable to load preview.</p>');
+      $('.preview-container .retry-preview-btn').addClass('show');
+      $('#pdf-preview-container').css('display','none');
+      $('.pdf-preview-error-msg').text('Failed to fetch preview.').css('display','block');
     });
-}
+  }
 
-async function getPreviewURL() {
+  async function getPreviewURL () {
     try {
-        const postcardResponse = await createPostcard();
-        const postcardId = postcardResponse.id;
-        previewPayload.postcardId = postcardId;
+      const postcardResponse = await createPostcard();
+      const postcardId = postcardResponse.id;
+      previewPayload.postcardId = postcardId;
 
-        setTimeout(async function () {
-            await showPdfPreview(postcardId);
-        }, 4000);
+      setTimeout(async function() {
+        await showPdfPreview(postcardId);
+      }, 2000);
+
     } catch (error) {
-        $('#pdf-preview-container').html('<p>Failed to fetch preview.</p>');
-        console.log('Error: ' + JSON.stringify(error));
-
-        $('.preview-container .retry-preview-btn').addClass('show');
+      $('.preview-container .retry-preview-btn').addClass('show');
+      $('#pdf-preview-container').css('display','none');
+      $('.pdf-preview-error-msg').text('Failed to fetch preview.');
+      console.log('error: '+JSON.stringify(error));
     }
-}
+  }
 
-$('.preview-container .retry-preview-btn').click(async function () {
+  $('.preview-container .retry-preview-btn').click(async function() {
     await showPdfPreview(previewPayload.postcardId);
-});
+  });
+
+  $('.express-delivery-btn').on('click', function() {
+    var isChecked = $(this).prop('checked');
+    var mailingClass = $(this).closest('.spacer').find('.mailing-class');
+    
+    if (isChecked) {
+      mailingClass.prop('disabled', true);
+    } else {
+      mailingClass.prop('disabled', false);
+    }
+  });
 
   /** screen 4 script */
   let timeoutId;
@@ -903,81 +950,54 @@ $('.preview-container .retry-preview-btn').click(async function () {
   /** screen 4 script */
 
   /** screen 3C script */
-  /** screen 3C script */
-function validateStep3() {
-  let isValid = true;
-
-  // Remove previous error messages and red borders
-  $('.error-message').remove();
-  $('.error-field').removeClass('error-field'); 
-
-  let today = new Date().toISOString().split('T')[0];
-  $('#sendDate3').attr('min', today);
-
-  if (!$('#description3').val().trim()) {
-      $('#description3').after('<span class="error-message">Please write the description.</span>');
-      $('#description3').addClass('error-field'); 
+  function validateStep3() {
+    let isValid = true;
+    // Remove previous error messages and red borders
+    $('.error-message').remove();
+    $('.error-field').removeClass('error-field');
+    let today = new Date().toISOString().split('T')[0];
+    $('#sendDate3').attr('min', today);
+    if (!$('#description3').val().trim()) {
+      $('#description3').after('<span class="error-message">Please enter required field.</span>');
+      $('#description3').addClass('error-field');
       isValid = false;
-  }
-
-  let selectedDate = $('#sendDate3').val();
-  if (!selectedDate || selectedDate < today) {
+    }
+    let selectedDate = $('#sendDate3').val();
+    if (!selectedDate || selectedDate < today) {
       $('#sendDate3').after('<span class="error-message">Send Date cannot be in the past.</span>');
-      $('#sendDate3').addClass('error-field'); 
+      $('#sendDate3').addClass('error-field');
       isValid = false;
-  }
-
-  if (!$('#mailingClass3').val()) {
+    }
+    if (!$('#mailingClass3').val()) {
       $('#mailingClass3').after('<span class="error-message">Mailing Class is required.</span>');
-      $('#mailingClass3').addClass('error-field'); 
+      $('#mailingClass3').addClass('error-field');
       isValid = false;
-  }
-
-  if (!$('input[name="size"]:checked').length) {
+    }
+    if (!$('input[name="size"]:checked').length) {
       $('.radio-buttons').after('<span class="error-message">Please select at least one size.</span>');
       isValid = false;
-  }
-
-  // Validate Front Template
-  if (!$('#frontTemplateInput').val().trim()) {
-      $('#frontTemplateInput').after('<span class="error-message">Please select the Front Template, this is required.</span>');
-      $('#frontTemplateInput').addClass('error-field'); 
+    }
+    // Validate Front Template
+    if (!$('#frontTemplateInput').val().trim()) {
+      $('#frontTemplateInput').after('<span class="error-message">Please select the Front Template.</span>');
+      $('#frontTemplateInput').addClass('error-field');
       isValid = false;
-  }
-
-  // Validate Back Template
-  if (!$('#backTemplateInput').val().trim()) {
-      $('#backTemplateInput').after('<span class="error-message">Please select the Back Template, this is required.</span>');
-      $('#backTemplateInput').addClass('error-field'); 
+    }
+    // Validate Back Template
+    if (!$('#backTemplateInput').val().trim()) {
+      $('#backTemplateInput').after('<span class="error-message">Please select the Back Template.</span>');
+      $('#backTemplateInput').addClass('error-field');
       isValid = false;
+    }
+    return isValid;
   }
-
-  return isValid;
-}
-$(document).ready(function () {
-  $('#expDelivery').change(function () {
-      if ($(this).is(':checked')) {
-          $('#mailingClass3').addClass('hidden'); // Hide the entire field
-      } else {
-          $('#mailingClass3').removeClass('hidden'); // Show the entire field
-      }
-  });
-});
-
-
-
-
   // Remove error messages dynamically when the user starts typing
-  $('input, textarea, select').on('input change', function () {
+  $(document).ready(function() {
+    $('input, textarea, select').on('input change', function() {
       $(this).removeClass('error-field'); // Remove red border
       $(this).next('.error-message').remove(); // Remove error message
+    });
   });
-
-
-
-
-
-
 
   $(document).ready(function () {
     let today = new Date().toISOString().split('T')[0];
