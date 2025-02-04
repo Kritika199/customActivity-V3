@@ -11,6 +11,7 @@ define([
   let selectedFieldsForMapping = {};
   let previewPayload = {
     test_api_key: 'test_sk_uQXxwmGMghWwG5wEfezZVN',
+    live_api_key: 'live_sk_mj3Bjf4wcMBwdPk9qeXZvx',
     isValid: true
   };
   let fromContact = '';
@@ -381,6 +382,23 @@ define([
       enabled: true
     });
   });
+
+  // Function to check the API key and toggle the checkbox
+function toggleLiveMode(apiKey) {
+  const liveModeCheckbox = document.getElementById('liveModeCheckbox');
+
+  if (apiKey === apiKeys.test_api_key) {
+      // If the key is the test key, disable the checkbox
+      liveModeCheckbox.disabled = true;
+      liveModeCheckbox.checked = false; // Ensure it's unchecked
+  } else if (apiKey === apiKeys.live_api_key) {
+      // If the key is the live key, enable the checkbox
+      liveModeCheckbox.disabled = false;
+  } else {
+      // Handle any other cases (e.g., invalid key)
+      console.error('Invalid API key provided');
+  }
+}
 
   function executeScreenTwoMethods() {
     // Handle showing Card Insert checkbox when "Letters" or "Self-Mailer" is selected
