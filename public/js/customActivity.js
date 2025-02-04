@@ -402,38 +402,36 @@ define([
   function handleApiKeyToggle() {
     // Ensure previewPayload exists
     if (typeof previewPayload === "undefined") {
-        console.error("❌ Error: previewPayload is not defined.");
+        console.error("Error: previewPayload is not defined.");
         return;
     }
 
-    // Get API Key from previewPayload
-    const apiKey = previewPayload.test_api_key || previewPayload.live_api_key;
+    // Get API Keys from previewPayload
+    const testApiKey = previewPayload.test_api_key || "";
+    const liveApiKey = previewPayload.live_api_key || "";
     const liveModeToggle = document.querySelector(".test-to-live-switch input");
 
     // Ensure toggle exists
     if (!liveModeToggle) {
-        console.error("❌ Error: #liveModeToggle element not found.");
+        console.error("Error: Toggle element not found.");
         return;
     }
 
-    if (!apiKey) {
-        console.error("❌ Error: API Key is missing in previewPayload.");
-        return;
-    }
+    console.log("Test API Key:", testApiKey);
+    console.log("Live API Key:", liveApiKey);
 
-    console.log("🔍 API Key Found:", apiKey);
-
-    if (apiKey.startsWith("test_")) {
-        liveModeToggle.disabled = true; // Disable toggle for test key
-        liveModeToggle.checked = false; // Ensure it's off
-        console.log("🚫 Live Mode Toggle is DISABLED (Test API Key)");
-    } else if (apiKey.startsWith("live_")) {
-        liveModeToggle.disabled = false; // Enable toggle for live key
-        console.log("✅ Live Mode Toggle is ENABLED (Live API Key)");
+    if (testApiKey && !liveApiKey) {
+        // Only Test API Key exists → Disable Toggle
+        liveModeToggle.disabled = true;
+        liveModeToggle.checked = false;
+        console.log(" Live Mode Toggle is DISABLED (Only Test API Key Present)");
     } else {
-        console.warn("⚠ Unknown API Key format:", apiKey);
+        // Live API Key exists → Enable Toggle
+        liveModeToggle.disabled = false;
+        console.log("Live Mode Toggle is ENABLED (Live API Key Present)");
     }
 }
+
 
 
   
