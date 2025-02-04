@@ -350,8 +350,8 @@ define([
     } else {
       $('#createType-error').text('');  // Clear error if valid
     }
-    // Get API Key from localStorage (saved in Step 1)
-    const apiKey = localStorage.getItem("selectedApiKey");
+    // Get API Key from previewPayload
+    const apiKey = previewPayload.test_api_key || previewPayload.live_api_key;
     const liveModeToggle = document.querySelector("#liveModeToggle");
 
     if (!apiKey) {
@@ -365,7 +365,6 @@ define([
             liveModeToggle.disabled = false; // Enable toggle for live key
         }
     }
-
 
     // Show general error message if any
     if (!errorMessages.length) {
