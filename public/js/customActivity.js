@@ -390,29 +390,33 @@ define([
   });
 
 
-  function handleApiKeyToggle() {
-    // Get API Key from previewPayload
-    const apiKey = previewPayload.test_api_key || previewPayload.live_api_key;
-    const liveModeToggle = document.querySelector("#liveModeToggle");
+  function storeApiKey() {
+    const apiKeyInput = document.querySelector("#apiKeyInput").value.trim();
 
-    if (!apiKey) {
-        console.error("API Key is missing.");
-        return false;
+    if (!apiKeyInput) {
+        console.error("User has not entered an API Key.");
+        return;
     }
 
-    console.log("API Key Found:", apiKey); // Log API key for debugging
-
-    if (apiKey.startsWith("test_")) {
-        liveModeToggle.disabled = true; // Disable toggle for test key
-        liveModeToggle.checked = false; // Ensure it's off
-        console.log("Live Mode Toggle is DISABLED (Test API Key)");
-    } else if (apiKey.startsWith("live_")) {
-        liveModeToggle.disabled = false; // Enable toggle for live key
-        console.log("Live Mode Toggle is ENABLED (Live API Key)");
+    // Ensure previewPayload exists
+    if (typeof previewPayload === "undefined") {
+        previewPayload = {};
     }
 
-    return true;
+    // Store in previewPayload based on key type
+    if (apiKeyInput.startsWith("test_")) {
+        previewPayload.test_api_key = apiKeyInput;
+        delete previewPayload.live_api_key; // Ensure no conflicting keys
+    } else if (apiKeyInput.startsWith("live_")) {
+        previewPayload.live_api_key = apiKeyInput;
+        delete previewPayload.test_api_key;
+    } else {
+        console.warn("Invalid API Key format entered:", apiKeyInput);
+    }
+
+    console.log("Updated previewPayload:", previewPayload);
 }
+
 
   
 
