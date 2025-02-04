@@ -65,6 +65,7 @@ define([
     case 'step1':
       if (validateApiKeys()) {
         connection.trigger('nextStep');
+      
       } else {
         handleValidationFailure();
       }
@@ -73,6 +74,9 @@ define([
     case 'step2':
       if (validateStep2()) {
         console.log('validate--*************' + validateStep2());
+        // ✅ Call the function to check API key and disable/enable toggle
+        handleApiKeyToggle(); 
+
         connection.trigger('nextStep');
       } else {
         handleValidationFailure();
@@ -301,35 +305,7 @@ define([
   }
 
 
-  function storeApiKeys() {
-    const testApiKey = $('#test-api-key').val().trim();
-    const liveApiKey = $('#live-api-key').val().trim();
-
-    // Ensure previewPayload exists
-    if (typeof previewPayload === "undefined") {
-        previewPayload = {};
-    }
-
-    if (testApiKey) {
-        previewPayload.test_api_key = testApiKey;
-        delete previewPayload.live_api_key; // Ensure no conflicting keys
-        console.log("✅ Stored Test API Key:", previewPayload.test_api_key);
-    }
-
-    if (liveApiKey) {
-        previewPayload.live_api_key = liveApiKey;
-        delete previewPayload.test_api_key; // Ensure no conflicting keys
-        console.log("✅ Stored Live API Key:", previewPayload.live_api_key);
-    }
-
-    console.log("🔄 Updated previewPayload:", previewPayload);
-}
-
-// Call storeApiKeys() **after validation** in Step 1
-if (isValid) { 
-    storeApiKeys();
-}
-
+  
   //start of adding * in Company Label 
   $('.mapping-fields-group #first-name').change(function () {
     var firstNameValue = $(this).val();
@@ -426,22 +402,22 @@ if (isValid) {
     // Ensure previewPayload exists
     if (typeof previewPayload === "undefined") {
         console.error("❌ Error: previewPayload is not defined.");
-        return false;
+        return;
     }
 
     // Get API Key from previewPayload
     const apiKey = previewPayload.test_api_key || previewPayload.live_api_key;
-    const liveModeToggle = document.querySelector("#liveModeToggle");
+    const liveModeToggle = document.querySelector(".test-to-live-switch input");
 
     // Ensure toggle exists
     if (!liveModeToggle) {
         console.error("❌ Error: #liveModeToggle element not found.");
-        return false;
+        return;
     }
 
     if (!apiKey) {
         console.error("❌ Error: API Key is missing in previewPayload.");
-        return false;
+        return;
     }
 
     console.log("🔍 API Key Found:", apiKey);
@@ -456,8 +432,6 @@ if (isValid) {
     } else {
         console.warn("⚠ Unknown API Key format:", apiKey);
     }
-
-    return true;
 }
 
 // Call handleApiKeyToggle() when Step 2 loads
