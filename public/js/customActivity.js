@@ -59,7 +59,7 @@ define([
     switch (currentStep.key) {
     case 'step1':
       if (validateApiKeys()) {
-        fetchTemplates();
+        
         
         handleApiKeyToggle();
         connection.trigger('nextStep');
@@ -68,15 +68,20 @@ define([
       }
       break;
 
-    case 'step2':
-      if (validateStep2()) {
-        fetchContacts();
-
-        connection.trigger('nextStep');
-      } else {
-        handleValidationFailure();
-      }
-      break;
+      case 'step2':
+        if (validateStep2()) {
+            var isExtTemp = $('#extTempId').is(':checked'); // Check if the existing template checkbox is checked
+            
+            if (isExtTemp) {
+                fetchTemplates(); // Call the function if the checkbox is checked
+            }
+    
+            connection.trigger('nextStep');
+        } else {
+            handleValidationFailure();
+        }
+        break;
+    
 
     case 'step3':
 
