@@ -384,20 +384,27 @@ define([
     const $liveModeToggle = $('.test-to-live-switch input');
     const $errorMessage = $('#liveModeError');
 
+    console.log("Script Loaded: Checking Live Mode Toggle");
+
     // Show error message when user hovers over or tries to click the disabled toggle
     $liveModeToggle.on('mouseenter click', function (event) {
+        console.log("Hover or Click Detected on Live Mode Toggle");
+
         if ($(this).prop('disabled')) {
+            console.log("Live Mode Toggle is Disabled - Showing Error Message");
             $errorMessage.show();
             event.preventDefault(); // Prevent any default action
+        } else {
+            console.log("Live Mode Toggle is Enabled - No Error Message Needed");
         }
     });
 
     // Hide error message when mouse leaves the toggle area
     $liveModeToggle.on('mouseleave', function () {
+        console.log("Mouse Left Live Mode Toggle - Hiding Error Message");
         $errorMessage.hide();
     });
 });
-
 
 
 
