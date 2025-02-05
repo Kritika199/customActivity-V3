@@ -1001,3 +1001,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     transform: rotate(90deg);
     pointer-events: none
 }
+
+
+.retry-btn-wrap {
+    display: inline-flex;
+        gap: 1rem;
+        align-items: center;
+        padding: 8px;
+}
+
+.retry-preview-btn {
+    background: rgb(0, 118, 222);
+    color: white;
+    border: none;
+    padding: 0.35rem 1.5rem;
+    height: fit-content;
+    border-radius: 4px;
+}
+
+.preview-message {
+    font-size: 14px;
+    color: #666; /* Adjust the color as needed */
+}

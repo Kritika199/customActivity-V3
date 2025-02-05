@@ -481,13 +481,18 @@
             <div class="preview-container">
                 <div class="section-label">Preview Post</div>
                 <div class="preview-box">
-                    <button id="show-preview-btn" class="preview-trigger-btn">Show Preview</button>
+                    
                     <div id="pdf-preview-container">
                         <iframe id="pdf-preview" style="border: 1px solid #ccc;"></iframe>
                         <p class="pdf-preview-error-msg"></p>
                     </div>
-                    <button class="retry-preview-btn">Retry</button>
-
+    
+                    <!-- Updated section with message on the left side of the button -->
+                    <div class="retry-btn-wrap">
+                        <span class="preview-message">If you want to view the template preview, click the 'Show Preview' button.</span>
+                        <button class="retry-preview-btn">Show Preview</button>
+                    </div>
+    
                 </div>
             </div>
         </div>
