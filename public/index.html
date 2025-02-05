@@ -34,15 +34,13 @@
                 <label for="test-api-key">Test Api Key*</label>
                 <input type="password" id="test-api-key" placeholder="Enter test API key" required />
                 <span class="toggle-password" id="toggle-password-test-key"><i class="fa fa-eye-slash"></i></span>
-                <span class="error-message" id="test-api-key-error" style="color: red; display: none">Please enter the
-                    Test API Key.</span>
+                <span class="error-message" id="test-api-key-error" style="color: red; display: none">Missing or invalid authentication</span>
             </div>
             <div class="step1-input-group">
                 <label for="live-api-key">Live Api Key</label>
                 <input type="password" id="live-api-key" placeholder="Enter live API key" />
                 <span class="toggle-password" id="toggle-password-live-key"><i class="fa fa-eye-slash"></i></span>
-                <span class="error-message" id="live-api-key-error" style="color: red; display: none">Please enter the
-                    Live API Key.</span>
+                <span class="error-message" id="live-api-key-error" style="color: red; display: none">Missing or invalid authentication</span>
             </div>
         </div>
         <div class="step1-right-panel"></div>
@@ -127,7 +125,7 @@
                 
             </div>
             <p id="liveModeError" style="color: red; display: none; font-size: 16px; margin-top: 30px;">
-                Live API key is missing. You cannot access the live mode.
+                Live API key is required to enable live mode.
             </p>
         </div>
     </div>
