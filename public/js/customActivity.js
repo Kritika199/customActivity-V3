@@ -386,8 +386,16 @@ define([
 
     console.log("Script Loaded: Checking Live Mode Toggle");
 
-    // Show error message when user hovers over or tries to click the disabled toggle
-    $liveModeToggle.on('mouseenter click', function (event) {
+    // Check if the element exists
+    console.log("Live Mode Toggle Found:", $liveModeToggle.length);
+
+    if ($liveModeToggle.length === 0) {
+        console.error("Error: Live Mode Toggle input NOT found in the DOM!");
+        return; // Exit script if element is missing
+    }
+
+    // Use event delegation in case the element is loaded dynamically
+    $(document).on('mouseenter click', '.test-to-live-switch input', function (event) {
         console.log("Hover or Click Detected on Live Mode Toggle");
 
         if ($(this).prop('disabled')) {
@@ -399,12 +407,12 @@ define([
         }
     });
 
-    // Hide error message when mouse leaves the toggle area
-    $liveModeToggle.on('mouseleave', function () {
+    $(document).on('mouseleave', '.test-to-live-switch input', function () {
         console.log("Mouse Left Live Mode Toggle - Hiding Error Message");
         $errorMessage.hide();
     });
 });
+
 
 
 
