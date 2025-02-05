@@ -336,7 +336,7 @@ define([
     if (!$('input[name=\'msgType\']:checked').length) {
       errorMessages.push('Message Type is required.');
       isValid = false;
-      $('#msgType-error').text('Message Type is required.');
+      $('#msgType-error').text('Please Select the Message Type.');
     } else {
       $('#msgType-error').text('');  // Clear error if valid
     }
@@ -345,7 +345,7 @@ define([
     if (!$('input[name=\'createType\']:checked').length) {
       errorMessages.push('Creation Type is required.');
       isValid = false;
-      $('#createType-error').text('Creation Type is required.');
+      $('#createType-error').text('Please select the Creation Type.');
     } else {
       $('#createType-error').text('');  // Clear error if valid
     }
@@ -1029,7 +1029,7 @@ define([
     let today = new Date().toISOString().split('T')[0];
     $('#sendDate3').attr('min', today);
     if (!$('#description3').val().trim()) {
-      $('#description3').after('<span class="error-message">Please enter required field.</span>');
+      $('#description3').after('<span class="error-message">The input value is missing.</span>');
       $('#description3').addClass('error-field');
       isValid = false;
     }
