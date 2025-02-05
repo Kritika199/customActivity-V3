@@ -60,7 +60,7 @@ define([
     case 'step1':
       if (validateApiKeys()) {
         fetchTemplates();
-        fetchContacts();
+        
         handleApiKeyToggle();
         connection.trigger('nextStep');
       } else {
@@ -70,6 +70,7 @@ define([
 
     case 'step2':
       if (validateStep2()) {
+        fetchContacts();
 
         connection.trigger('nextStep');
       } else {
