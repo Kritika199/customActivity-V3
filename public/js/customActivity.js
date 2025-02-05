@@ -381,15 +381,22 @@ define([
   }
 
   $(document).ready(function () {
-    $('.test-to-live-switch input').on('change', function () {
-        if ($(this).is(':checked') && (!previewPayload || !previewPayload.live_api_key)) {
-            $('#liveModeError').show(); // Show error message
-            $(this).prop('checked', false); // Prevent enabling the toggle
-        } else {
-            $('#liveModeError').hide(); // Hide error message if conditions are met
+    const $liveModeToggle = $('.test-to-live-switch input');
+    const $errorMessage = $('#liveModeError');
+
+    // Show error message when user hovers over or tries to click the disabled toggle
+    $liveModeToggle.on('mouseenter click', function (event) {
+        if ($(this).prop('disabled')) {
+            $errorMessage.show();
+            event.preventDefault(); // Prevent any default action
         }
     });
-  });
+
+    // Hide error message when mouse leaves the toggle area
+    $liveModeToggle.on('mouseleave', function () {
+        $errorMessage.hide();
+    });
+});
 
 
 
