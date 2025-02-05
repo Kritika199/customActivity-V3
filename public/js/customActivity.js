@@ -814,7 +814,7 @@ define([
       const postcardDetails = await fetchPostcardDetails(postcardId);
       const pdfUrl = postcardDetails.url;
 
-      $('.preview-container .preview-message').css('display','none');
+      
 
       connection.trigger('nextStep');
       if (pdfUrl) {
@@ -822,13 +822,16 @@ define([
         $('#pdf-preview-container').css('display','block');
         $('.preview-container .retry-preview-btn').removeClass('show');
         $('.pdf-preview-error-msg').css('display','none');
+        $('.preview-container .preview-message').css('display','none');
       } else {
         $('.preview-container .retry-preview-btn').addClass('show');
+        $('.preview-container .retry-preview-btn').text('Retry');
         $('#pdf-preview-container').css('display','none');
         $('.pdf-preview-error-msg').text('Preview not found.').css('display','block');
       }
     } catch (error) {
       $('.preview-container .retry-preview-btn').addClass('show');
+      $('.preview-container .retry-preview-btn').text('Retry');
       $('#pdf-preview-container').css('display','none');
       $('.pdf-preview-error-msg').text('Error while fetching the preview - '+error.message).css('display','block');
     }
