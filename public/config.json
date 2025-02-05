@@ -26,7 +26,7 @@
         }
     },
     "configurationArguments": {
-        "applicationExtensionKey": "6844ce9d-6a56-4bdd-9826-fac70597e125",
+        "applicationExtensionKey": "6d835994c-d915-491c-834d-4581a219ce3e",
          "save": {
            "url": "https://custom-activity-v3-blush.vercel.app/save",
             "verb": "POST",
