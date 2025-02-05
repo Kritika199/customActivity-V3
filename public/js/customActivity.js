@@ -59,8 +59,7 @@ define([
     switch (currentStep.key) {
     case 'step1':
       if (validateApiKeys()) {
-        fetchContacts();
-        
+      
         
         handleApiKeyToggle();
         connection.trigger('nextStep');
@@ -71,10 +70,10 @@ define([
 
       case 'step2':
         if (validateStep2()) {
-            var isExtTemp = $('#extTempId').is(':checked'); // Check if the existing template checkbox is checked
+            var isExtTemp = $('#extTempId').is(':checked'); 
             
             if (isExtTemp) {
-                fetchTemplates(); // Call the function if the checkbox is checked
+                fetchTemplates(); 
             }
     
             connection.trigger('nextStep');
@@ -380,6 +379,19 @@ define([
       $liveModeToggle.prop('disabled', false);
     }
   }
+
+  $(document).ready(function () {
+    $('.test-to-live-switch input').on('change', function () {
+        if ($(this).is(':checked') && (!previewPayload || !previewPayload.live_api_key)) {
+            $('#liveModeError').show(); // Show error message
+            $(this).prop('checked', false); // Prevent enabling the toggle
+        } else {
+            $('#liveModeError').hide(); // Hide error message if conditions are met
+        }
+    });
+  });
+
+
 
 
   $('.step2radioBTN').change(function () {
