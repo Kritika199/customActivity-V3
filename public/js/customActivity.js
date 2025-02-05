@@ -10,8 +10,6 @@ define([
   let deFields;
   let selectedFieldsForMapping = {};
   let previewPayload = {
-    test_api_key: 'test_sk_uQXxwmGMghWwG5wEfezZVN',
-    live_api_key: '',
     isValid: true
   };
   let fromContact = '';
@@ -27,7 +25,6 @@ define([
   $(window).ready(onRender);
 
   function onRender() {
-    console.log('onRender()************************************************************');
     connection.trigger('ready');
     connection.trigger('requestSchema');
     $('#card-insert-type').addClass('hidden');
@@ -43,13 +40,11 @@ define([
 
   connection.on('requestedSchema', function (data) {
     // save schema
-    console.log('*** Schema ***', data['schema']);
     deFields = data['schema'];
     populateDropdowns();
   });
 
   function initialize(data) {
-    console.log('initialize()************************************************************');
     if (data) {
       payload = data;
     }
@@ -59,15 +54,12 @@ define([
   // wizard step *******************************************************************************
   var currentStep = steps[0].key;
   function onClickedNext() {
-    console.log('onClickedNext() ************************************************************');
 
     switch (currentStep.key) {
     case 'step1':
       if (validateApiKeys()) {
-        // Call the function to check API key and disable/enable toggle
-        handleApiKeyToggle(); 
+        handleApiKeyToggle();
         connection.trigger('nextStep');
-      
       } else {
         handleValidationFailure();
       }
@@ -75,8 +67,6 @@ define([
 
     case 'step2':
       if (validateStep2()) {
-        console.log('validate--*************' + validateStep2());
-        
 
         connection.trigger('nextStep');
       } else {
@@ -85,7 +75,7 @@ define([
       break;
 
     case 'step3':
-      console.log('inside step 3');
+
       if ($('.screen-3').css('display') === 'block') {
         validateStep3() ? proceedToNext() : handleValidationFailure();
       } else {
@@ -123,7 +113,6 @@ define([
   }
 
   function proceedToNext() {
-    console.log('set preview start');
     
     setPreviewPayload();
     connection.trigger('nextStep');
@@ -131,30 +120,27 @@ define([
 
 
   function onClickedBack() {
-    console.log('onClickedBack()************************************************************');
     connection.trigger('prevStep');
   }
 
   function onGotoStep(step) {
-    console.log('onGotoStep()************************************************************', step);
     showStep(step);
     connection.trigger('ready');
   }
 
   function showStep(step) {
 
-    console.log('showStep()************************************************************');
     currentStep = step;
 
     $('.step').hide();
 
     switch (currentStep.key) {
     case 'step1':
-      console.log('case step1************************************************************');
+
       $('#step1').show();
       connection.trigger('updateButton', {
         button: 'back',
-        visible: true,
+        visible: false,
       });
       connection.trigger('updateButton', {
         button: 'next',
@@ -163,7 +149,7 @@ define([
       });
       break;
     case 'step2':
-      console.log('case step2************************************************************');
+
       $('#step2').show();
       connection.trigger('updateButton', {
         button: 'back',
@@ -176,7 +162,7 @@ define([
       });
       break;
     case 'step3':
-      console.log('case step3************************************************************');
+
       $('#step3').show();
       connection.trigger('updateButton', {
         button: 'back',
@@ -189,7 +175,7 @@ define([
       });
       break;
     case 'step4':
-      console.log('case step4************************************************************');
+
       $('#step4').show();
       connection.trigger('updateButton', {
         button: 'back',
@@ -202,7 +188,7 @@ define([
       });
       break;
     case 'step5':
-      console.log('case step5************************************************************');
+
       $('#step5').show();
       connection.trigger('updateButton', {
         button: 'back',
@@ -219,14 +205,12 @@ define([
 
 
   function save() {
-    console.log('save()************************************************************');
     payload['arguments'].execute.inArguments = [{}];
     connection.trigger('updateActivity', payload);
   }
 
 
   function initializeHandler() {
-    console.log('inside initializehandelloer');
     executeScreenTwoMethods();
     setDefaultValuesForPostCardHtmlCreation();
   }
@@ -234,7 +218,6 @@ define([
 
   function showHideLiveKey(e) {
     e.preventDefault();
-    console.log('inside showHideLiveKey');
 
     const icon = $('#toggle-password-live-key i'); // Select the icon inside the button
     const liveKeyInput = $('#live-api-key'); // Select the input field
@@ -249,7 +232,6 @@ define([
   }
 
   function showHideTestKey() {
-    console.log('inside showHideTestKey');
     const icon = $('#toggle-password-test-key i'); // Select the icon inside the button
     const testKeyInput = $('#test-api-key'); // Select the input field
 
@@ -267,7 +249,6 @@ define([
   $('#live-api-key').on('input', hideErrorLiveKey);
 
   function validateApiKeys() {
-    console.log('inside validate api keys function');
     let isValid = true;
     const testApiKey = $('#test-api-key').val().trim();
     const liveApiKey = $('#live-api-key').val().trim();
@@ -282,6 +263,8 @@ define([
       $('#test-api-key').css('border', '1px solid red'); // Highlight input box
       $('#test-api-key-error').text('Enter a valid API key.').show();
       isValid =  false;
+    } else {
+        previewPayload.test_api_key = testApiKey;
     }
 
     // checking Live API key if it is not empty
@@ -290,6 +273,8 @@ define([
         $('#live-api-key').css('border', '1px solid red'); // Highlight input box
         $('#live-api-key-error').text('Enter a valid API key or leave it blank.').show();
         isValid =  false;
+      } else {
+        previewPayload.live_api_key = liveApiKey;
       }
     }
     return isValid;
@@ -305,8 +290,6 @@ define([
     $('#live-api-key-error').hide();
   }
 
-
-  
   //start of adding * in Company Label 
   $('.mapping-fields-group #first-name').change(function () {
     var firstNameValue = $(this).val();
@@ -357,12 +340,6 @@ define([
     } else {
       $('#createType-error').text('');  // Clear error if valid
     }
-    // Handle API Key toggle logic
-    if (!handleApiKeyToggle()) {
-      errorMessages.push("API Key is missing.");
-      isValid = false;
-  }
-    
 
     // Show general error message if any
     if (!errorMessages.length) {
@@ -373,6 +350,27 @@ define([
 
     return isValid;
   }
+
+  function handleApiKeyToggle() {
+    if (typeof previewPayload === 'undefined') {
+      return;
+    }
+
+    const testApiKey = previewPayload.test_api_key || '';
+    const liveApiKey = previewPayload.live_api_key || '';
+    const $liveModeToggle = $('.test-to-live-switch input');
+
+    if ($liveModeToggle.length === 0) {
+      return;
+    }
+
+    if (testApiKey && !liveApiKey) {
+      $liveModeToggle.prop('disabled', true).prop('checked', false);
+    } else {
+      $liveModeToggle.prop('disabled', false);
+    }
+  }
+
 
   $('.step2radioBTN').change(function () {
     var isPostcard = $('#postcard').is(':checked');
@@ -396,53 +394,10 @@ define([
     });
   });
 
-
-  
-
-  function handleApiKeyToggle() {
-    // Ensure previewPayload exists
-    if (typeof previewPayload === "undefined") {
-        console.error("Error: previewPayload is not defined.");
-        return;
-    }
-
-    // Get API Keys from previewPayload
-    const testApiKey = previewPayload.test_api_key || "";
-    const liveApiKey = previewPayload.live_api_key || "";
-    const liveModeToggle = document.querySelector(".test-to-live-switch input");
-
-    // Ensure toggle exists
-    if (!liveModeToggle) {
-        console.error("Error: Toggle element not found.");
-        return;
-    }
-
-    console.log("Test API Key:", testApiKey);
-    console.log("Live API Key:", liveApiKey);
-
-    if (testApiKey && !liveApiKey) {
-        // Only Test API Key exists → Disable Toggle
-        liveModeToggle.disabled = true;
-        liveModeToggle.checked = false;
-        console.log(" Live Mode Toggle is DISABLED (Only Test API Key Present)");
-    } else {
-        // Live API Key exists → Enable Toggle
-        liveModeToggle.disabled = false;
-        console.log("Live Mode Toggle is ENABLED (Live API Key Present)");
-    }
-}
-
-
-
-  
-
-    
-  
-
   function executeScreenTwoMethods() {
     // Handle showing Card Insert checkbox when "Letters" or "Self-Mailer" is selected
     $('input[name="msgType"]').change(function () {
-      console.log('Radio button changed:', this.id);
+
       if (this.id === 'letters' || this.id === 'self-mailer') {
         $('#card-insert-container').addClass('visible'); // Show Card Insert checkbox
         $('.card-insert-wrapper').addClass('visible'); // Show Card Insert wrapper (if needed)
@@ -457,7 +412,7 @@ define([
     });
     // Show/Hide Card Insert Type section when Card Insert is checked/unchecked
     $('#card-insert').change(function () {
-      console.log('Card Insert checkbox changed:', this.checked);
+
       if (this.checked) {
         $('#card-insert-type').removeClass('hidden'); // Show Card Insert Type section
       } else {
@@ -485,14 +440,23 @@ define([
 
     const today = new Date().toISOString().split('T')[0];
     $('input[type="date"]').each(function () {
-      $(this).val(today);  // Set default value
-      $(this).attr('min', today);  // Set minimum selectable date
+      $(this).val(today);
+      $(this).attr('min', today);
     });
 
     $('#pdf-upload').on('change', function () {
       if (this.files.length > 0 && this.files[0].type === 'application/pdf') {
         $('#file-name').text(this.files[0].name);
+        $('#remove-pdf').show();
       }
+    });
+
+    $('#remove-pdf').on('click', function(e) {
+      e.preventDefault();
+
+      $('#pdf-upload').val('');
+      $('#file-name').text('Drag or Upload PDF');
+      $(this).hide();
     });
 
     $('#drop-area').on('dragover', function (e) {
@@ -521,6 +485,8 @@ define([
       }
 
       const pdfInput = $('.drop-pdf #pdf-upload')[0]; 
+
+      
       if (pdfInput.files.length > 0) {
         const pdfFile = pdfInput.files[0];
 
@@ -537,7 +503,7 @@ define([
           isValid = false;
         }
       } else {
-        $('.drop-pdf .error-msg').addClass('show');
+        $('.drop-pdf .error-msg').text('Please select a PDF file').addClass('show');
         isValid = false;
       }
     }
@@ -596,7 +562,7 @@ define([
             const pdfDimensions = `${(width / 72).toFixed(2)}x${(height / 72).toFixed(2)}`;
             const selectedPDFDimension = $('.postcard-pdf-size input[name="postcardPDFSize"]:checked').data('dimentions');
 
-            console.log(`PDF Dimensions: ${pdfDimensions} inches`);
+    
 
             if (numPages !== 2) {
               resolve({
@@ -690,8 +656,14 @@ define([
 
   function getFormattedDate(sendDate) {
     let now = new Date();
-    let formattedTime = now.toISOString().split('T')[1];
-    return `${sendDate}T${formattedTime}`;
+    let istOffset = 5.5 * 60 * 60 * 1000; // Convert 5.5 hours to milliseconds
+    let istTime = new Date(now.getTime() + istOffset);
+
+    let formattedDate = sendDate;
+    let formattedTime = istTime.toISOString().split('T')[1]; // Extract the time part from IST
+
+    
+    return `${formattedDate}T${formattedTime}`;
   }
 
   async function createPostcard() {
@@ -704,7 +676,7 @@ define([
 
     if(previewPayload.screen === 'pdf'){
       data = new FormData();
-      data.append('to', 'contact_hGsXV82wSiv6wpta1uXf5M');
+      data.append('to', fromContact);
       data.append('from', fromContact);
       data.append('sendDate', previewPayload.sendDate);
       data.append('express', previewPayload.isExpressDelivery);
@@ -717,8 +689,8 @@ define([
     } else if (previewPayload.screen === 'html') {
       headers['Content-Type'] = 'application/x-www-form-urlencoded';
       data = new URLSearchParams({
-        'to': 'contact_hGsXV82wSiv6wpta1uXf5M',
-        'from': 'contact_hGsXV82wSiv6wpta1uXf5M',
+        'to': fromContact,
+        'from': fromContact,
         'frontHTML': previewPayload.frontHtmlContent,
         'backHTML': previewPayload.backHtmlContent,
         'size': previewPayload.size,
@@ -734,8 +706,8 @@ define([
     } else if(previewPayload.screen === 'existing-template') {
       headers['Content-Type'] = 'application/x-www-form-urlencoded';
       data = new URLSearchParams({
-        'to': 'contact_hGsXV82wSiv6wpta1uXf5M',
-        'from': 'contact_hGsXV82wSiv6wpta1uXf5M',
+        'to': fromContact,
+        'from': fromContact,
         frontTemplate: previewPayload.frontTemplateId,
         backTemplate: previewPayload.backTemplateId,
         size: previewPayload.size,
@@ -761,7 +733,7 @@ define([
       }
 
       const result = await response.json();
-      console.log('Postcard created successfully:', result);
+
       return result;
     } catch (error) {
       console.error('Error creating postcard:', error.message);
@@ -797,7 +769,7 @@ define([
     try {
       const postcardDetails = await fetchPostcardDetails(postcardId);
       const pdfUrl = postcardDetails.url;
-      console.log('postcard details: '+pdfUrl);
+
     
       connection.trigger('nextStep');
       if (pdfUrl) {
@@ -837,7 +809,7 @@ define([
       $('.preview-container .retry-preview-btn').addClass('show');
       $('#pdf-preview-container').css('display','none');
       $('.pdf-preview-error-msg').text('Failed to fetch preview.');
-      console.log('error: '+JSON.stringify(error));
+
     }
   }
 
@@ -869,7 +841,7 @@ define([
       success: function (response) {
         // Clear existing options
         $('#dropdown-options').empty();
-        console.log('Resonese here', response.data);
+
 
         // Populate the dropdown with new options
         response.data.forEach(function (contact) {
@@ -915,11 +887,9 @@ define([
     const contact = $(this).data('contact');
     $('#search-contact').val(contact.firstName); // Set the selected contact name in the input
     $('#dropdown-options').hide(); // Hide the dropdown
-    console.log('contactId: '+contact.id);
     
     fromContact = contact.id;
     // You can also store the selected contact ID or other data if needed
-    console.log('Selected Contact:', contact);
   });
 
   $(document).on('click', function (event) {
@@ -1071,7 +1041,6 @@ define([
   }
 
   async function fetchTemplates(searchQuery = '') {
-    console.log('Fetching templates...');
     const requestOptions = {
       method: 'GET',
       headers: { 'x-api-key': previewPayload.test_api_key },
@@ -1124,7 +1093,6 @@ define([
       $list.append($listItem);
     });
 
-    console.log(`${listId} populated with templates.`);
   }
 
 
