@@ -10,9 +10,11 @@ define([
   let deFields;
   let selectedFieldsForMapping = {};
   let previewPayload = {
-    test_api_key: 'test_sk_qraE3RyxvpGQbAjQfngQbb',
-    isValid: true
-  };
+    test_api_key: userInput || 'default_api_key',  // Fallback to a default key if input is empty
+    isValid: !!userInput // Convert to boolean (true if there's input, false otherwise)
+};
+
+ console.log(previewPayload);
   let fromContact = '';
 
   var steps = [ // initialize to the same value as what's set in config.json for consistency        
