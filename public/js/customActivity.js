@@ -814,7 +814,8 @@ define([
       const postcardDetails = await fetchPostcardDetails(postcardId);
       const pdfUrl = postcardDetails.url;
 
-    
+      $('.preview-container .preview-message').css('display','none');
+
       connection.trigger('nextStep');
       if (pdfUrl) {
         $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
