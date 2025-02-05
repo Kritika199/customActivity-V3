@@ -385,8 +385,6 @@ define([
     const $errorMessage = $('#liveModeError');
 
     console.log("Script Loaded: Checking Live Mode Toggle");
-
-    // Check if the element exists
     console.log("Live Mode Toggle Found:", $liveModeToggle.length);
 
     if ($liveModeToggle.length === 0) {
@@ -394,20 +392,17 @@ define([
         return; // Exit script if element is missing
     }
 
-    // Use event delegation in case the element is loaded dynamically
-    $(document).on('mouseenter click', '.test-to-live-switch input', function (event) {
-        console.log("Hover or Click Detected on Live Mode Toggle");
+    // Attach events to the parent label (because disabled inputs don't fire events)
+    $('.test-to-live-switch').on('mouseenter', function () {
+        console.log("Hover detected on Live Mode Toggle container");
 
-        if ($(this).prop('disabled')) {
+        if ($liveModeToggle.prop('disabled')) {
             console.log("Live Mode Toggle is Disabled - Showing Error Message");
             $errorMessage.show();
-            event.preventDefault(); // Prevent any default action
-        } else {
-            console.log("Live Mode Toggle is Enabled - No Error Message Needed");
         }
     });
 
-    $(document).on('mouseleave', '.test-to-live-switch input', function () {
+    $('.test-to-live-switch').on('mouseleave', function () {
         console.log("Mouse Left Live Mode Toggle - Hiding Error Message");
         $errorMessage.hide();
     });
