@@ -10,8 +10,7 @@ define([
   let deFields;
   let selectedFieldsForMapping = {};
   let previewPayload = {
-    test_api_key: 'test_sk_qraE3RyxvpGQbAjQfngQbb',
-
+    
     isValid: true
   };
   let fromContact = '';
