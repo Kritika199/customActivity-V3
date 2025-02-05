@@ -809,60 +809,57 @@ define([
     }
   }
 
-  // Function to show PDF preview
-async function showPdfPreview(postcardId) {
-  try {
+  async function showPdfPreview(postcardId) {
+    try {
       const postcardDetails = await fetchPostcardDetails(postcardId);
       const pdfUrl = postcardDetails.url;
 
+    
+      connection.trigger('nextStep');
       if (pdfUrl) {
-          $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
-          $('#pdf-preview-container').css('display', 'block');
-          $('.preview-container .retry-preview-btn').removeClass('show');
-          $('.pdf-preview-error-msg').css('display', 'none');
+        $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
+        $('#pdf-preview-container').css('display','block');
+        $('.preview-container .retry-preview-btn').removeClass('show');
+        $('.pdf-preview-error-msg').css('display','none');
       } else {
-          $('.preview-container .retry-preview-btn').addClass('show');
-          $('#pdf-preview-container').css('display', 'none');
-          $('.pdf-preview-error-msg').text('Preview not found.').css('display', 'block');
+        $('.preview-container .retry-preview-btn').addClass('show');
+        $('#pdf-preview-container').css('display','none');
+        $('.pdf-preview-error-msg').text('Preview not found.').css('display','block');
       }
-  } catch (error) {
+    } catch (error) {
       $('.preview-container .retry-preview-btn').addClass('show');
-      $('#pdf-preview-container').css('display', 'none');
-      $('.pdf-preview-error-msg').text('Error while fetching the preview - ' + error.message).css('display', 'block');
+      $('#pdf-preview-container').css('display','none');
+      $('.pdf-preview-error-msg').text('Error while fetching the preview - '+error.message).css('display','block');
+    }
+
+    $('#pdf-preview').on('error', function () {
+      $('.preview-container .retry-preview-btn').addClass('show');
+      $('#pdf-preview-container').css('display','none');
+      $('.pdf-preview-error-msg').text('Failed to fetch preview.').css('display','block');
+    });
   }
 
-  $('#pdf-preview').on('error', function () {
-      $('.preview-container .retry-preview-btn').addClass('show');
-      $('#pdf-preview-container').css('display', 'none');
-      $('.pdf-preview-error-msg').text('Failed to fetch preview.').css('display', 'block');
-  });
-}
-
-// Function to get the preview URL
-async function getPreviewURL() {
-  try {
+  async function getPreviewURL () {
+    try {
       const postcardResponse = await createPostcard();
       const postcardId = postcardResponse.id;
       previewPayload.postcardId = postcardId;
 
-      // Show the preview after fetching the URL
-      await showPdfPreview(postcardId);
-  } catch (error) {
+      setTimeout(async function() {
+        await showPdfPreview(postcardId);
+      }, 2000);
+
+    } catch (error) {
       $('.preview-container .retry-preview-btn').addClass('show');
-      $('#pdf-preview-container').css('display', 'none');
-      $('.pdf-preview-error-msg').text('Failed to fetch preview.').css('display', 'block');
+      $('#pdf-preview-container').css('display','none');
+      $('.pdf-preview-error-msg').text('Failed to fetch preview.');
+
+    }
   }
-}
 
-// Event listener for the "Show Preview" button
-$('#show-preview-btn').click(async function () {
-  await getPreviewURL();
-});
-
-// Event listener for the "Retry" button
-$('.preview-container .retry-preview-btn').click(async function () {
-  await showPdfPreview(previewPayload.postcardId);
-});
+  $('.preview-container .retry-preview-btn').click(async function() {
+    await showPdfPreview(previewPayload.postcardId);
+  });
 
   $('.express-delivery-btn').on('click', function() {
     var isChecked = $(this).prop('checked');
