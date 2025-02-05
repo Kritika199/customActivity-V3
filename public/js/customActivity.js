@@ -59,6 +59,7 @@ define([
     switch (currentStep.key) {
     case 'step1':
       if (validateApiKeys()) {
+        fetchContacts();
         
         
         handleApiKeyToggle();
@@ -913,7 +914,7 @@ define([
   });
 
   $('#search-contact').on('focus', function () {
-    //  fetchContacts(); // Show initial contacts
+    fetchContacts(); // Show initial contacts
     const searchQuery = $(this).val().trim();
     if ($('#dropdown-options').is(':hidden')) { // Only fetch if dropdown is hidden
       fetchContacts(searchQuery); // Use existing searchQuery if present
