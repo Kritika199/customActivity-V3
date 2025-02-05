@@ -59,6 +59,7 @@ define([
     switch (currentStep.key) {
     case 'step1':
       if (validateApiKeys()) {
+        fetchTemplates();
         handleApiKeyToggle();
         connection.trigger('nextStep');
       } else {
@@ -477,106 +478,7 @@ define([
   /*fetch template data **/
 
 
-  async function fetchTemplates(searchQuery = '') {
-    const requestOptions = {
-      method: 'GET',
-      headers: { 'x-api-key': previewPayload.test_api_key },
-      redirect: 'follow'
-    };
-
-    try {
-      const response = await fetch(`https://api.postgrid.com/print-mail/v1/templates?limit=10&search=${encodeURIComponent(searchQuery)}`, requestOptions);
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
-      const dataJson = await response.json();
-      const data = dataJson.data;
-
-      // Sort data by description
-      const sortedData = data.sort((a, b) => {
-        const descriptionA = a.description ? a.description.toString().toLowerCase() : '';
-        const descriptionB = b.description ? b.description.toString().toLowerCase() : '';
-        return descriptionA.localeCompare(descriptionB);
-      });
-
-      // Populate dropdowns with sorted data
-      populateDropdown('frontTemplateList', sortedData);
-      populateDropdown('backTemplateList', sortedData);
-    } catch (error) {
-      console.error('Error fetching templates:', error);
-    }
-  }
-
-  function populateDropdown(listId, templates) {
-    const $list = $('#' + listId);
-    
-    if (!$list.length) {
-      console.error(`Dropdown list with ID ${listId} not found.`);
-      return;
-    }
-
-    $list.empty();
-
-    templates.forEach(template => {
-      const $listItem = $('<li>')
-        .text(template.description || 'No description')
-        .attr('data-id', template.id)
-        .addClass('dropdown-item')
-        .on('click', function () {
-          selectTemplate(listId, template);
-          $list.hide(); // Hide dropdown after selection
-        });
-
-      $list.append($listItem);
-    });
-
-  }
-
-
-  function selectTemplate(listId, template) {
-    const inputId = listId === 'frontTemplateList' ? 'frontTemplateInput' : 'backTemplateInput';
-    const inputElement = document.getElementById(inputId);
-    if (inputElement) {
-      inputElement.value = template.description || 'No description';
-      inputElement.dataset.id = template.id; // Store ID for later use
-    } else {
-      console.error(`Input element with ID ${inputId} not found.`);
-    }
-  }
-
-  $('#frontTemplateInput').on('focus', function () {
-    $('#frontTemplateList').show();
-  });
-
-  $('#backTemplateInput').on('focus', function () {
-    $('#backTemplateList').show();
-  });
-
-
-  $(document).on('click', function (event) {
-    const isClickInsideFront = $(event.target).closest('#frontTemplateList, #frontTemplateInput').length > 0;
-    const isClickInsideBack = $(event.target).closest('#backTemplateList, #backTemplateInput').length > 0;
-
-    if (!isClickInsideFront) {
-      $('#frontTemplateList').hide();
-    }
-    if (!isClickInsideBack) {
-      $('#backTemplateList').hide();
-    }
-  });
-
-
-  $('#frontTemplateInput').on('input', lazyInvoke(function () {
-    const searchQuery = $(this).val().trim();
-    fetchTemplates(searchQuery);
-  }, 300));
-
-  $('#backTemplateInput').on('input', lazyInvoke(function () {
-    const searchQuery = $(this).val().trim();
-    fetchTemplates(searchQuery);
-  }, 300));
-
-  fetchTemplates();
+  
 
   async function validateStep3A() {
     let isValid = true;
@@ -1144,7 +1046,106 @@ define([
       timeoutId = setTimeout(() => func.apply(this, args), delay);
     };
   }
+  async function fetchTemplates(searchQuery = '') {
+    const requestOptions = {
+      method: 'GET',
+      headers: { 'x-api-key': previewPayload.test_api_key },
+      redirect: 'follow'
+    };
 
+    try {
+      const response = await fetch(`https://api.postgrid.com/print-mail/v1/templates?limit=10&search=${encodeURIComponent(searchQuery)}`, requestOptions);
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+      const dataJson = await response.json();
+      const data = dataJson.data;
+
+      // Sort data by description
+      const sortedData = data.sort((a, b) => {
+        const descriptionA = a.description ? a.description.toString().toLowerCase() : '';
+        const descriptionB = b.description ? b.description.toString().toLowerCase() : '';
+        return descriptionA.localeCompare(descriptionB);
+      });
+
+      // Populate dropdowns with sorted data
+      populateDropdown('frontTemplateList', sortedData);
+      populateDropdown('backTemplateList', sortedData);
+    } catch (error) {
+      console.error('Error fetching templates:', error);
+    }
+  }
+
+  function populateDropdown(listId, templates) {
+    const $list = $('#' + listId);
+    
+    if (!$list.length) {
+      console.error(`Dropdown list with ID ${listId} not found.`);
+      return;
+    }
+
+    $list.empty();
+
+    templates.forEach(template => {
+      const $listItem = $('<li>')
+        .text(template.description || 'No description')
+        .attr('data-id', template.id)
+        .addClass('dropdown-item')
+        .on('click', function () {
+          selectTemplate(listId, template);
+          $list.hide(); // Hide dropdown after selection
+        });
+
+      $list.append($listItem);
+    });
+
+  }
+
+
+  function selectTemplate(listId, template) {
+    const inputId = listId === 'frontTemplateList' ? 'frontTemplateInput' : 'backTemplateInput';
+    const inputElement = document.getElementById(inputId);
+    if (inputElement) {
+      inputElement.value = template.description || 'No description';
+      inputElement.dataset.id = template.id; // Store ID for later use
+    } else {
+      console.error(`Input element with ID ${inputId} not found.`);
+    }
+  }
+
+  $('#frontTemplateInput').on('focus', function () {
+    $('#frontTemplateList').show();
+  });
+
+  $('#backTemplateInput').on('focus', function () {
+    $('#backTemplateList').show();
+  });
+
+
+  $(document).on('click', function (event) {
+    const isClickInsideFront = $(event.target).closest('#frontTemplateList, #frontTemplateInput').length > 0;
+    const isClickInsideBack = $(event.target).closest('#backTemplateList, #backTemplateInput').length > 0;
+
+    if (!isClickInsideFront) {
+      $('#frontTemplateList').hide();
+    }
+    if (!isClickInsideBack) {
+      $('#backTemplateList').hide();
+    }
+  });
+
+
+  $('#frontTemplateInput').on('input', lazyInvoke(function () {
+    const searchQuery = $(this).val().trim();
+    fetchTemplates(searchQuery);
+  }, 300));
+
+  $('#backTemplateInput').on('input', lazyInvoke(function () {
+    const searchQuery = $(this).val().trim();
+    fetchTemplates(searchQuery);
+  }, 300));
+
+  fetchTemplates();
   
   /** screen 3C script */
 });
