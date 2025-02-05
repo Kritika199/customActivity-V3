@@ -10,11 +10,8 @@ define([
   let deFields;
   let selectedFieldsForMapping = {};
   let previewPayload = {
-    test_api_key: userInput ,  // Fallback to a default key if input is empty
-    isValid: !!userInput // Convert to boolean (true if there's input, false otherwise)
-};
-
-console.log(previewPayload);
+    isValid: true
+  };
   let fromContact = '';
 
   var steps = [ // initialize to the same value as what's set in config.json for consistency        
@@ -1135,12 +1132,12 @@ console.log(previewPayload);
   $('#frontTemplateInput').on('input', lazyInvoke(function () {
     const searchQuery = $(this).val().trim();
     fetchTemplates(searchQuery);
-  }, 300));
+  }, 100));
 
   $('#backTemplateInput').on('input', lazyInvoke(function () {
     const searchQuery = $(this).val().trim();
     fetchTemplates(searchQuery);
-  }, 300));
+  }, 100));
 
   fetchTemplates();
   /** screen 3C script */
