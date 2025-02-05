@@ -1012,6 +1012,30 @@ define([
       isValid = false;
     }
 
+    let city = $('#city').val();
+    if (city === 'Select') {
+      $('#city').css('border', '2px solid red');
+      $('.error-message-contactMapping').text(' City is required.').css('color', 'red').show();
+      isValid = false;
+    }
+
+    let state = $('#state').val();
+    if (state === 'Select') {
+      $('#state').css('border', '2px solid red');
+      $('.error-message-contactMapping').text(' State is required.').css('color', 'red').show();
+      isValid = false;
+    }
+    let countryCode = $('#country-code').val();
+    if (city === 'Select') {
+      $('#country-code').css('border', '2px solid red');
+      $('.error-message-contactMapping').text(' Country Code is required.').css('color', 'red').show();
+      isValid = false;
+    }
+
+
+  
+
+
     return isValid;
   }
 
