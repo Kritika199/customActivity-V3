@@ -1132,7 +1132,7 @@ define([
   $('#frontTemplateInput').on('input', lazyInvoke(function () {
     const searchQuery = $(this).val().trim();
     fetchTemplates(searchQuery);
-  }, 100));
+  }, 300));
 
   $('#backTemplateInput').on('input', lazyInvoke(function () {
     const searchQuery = $(this).val().trim();
