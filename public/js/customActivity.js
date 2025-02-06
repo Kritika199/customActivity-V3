@@ -844,24 +844,24 @@ function validateApiKeys() {
                 $('.preview-message').css('display', 'none'); 
             });
         } else {
-            // If PDF URL is not available, hide everything related to preview
+            // If PDF URL is not available, show the preview container but hide the button and message
             $('#pdf-preview-container').css('display', 'block');
             $('.retry-preview-btn').css('display', 'none');
             $('.preview-message').css('display', 'none');
         }
     } catch (error) {
-        // If there's an error, hide everything related to preview
-        $('#pdf-preview-container').css('display', 'block');
-        $('.retry-preview-btn').css('display', 'none');
-        $('.preview-message').css('display', 'none');
+        // If there's an error fetching the preview, show the preview container even if empty
+        $('#pdf-preview-container').css('display', 'block'); // Ensure preview container is visible
+        $('.retry-preview-btn').css('display', 'none'); // Hide the retry button
+        $('.preview-message').css('display', 'none'); // Hide the message
     }
 
-    // Error handling for the PDF element itself
+    // Error handling for the PDF element itself (e.g., broken PDF link)
     $('#pdf-preview').on('error', function () {
-        // If there's an error loading the PDF, hide everything
-        $('#pdf-preview-container').css('display', 'none');
-        $('.retry-preview-btn').css('display', 'none');
-        $('.preview-message').css('display', 'none');
+        // If there's an error loading the PDF, still show the preview container (blank)
+        $('#pdf-preview-container').css('display', 'block'); // Ensure preview container is visible
+        $('.retry-preview-btn').css('display', 'none'); // Hide the retry button
+        $('.preview-message').css('display', 'none'); // Hide the message
     });
 }
 
@@ -877,17 +877,18 @@ async function getPreviewURL () {
         }, 3000);
 
     } catch (error) {
-        // If postcard creation fails, hide everything related to preview
+        // If postcard creation fails, show the preview container even if no PDF is fetched
         $('#pdf-preview-container').css('display', 'block');
         $('.retry-preview-btn').css('display', 'none');
         $('.preview-message').css('display', 'none');
     }
 }
 
+// Event listener for retry button click
+$('.preview-container .retry-preview-btn').click(async function() {
+    await showPdfPreview(previewPayload.postcardId); // Retry fetching the preview
+});
 
-  $('.preview-container .retry-preview-btn').click(async function() {
-    await showPdfPreview(previewPayload.postcardId);
-  });
 
   $('.express-delivery-btn').on('click', function() {
     var isChecked = $(this).prop('checked');
@@ -1241,7 +1242,7 @@ $('#search-contact').on('focus', function () {
     fetchTemplates(searchQuery);
   }, 300));
 
-  fetchTemplates();
+ 
   
   /** screen 3C script */
 });
