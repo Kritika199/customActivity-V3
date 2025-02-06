@@ -828,39 +828,66 @@ function validateApiKeys() {
         const postcardDetails = await fetchPostcardDetails(postcardId);
         const pdfUrl = postcardDetails.url;
 
-        if (pdfUrl) {
-            // Set the PDF preview URL and display the preview
-            $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
-            $('#pdf-preview-container').css('display', 'block');
+        connection.trigger('nextStep');
 
-            // Hide the message and button
-            $('.preview-container .preview-message').hide();
-            $('.preview-container .retry-preview-btn').hide();
-        } 
-        // If pdfUrl is missing, do nothing (keep "Show Preview" button as it is)
+        // If PDF URL is available, show the preview and the button message
+        if (pdfUrl) {
+            // Show the preview message and button initially, but don't show the PDF yet
+            $('.retry-preview-btn').css('display', 'inline-block'); // Show the retry button
+            $('.preview-message').css('display', 'inline-block'); // Show the message
+
+            // Set up the button to show the PDF when clicked
+            $('.retry-preview-btn').off('click').on('click', function() {
+                $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
+                $('#pdf-preview-container').css('display', 'block'); // Show the PDF container
+                $('.retry-preview-btn').css('display', 'none'); // Hide the retry button
+                $('.preview-message').css('display', 'none'); // Hide the preview message
+            });
+        } else {
+            // If PDF URL is not available, hide everything related to preview
+            $('#pdf-preview-container').css('display', 'none');
+            $('.retry-preview-btn').css('display', 'none');
+            $('.preview-message').css('display', 'none');
+        }
     } catch (error) {
-        console.error('Error while fetching the preview:', error);
+        // If there's an error, hide everything related to preview
+        $('#pdf-preview-container').css('display', 'none');
+        $('.retry-preview-btn').css('display', 'none');
+        $('.preview-message').css('display', 'none');
     }
+
+    // Error handling for the PDF element itself
+    $('#pdf-preview').on('error', function () {
+        // If there's an error loading the PDF, hide everything
+        $('#pdf-preview-container').css('display', 'none');
+        $('.retry-preview-btn').css('display', 'none');
+        $('.preview-message').css('display', 'none');
+    });
 }
 
-async function getPreviewURL() {
+async function getPreviewURL () {
     try {
         const postcardResponse = await createPostcard();
         const postcardId = postcardResponse.id;
-        previewPayload.postcardId = postcardId; // Store ID
+        previewPayload.postcardId = postcardId;
 
+        // Delay the preview call slightly to ensure postcard is ready
         setTimeout(async function() {
             await showPdfPreview(postcardId);
         }, 2000);
+
     } catch (error) {
-        console.error('Error creating postcard:', error);
+        // If postcard creation fails, hide everything related to preview
+        $('#pdf-preview-container').css('display', 'none');
+        $('.retry-preview-btn').css('display', 'none');
+        $('.preview-message').css('display', 'none');
     }
 }
 
-// Button click event
-$('.preview-container .retry-preview-btn').off('click').on('click', async function () {
+
+  $('.preview-container .retry-preview-btn').click(async function() {
     await showPdfPreview(previewPayload.postcardId);
-});
+  });
 
   $('.express-delivery-btn').on('click', function() {
     var isChecked = $(this).prop('checked');
