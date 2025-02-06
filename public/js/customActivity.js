@@ -963,10 +963,14 @@ function validateApiKeys() {
   $('#search-contact').on('focus', function () {
    // fetchContacts(); // Show initial contacts
     const searchQuery = $(this).val().trim();
-    if ($('#dropdown-options').is(':hidden')) { // Only fetch if dropdown is hidden
+    if($('#dropdown-options').is(':hidden') && searchQuery === ''){
+      fetchContacts();
+    }
+    else if ($('#dropdown-options').is(':hidden')) { // Only fetch if dropdown is hidden
        // Use existing searchQuery if present
        $('#dropdown-options').show();
     }
+    
 
   });
 
