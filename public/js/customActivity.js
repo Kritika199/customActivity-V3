@@ -891,88 +891,83 @@ function validateApiKeys() {
   });
 
   /** screen 4 script */
-  let timeoutId;
-  function fetchContacts(searchQuery) {
-    $.ajax({
-      url: 'https://api.postgrid.com/print-mail/v1/contacts', // Replace with your API endpoint
-      method: 'GET',
-      data: searchQuery ? { search: searchQuery, limit: 10 } : { limit: 10 },
-      headers: {
-        'x-api-key': previewPayload.test_api_key// Replace with your API key
-      },
-      success: function (response) {
-        // Clear existing options
-        $('#dropdown-options').empty();
+  /** screen 4 script */
+let timeoutId;
 
+function fetchContacts(searchQuery) {
+  $.ajax({
+    url: 'https://api.postgrid.com/print-mail/v1/contacts', // Replace with your API endpoint
+    method: 'GET',
+    data: searchQuery ? { search: searchQuery, limit: 10 } : { limit: 10 },
+    headers: {
+      'x-api-key': previewPayload.test_api_key // Replace with your API key
+    },
+    success: function (response) {
+      // Clear existing options
+      $('#dropdown-options').empty();
 
-        // Populate the dropdown with new options
-        response.data.forEach(function (contact) {
-          $('#dropdown-options').append(
-            $('<div>').text(contact.firstName).data('contact', contact)
-          );
-        });
+      // Populate the dropdown with new options
+      response.data.forEach(function (contact) {
+        $('#dropdown-options').append(
+          $('<div>').text(contact.firstName).data('contact', contact)
+        );
+      });
 
-        // Show the dropdown if there are results
-        if (response.data.length > 0) {
-          $('#dropdown-options').show();
-        } else {
-          $('#dropdown-options').hide();
-        }
-      },
-      error: function (xhr, status, error) {
-        console.error('Error fetching contacts:', error);
+      // Show the dropdown if there are results
+      if (response.data.length > 0) {
+        $('#dropdown-options').show();
+      } else {
+        $('#dropdown-options').hide();
       }
-    });
+    },
+    error: function (xhr, status, error) {
+      console.error('Error fetching contacts:', error);
+    }
+  });
+}
+
+function debounce(func, delay) {
+  return function () {
+    const context = this;
+    const args = arguments;
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func.apply(context, args), delay);
+  };
+}
+
+const debouncedFetchContacts = debounce(fetchContacts, 300);
+
+$('#search-contact').on('input', function () {
+  const searchQuery = $(this).val();
+  if (searchQuery.length > 2) { // Only search if the input has more than 2 characters
+    debouncedFetchContacts(searchQuery);
+  } else {
+    $('#dropdown-options').empty().hide();
   }
+});
 
-  function debounce(func, delay) {
-    return function () {
-      const context = this;
-      const args = arguments;
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => func.apply(context, args), delay);
-    };
+$('#dropdown-options').on('click', 'div', function () {
+  const contact = $(this).data('contact');
+  $('#search-contact').val(contact.firstName); // Set the selected contact name in the input
+  $('#dropdown-options').hide(); // Hide the dropdown
+
+  fromContact = contact.id;
+  // You can also store the selected contact ID or other data if needed
+});
+
+$(document).on('click', function (event) {
+  if (!$(event.target).closest('.mapping-dropdown').length) {
+    $('#dropdown-options').hide();
   }
+});
 
-  const debouncedFetchContacts = debounce(fetchContacts, 300);
-
-  $('#search-contact').on('input', function () {
-    const searchQuery = $(this).val();
-    if (searchQuery.length > 2) { // Only search if the input has more than 2 characters
-      debouncedFetchContacts(searchQuery);
-    } else {
-      $('#dropdown-options').empty().hide();
-    }
-  });
-
-  $('#dropdown-options').on('click', 'div', function () {
-    const contact = $(this).data('contact');
-    $('#search-contact').val(contact.firstName); // Set the selected contact name in the input
-    $('#dropdown-options').hide(); // Hide the dropdown
-    
-    fromContact = contact.id;
-    // You can also store the selected contact ID or other data if needed
-  });
-
-  $(document).on('click', function (event) {
-    if (!$(event.target).closest('.mapping-dropdown').length) {
-      $('#dropdown-options').hide();
-    }
-  });
-
-  $('#search-contact').on('focus', function () {
-   // fetchContacts(); // Show initial contacts
-    const searchQuery = $(this).val().trim();
-    if($('#dropdown-options').is(':hidden') && searchQuery === ''){
-      fetchContacts();
-    }
-    else if ($('#dropdown-options').is(':hidden')) { // Only fetch if dropdown is hidden
-       // Use existing searchQuery if present
-       $('#dropdown-options').show();
-    }
-    
-
-  });
+$('#search-contact').on('focus', function () {
+  const searchQuery = $(this).val().trim();
+  if ($('#dropdown-options').is(':hidden')) {
+    // Fetch contacts immediately without debounce when input is focused
+    fetchContacts(searchQuery);
+  }
+});
 
   function populateDropdowns() {
     $('.mapping-fields-group select').each(function () {
