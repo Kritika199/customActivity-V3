@@ -85,7 +85,7 @@ define([
     
 
     case 'step3':
-      $('#dropdown-options').hide();
+      $('#dropdown-options').show();
       if ($('.screen-3').css('display') === 'block') {
         validateStep3() ? proceedToNext() : handleValidationFailure();
       } else {
