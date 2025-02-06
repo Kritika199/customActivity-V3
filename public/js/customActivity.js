@@ -85,7 +85,7 @@ define([
     
 
     case 'step3':
-
+      $('#dropdown-options').hide();
       if ($('.screen-3').css('display') === 'block') {
         validateStep3() ? proceedToNext() : handleValidationFailure();
       } else {
@@ -961,10 +961,11 @@ function validateApiKeys() {
   });
 
   $('#search-contact').on('focus', function () {
-    fetchContacts(); // Show initial contacts
+   // fetchContacts(); // Show initial contacts
     const searchQuery = $(this).val().trim();
     if ($('#dropdown-options').is(':hidden')) { // Only fetch if dropdown is hidden
-      fetchContacts(searchQuery); // Use existing searchQuery if present
+       // Use existing searchQuery if present
+       $('#dropdown-options').show();
     }
 
   });
