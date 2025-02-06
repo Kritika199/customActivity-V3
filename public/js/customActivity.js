@@ -62,6 +62,7 @@ define([
       
         
         handleApiKeyToggle();
+        fetchContacts();
         connection.trigger('nextStep');
       } else {
         handleValidationFailure();
@@ -260,6 +261,8 @@ define([
   $('#test-api-key').on('input', hideErrorTestKey);
 $('#live-api-key').on('input', hideErrorLiveKey);
 
+
+
 function validateApiKeys() {
     let isValid = true;
     const testApiKey = $('#test-api-key').val().trim();
@@ -274,7 +277,7 @@ function validateApiKeys() {
         isValid = false;
     } else if (!regexForTestApiKey.test(testApiKey)) {
         $('#test-api-key').css('border', '1px solid red'); // Highlight input box
-        $('#test-api-key-error').text(`Invalid Test API Key: ${testApiKey}`).show(); // Show error message with key value
+        $('#test-api-key-error').text(`Invalid API key: ${testApiKey}`).show(); // Show error message with key value
         isValid = false;
     } else {
         previewPayload.test_api_key = testApiKey;
@@ -286,7 +289,7 @@ function validateApiKeys() {
     if (liveApiKey !== '') {
         if (!regexForLiveApiKey.test(liveApiKey)) {
             $('#live-api-key').css('border', '1px solid red'); // Highlight input box
-            $('#live-api-key-error').text(`Invalid Live API Key: ${liveApiKey}`).show(); // Show error message with key value
+            $('#live-api-key-error').text(`Invalid API key: ${liveApiKey}`).show(); // Show error message with key value
             isValid = false;
         } else {
             previewPayload.live_api_key = liveApiKey;
