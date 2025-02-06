@@ -482,22 +482,24 @@
                 <div class="section-label">Preview Post</div>
                 <div class="preview-box">
                     
-                    <div id="pdf-preview-container">
-                        <iframe id="pdf-preview" style="border: 1px solid #ccc;"></iframe>
-                        <p class="pdf-preview-error-msg" style="display:none"> Opps somthing went wrong.Please retry again </p>
+                    <!-- PDF Preview Container -->
+                    <div id="pdf-preview-container" style="display: none;">
+                        <iframe id="pdf-preview" style="border: 1px solid #ccc; width: 100%; height: 500px;"></iframe>
                     </div>
     
-                    <!-- Updated section with message on the left side of the button -->
+                    <!-- Button & Message Section -->
                     <div class="retry-btn-wrap">
-                        <span class="preview-message">If you want to view the template preview, click the 'Show Preview' button.</span>
+                        <span class="preview-message">
+                            If you want to view the template preview, click the 'Show Preview' button.
+                        </span>
                         <button class="retry-preview-btn">Show Preview</button>
-
                     </div>
     
                 </div>
             </div>
         </div>
     </div>
+    
 </body>
 
 </html>
