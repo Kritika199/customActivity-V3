@@ -60,9 +60,9 @@ define([
     case 'step1':
       if (validateApiKeys()) {
       
-        
-        handleApiKeyToggle();
         fetchContacts();
+        handleApiKeyToggle();
+        
         connection.trigger('nextStep');
       } else {
         handleValidationFailure();
@@ -851,17 +851,17 @@ function validateApiKeys() {
         }
     } catch (error) {
         // If there's an error fetching the preview, show the preview container even if empty
-        $('#pdf-preview-container').css('display', 'block'); // Ensure preview container is visible
-        $('.retry-preview-btn').css('display', 'none'); // Hide the retry button
-        $('.preview-message').css('display', 'none'); // Hide the message
+        $('#pdf-preview-container').css('display', 'block'); 
+        $('.retry-preview-btn').css('display', 'none'); 
+        $('.preview-message').css('display', 'none'); 
     }
 
     // Error handling for the PDF element itself (e.g., broken PDF link)
     $('#pdf-preview').on('error', function () {
         // If there's an error loading the PDF, still show the preview container (blank)
-        $('#pdf-preview-container').css('display', 'block'); // Ensure preview container is visible
-        $('.retry-preview-btn').css('display', 'none'); // Hide the retry button
-        $('.preview-message').css('display', 'none'); // Hide the message
+        $('#pdf-preview-container').css('display', 'block'); 
+        $('.retry-preview-btn').css('display', 'none'); 
+        $('.preview-message').css('display', 'none'); 
     });
 }
 
@@ -1027,57 +1027,44 @@ $('#search-contact').on('focus', function () {
     let isValid = true;
     resetToContactMappingErrors();
 
-    // Validate Address Line 1
-    let address1 = $('#address1').val();
-    if (address1 === 'Select') {
-      $('#address1').css('border', '2px solid red');
-      $('.error-message-contactMapping').text('Address Line 1 is required.').css('color', 'red').show();
-      isValid = false;
+    let requiredFields = ['#address1', '#first-name', '#company', '#city', '#state', '#country-code'];
+    let isAnyFieldEmpty = false;
+
+    requiredFields.forEach(selector => {
+        let value = $(selector).val();
+        
+        // Special validation for First Name or Company (one must be selected)
+        if (selector === '#first-name' || selector === '#company') {
+            if ($('#first-name').val() === 'Select' && $('#company').val() === 'Select') {
+                $('#first-name, #company').css('border', '2px solid red');
+                isAnyFieldEmpty = true;
+            }
+        } else {
+            if (value === 'Select') {
+                $(selector).css('border', '2px solid red');
+                isAnyFieldEmpty = true;
+            }
+        }
+    });
+
+    if (isAnyFieldEmpty) {
+        $('.error-message-contactMapping').text('Please fill all required fields.').css('color', 'red').show();
+        isValid = false;
     }
-
-    // Validate First Name or Company (one must be selected)
-    let firstName = $('#first-name').val();
-    let company = $('#company').val();
-    if (firstName === 'Select' && company === 'Select') {
-      $('#first-name, #company').css('border', '2px solid red');
-      $('.error-message-contactMapping').text('Either First Name or Company must be selected.').css('color', 'red').show();
-      isValid = false;
-    }
-
-    let city = $('#city').val();
-    if (city === 'Select') {
-      $('#city').css('border', '2px solid red');
-      $('.error-message-contactMapping').text(' City is required.').css('color', 'red').show();
-      isValid = false;
-    }
-
-    let state = $('#state').val();
-    if (state === 'Select') {
-      $('#state').css('border', '2px solid red');
-      $('.error-message-contactMapping').text(' State is required.').css('color', 'red').show();
-      isValid = false;
-    }
-    let countryCode = $('#country-code').val();
-    if (countryCode === 'Select') {
-      $('#country-code').css('border', '2px solid red');
-      $('.error-message-contactMapping').text(' Country Code is required.').css('color', 'red').show();
-      isValid = false;
-    }
-
-
-  
-
 
     return isValid;
-  }
+}
 
-  function resetToContactMappingErrors() {
+function resetToContactMappingErrors() {
     $('.mapping-fields-group select').css('border', ''); // Reset border styles
-    $('.error-message-contactMapping').text('').hide(); // Clear and hide error messages
-  }
-  $('.mapping-fields-group select').on('click', function () {
+    $('.error-message-contactMapping').text('').hide(); // Clear and hide error message
+}
+
+// Automatically hide error message and reset borders when user interacts with a field
+$('.mapping-fields-group select').on('change', function () {
     resetToContactMappingErrors();
-  });
+});
+
   /** screen 4 script */
 
   /** screen 3C script */
