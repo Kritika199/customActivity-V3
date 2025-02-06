@@ -833,15 +833,15 @@ function validateApiKeys() {
         // If PDF URL is available, show the preview and the button message
         if (pdfUrl) {
             // Show the preview message and button initially, but don't show the PDF yet
-            $('.retry-preview-btn').css('display', 'inline-block'); // Show the retry button
-            $('.preview-message').css('display', 'inline-block'); // Show the message
+            $('.retry-preview-btn').css('display', 'inline-block'); 
+            $('.preview-message').css('display', 'inline-block'); 
 
             // Set up the button to show the PDF when clicked
             $('.retry-preview-btn').off('click').on('click', function() {
                 $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
-                $('#pdf-preview-container').css('display', 'block'); // Show the PDF container
-                $('.retry-preview-btn').css('display', 'none'); // Hide the retry button
-                $('.preview-message').css('display', 'none'); // Hide the preview message
+                $('#pdf-preview-container').css('display', 'block'); 
+                $('.retry-preview-btn').css('display', 'none'); 
+                $('.preview-message').css('display', 'none'); 
             });
         } else {
             // If PDF URL is not available, hide everything related to preview

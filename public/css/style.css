@@ -1004,10 +1004,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 
 .retry-btn-wrap {
-    display: inline-flex;
-        gap: 1rem;
-        align-items: center;
-        padding: 8px;
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+    align-items: center; 
+    padding: 20px; 
+    margin-top: 20px; 
+    margin-bottom: 20px; 
+    text-align: center; 
 }
 
 .retry-preview-btn {
@@ -1017,9 +1021,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding: 0.35rem 1.5rem;
     height: fit-content;
     border-radius: 4px;
+    margin-top: 10px; 
 }
 
 .preview-message {
-    font-size: 14px;
-    color: #666; /* Adjust the color as needed */
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 10px; 
+    text-align: center; 
 }
