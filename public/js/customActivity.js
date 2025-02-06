@@ -825,46 +825,51 @@ function validateApiKeys() {
 
   async function showPdfPreview(postcardId) {
     try {
+        // Reset the previous preview
+        $('#pdf-preview').attr('src', ''); // Clear old PDF
+        $('#pdf-preview-container').css('display', 'none'); // Hide preview container
+        $('.retry-preview-btn').css('display', 'none'); // Hide button initially
+        $('.preview-message').css('display', 'none'); // Hide message initially
+
         const postcardDetails = await fetchPostcardDetails(postcardId);
         const pdfUrl = postcardDetails.url;
 
-        console.log("PDF URL:", pdfUrl); // Console log to check if URL is coming
+        console.log("PDF URL:", pdfUrl); // Debugging log
 
         connection.trigger('nextStep');
 
-        // If PDF URL is available, show the preview and the button message
         if (pdfUrl) {
             $('.retry-preview-btn').css('display', 'inline-block'); 
             $('.preview-message').css('display', 'inline-block'); 
 
             $('.retry-preview-btn').off('click').on('click', function() {
-                console.log("Show Preview button clicked!"); // Console log on button click
+                console.log("Show Preview button clicked!");
                 $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
                 $('#pdf-preview-container').css('display', 'block'); 
                 $('.retry-preview-btn').css('display', 'none'); 
                 $('.preview-message').css('display', 'none'); 
             });
         } else {
-            console.warn("No PDF URL received!"); // Warning if URL is missing
+            console.warn("No PDF URL received!");
             $('#pdf-preview-container').css('display', 'block');
             $('.retry-preview-btn').css('display', 'none');
             $('.preview-message').css('display', 'none');
         }
     } catch (error) {
-        console.error("Error fetching PDF Preview:", error); // Error logging
+        console.error("Error fetching PDF Preview:", error);
         $('#pdf-preview-container').css('display', 'block'); 
         $('.retry-preview-btn').css('display', 'none'); 
         $('.preview-message').css('display', 'none'); 
     }
 
-    // Error handling for the PDF element itself
     $('#pdf-preview').on('error', function () {
-        console.error("Error loading PDF preview!"); // Console log if PDF fails to load
+        console.error("Error loading PDF preview!");
         $('#pdf-preview-container').css('display', 'block'); 
         $('.retry-preview-btn').css('display', 'none'); 
         $('.preview-message').css('display', 'none'); 
     });
 }
+
 
 
 async function getPreviewURL () {
