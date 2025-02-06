@@ -825,7 +825,7 @@ function validateApiKeys() {
 
   async function showPdfPreview(postcardId) {
     try {
-        // Reset the previous preview
+       
         $('#pdf-preview').attr('src', ''); // Clear old PDF
         $('#pdf-preview-container').css('display', 'none'); // Hide preview container
         $('.retry-preview-btn').css('display', 'none'); // Hide button initially
