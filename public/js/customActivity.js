@@ -270,7 +270,7 @@ define([
     }
     else if(!regexForTestApiKey.test(testApiKey)){
       $('#test-api-key').css('border', '1px solid red'); // Highlight input box
-      $('#test-api-key-error').text('Invalid API key.').show();
+      $('#test-api-key-error').text('Invalid API key.${testApiKey}').show();
       isValid =  false;
     } else {
         previewPayload.test_api_key = testApiKey;
@@ -280,7 +280,7 @@ define([
     if(liveApiKey !== ''){
       if(!regexForLiveApiKey.test(liveApiKey)){
         $('#live-api-key').css('border', '1px solid red'); // Highlight input box
-        $('#live-api-key-error').text('Invalid API key.').show();
+        $('#live-api-key-error').text('Invalid API key.${liveApiKey}').show();
         isValid =  false;
       } else {
         previewPayload.live_api_key = liveApiKey;
@@ -1026,7 +1026,7 @@ define([
       isValid = false;
     }
     let countryCode = $('#country-code').val();
-    if (city === 'Select') {
+    if (countryCode === 'Select') {
       $('#country-code').css('border', '2px solid red');
       $('.error-message-contactMapping').text(' Country Code is required.').css('color', 'red').show();
       isValid = false;
