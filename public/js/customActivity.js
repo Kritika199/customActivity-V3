@@ -828,42 +828,44 @@ function validateApiKeys() {
         const postcardDetails = await fetchPostcardDetails(postcardId);
         const pdfUrl = postcardDetails.url;
 
+        console.log("PDF URL:", pdfUrl); // Console log to check if URL is coming
+
         connection.trigger('nextStep');
 
         // If PDF URL is available, show the preview and the button message
         if (pdfUrl) {
-            // Show the preview message and button initially, but don't show the PDF yet
             $('.retry-preview-btn').css('display', 'inline-block'); 
             $('.preview-message').css('display', 'inline-block'); 
 
-            // Set up the button to show the PDF when clicked
             $('.retry-preview-btn').off('click').on('click', function() {
+                console.log("Show Preview button clicked!"); // Console log on button click
                 $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
                 $('#pdf-preview-container').css('display', 'block'); 
                 $('.retry-preview-btn').css('display', 'none'); 
                 $('.preview-message').css('display', 'none'); 
             });
         } else {
-            // If PDF URL is not available, show the preview container but hide the button and message
+            console.warn("No PDF URL received!"); // Warning if URL is missing
             $('#pdf-preview-container').css('display', 'block');
             $('.retry-preview-btn').css('display', 'none');
             $('.preview-message').css('display', 'none');
         }
     } catch (error) {
-        // If there's an error fetching the preview, show the preview container even if empty
+        console.error("Error fetching PDF Preview:", error); // Error logging
         $('#pdf-preview-container').css('display', 'block'); 
         $('.retry-preview-btn').css('display', 'none'); 
         $('.preview-message').css('display', 'none'); 
     }
 
-    // Error handling for the PDF element itself (e.g., broken PDF link)
+    // Error handling for the PDF element itself
     $('#pdf-preview').on('error', function () {
-        // If there's an error loading the PDF, still show the preview container (blank)
+        console.error("Error loading PDF preview!"); // Console log if PDF fails to load
         $('#pdf-preview-container').css('display', 'block'); 
         $('.retry-preview-btn').css('display', 'none'); 
         $('.preview-message').css('display', 'none'); 
     });
 }
+
 
 async function getPreviewURL () {
     try {
