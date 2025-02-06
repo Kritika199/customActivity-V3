@@ -257,38 +257,49 @@ define([
   $('#test-api-key').on('input', hideErrorTestKey);
   $('#live-api-key').on('input', hideErrorLiveKey);
 
-  function validateApiKeys() {
+  $('#test-api-key').on('input', hideErrorTestKey);
+$('#live-api-key').on('input', hideErrorLiveKey);
+
+function validateApiKeys() {
     let isValid = true;
     const testApiKey = $('#test-api-key').val().trim();
     const liveApiKey = $('#live-api-key').val().trim();
     const regexForTestApiKey = /^test_sk_[a-zA-Z0-9]{16,}$/;
     const regexForLiveApiKey = /^live_sk_[a-zA-Z0-9]{16,}$/;
+
+    // Validate Test API Key
     if (testApiKey === '') {
-      $('#test-api-key').css('border', '1px solid red'); // Highlight input box
-      $('#test-api-key-error').show(); // Show error message
-      isValid = false;
-    }
-    else if(!regexForTestApiKey.test(testApiKey)){
-      $('#test-api-key').css('border', '1px solid red'); // Highlight input box
-      $('#test-api-key-error').text(`Invalid API key: ${testApiKey}`).show();
-      isValid =  false;
+        $('#test-api-key').css('border', '1px solid red'); // Highlight input box
+        $('#test-api-key-error').text('Test API Key is required').show(); // Show error message
+        isValid = false;
+    } else if (!regexForTestApiKey.test(testApiKey)) {
+        $('#test-api-key').css('border', '1px solid red'); // Highlight input box
+        $('#test-api-key-error').text(`Invalid Test API Key: ${testApiKey}`).show(); // Show error message with key value
+        isValid = false;
     } else {
         previewPayload.test_api_key = testApiKey;
+        $('#test-api-key-error').hide(); // Hide error message if valid
+        $('#test-api-key').css('border', ''); // Remove highlight
     }
 
-    // checking Live API key if it is not empty
-    if(liveApiKey !== ''){
-      if(!regexForLiveApiKey.test(liveApiKey)){
-        $('#live-api-key').css('border', '1px solid red'); // Highlight input box
-        $('#live-api-key-error').text(`Invalid API key: ${liveApiKey}`).show();
-        isValid =  false;
-      } else {
-        previewPayload.live_api_key = liveApiKey;
-      }
+    // Validate Live API Key (only if it's not empty)
+    if (liveApiKey !== '') {
+        if (!regexForLiveApiKey.test(liveApiKey)) {
+            $('#live-api-key').css('border', '1px solid red'); // Highlight input box
+            $('#live-api-key-error').text(`Invalid Live API Key: ${liveApiKey}`).show(); // Show error message with key value
+            isValid = false;
+        } else {
+            previewPayload.live_api_key = liveApiKey;
+            $('#live-api-key-error').hide(); // Hide error message if valid
+            $('#live-api-key').css('border', ''); // Remove highlight
+        }
+    } else {
+        $('#live-api-key-error').hide(); // Hide error message if empty
+        $('#live-api-key').css('border', ''); // Remove highlight
     }
+
     return isValid;
-  
-  }
+}
   
   function hideErrorTestKey() {
     $('#test-api-key').css('border', ''); // Reset border
