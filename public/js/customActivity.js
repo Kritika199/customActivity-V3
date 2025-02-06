@@ -845,13 +845,13 @@ function validateApiKeys() {
             });
         } else {
             // If PDF URL is not available, hide everything related to preview
-            $('#pdf-preview-container').css('display', 'none');
+            $('#pdf-preview-container').css('display', 'block');
             $('.retry-preview-btn').css('display', 'none');
             $('.preview-message').css('display', 'none');
         }
     } catch (error) {
         // If there's an error, hide everything related to preview
-        $('#pdf-preview-container').css('display', 'none');
+        $('#pdf-preview-container').css('display', 'block');
         $('.retry-preview-btn').css('display', 'none');
         $('.preview-message').css('display', 'none');
     }
@@ -874,11 +874,11 @@ async function getPreviewURL () {
         // Delay the preview call slightly to ensure postcard is ready
         setTimeout(async function() {
             await showPdfPreview(postcardId);
-        }, 2000);
+        }, 3000);
 
     } catch (error) {
         // If postcard creation fails, hide everything related to preview
-        $('#pdf-preview-container').css('display', 'none');
+        $('#pdf-preview-container').css('display', 'block');
         $('.retry-preview-btn').css('display', 'none');
         $('.preview-message').css('display', 'none');
     }
