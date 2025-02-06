@@ -1034,17 +1034,17 @@ $('#search-contact').on('focus', function () {
         let value = $(selector).val();
         
         // Special validation for First Name or Company (one must be selected)
-        if (selector === '#first-name' || selector === '#company') {
-            if ($('#first-name').val() === 'Select' && $('#company').val() === 'Select') {
-                $('#first-name, #company').css('border', '2px solid red');
-                isAnyFieldEmpty = true;
-            }
-        } else {
-            if (value === 'Select') {
-                $(selector).css('border', '2px solid red');
-                isAnyFieldEmpty = true;
-            }
-        }
+        
+    // Validate First Name or Company (one must be selected)
+    let firstName = $('#first-name').val();
+    let company = $('#company').val();
+    if (firstName === 'Select' && company === 'Select') {
+      $('#first-name, #company').css('border', '2px solid red');
+      $('.error-message-contactMapping').text('Either First Name or Company must be selected.').css('color', 'red').show();
+      isValid = false;
+    }
+
+        
     });
 
     if (isAnyFieldEmpty) {
