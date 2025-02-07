@@ -10,7 +10,6 @@ define([
   let deFields;
   let selectedFieldsForMapping = {};
   let previewPayload = {
-    
     isValid: true
   };
   let fromContact = '';
@@ -59,8 +58,6 @@ define([
     switch (currentStep.key) {
     case 'step1':
       if (validateApiKeys()) {
-      
-        fetchContacts();
         handleApiKeyToggle();
         
         connection.trigger('nextStep');
@@ -69,20 +66,17 @@ define([
       }
       break;
 
-      case 'step2':
-        if (validateStep2()) {
-            var isExtTemp = $('#extTempId').is(':checked'); 
-            
-            if (isExtTemp) {
-                fetchTemplates(); 
-            }
-    
-            connection.trigger('nextStep');
-        } else {
-            handleValidationFailure();
+    case 'step2':
+      if (validateStep2()) {
+        var isExtTemp = $('#extTempId').is(':checked');
+        if (isExtTemp) {
+            fetchTemplates();
         }
-        break;
-    
+        connection.trigger('nextStep');
+      } else {
+        handleValidationFailure();
+      }
+      break;
 
     case 'step3':
       $('#dropdown-options').hide();
@@ -258,22 +252,16 @@ define([
   $('#test-api-key').on('input', hideErrorTestKey);
   $('#live-api-key').on('input', hideErrorLiveKey);
 
-  $('#test-api-key').on('input', hideErrorTestKey);
-$('#live-api-key').on('input', hideErrorLiveKey);
-
-
-
-function validateApiKeys() {
+  function validateApiKeys() {
     let isValid = true;
     const testApiKey = $('#test-api-key').val().trim();
     const liveApiKey = $('#live-api-key').val().trim();
     const regexForTestApiKey = /^test_sk_[a-zA-Z0-9]{16,}$/;
     const regexForLiveApiKey = /^live_sk_[a-zA-Z0-9]{16,}$/;
-
     // Validate Test API Key
     if (testApiKey === '') {
         $('#test-api-key').css('border', '1px solid red'); // Highlight input box
-        $('#test-api-key-error').text('Test API Key is required').show(); // Show error message
+        $('#test-api-key-error').text('Missing or invalid authentication').show(); // Show error message
         isValid = false;
     } else if (!regexForTestApiKey.test(testApiKey)) {
         $('#test-api-key').css('border', '1px solid red'); // Highlight input box
@@ -284,23 +272,16 @@ function validateApiKeys() {
         $('#test-api-key-error').hide(); // Hide error message if valid
         $('#test-api-key').css('border', ''); // Remove highlight
     }
-
     // Validate Live API Key (only if it's not empty)
+    previewPayload.live_api_key = liveApiKey;
     if (liveApiKey !== '') {
         if (!regexForLiveApiKey.test(liveApiKey)) {
             $('#live-api-key').css('border', '1px solid red'); // Highlight input box
             $('#live-api-key-error').text(`Invalid API key: ${liveApiKey}`).show(); // Show error message with key value
             isValid = false;
-        } else {
-            previewPayload.live_api_key = liveApiKey;
-            $('#live-api-key-error').hide(); // Hide error message if valid
-            $('#live-api-key').css('border', ''); // Remove highlight
+            previewPayload.live_api_key = '';
         }
-    } else {
-        $('#live-api-key-error').hide(); // Hide error message if empty
-        $('#live-api-key').css('border', ''); // Remove highlight
     }
-
     return isValid;
 }
   
@@ -350,7 +331,7 @@ function validateApiKeys() {
     if (!$('input[name=\'msgType\']:checked').length) {
       errorMessages.push('Message Type is required.');
       isValid = false;
-      $('#msgType-error').text('Please Select the Message Type.');
+      $('#msgType-error').text('Message Type is required.');
     } else {
       $('#msgType-error').text('');  // Clear error if valid
     }
@@ -359,7 +340,7 @@ function validateApiKeys() {
     if (!$('input[name=\'createType\']:checked').length) {
       errorMessages.push('Creation Type is required.');
       isValid = false;
-      $('#createType-error').text('Please select the Creation Type.');
+      $('#createType-error').text('Creation Type is required.');
     } else {
       $('#createType-error').text('');  // Clear error if valid
     }
@@ -394,36 +375,29 @@ function validateApiKeys() {
     }
   }
 
+
   $(document).ready(function () {
     const $liveModeToggle = $('.test-to-live-switch input');
     const $errorMessage = $('#liveModeError');
-
     console.log("Script Loaded: Checking Live Mode Toggle");
     console.log("Live Mode Toggle Found:", $liveModeToggle.length);
-
     if ($liveModeToggle.length === 0) {
         console.error("Error: Live Mode Toggle input NOT found in the DOM!");
         return; // Exit script if element is missing
     }
-
     // Attach events to the parent label (because disabled inputs don't fire events)
     $('.test-to-live-switch').on('mouseenter', function () {
         console.log("Hover detected on Live Mode Toggle container");
-
         if ($liveModeToggle.prop('disabled')) {
             console.log("Live Mode Toggle is Disabled - Showing Error Message");
             $errorMessage.show();
         }
     });
-
     $('.test-to-live-switch').on('mouseleave', function () {
         console.log("Mouse Left Live Mode Toggle - Hiding Error Message");
         $errorMessage.hide();
     });
 });
-
-
-
 
   $('.step2radioBTN').change(function () {
     var isPostcard = $('#postcard').is(':checked');
@@ -498,9 +472,12 @@ function validateApiKeys() {
     });
 
     $('#pdf-upload').on('change', function () {
+        console.log('file type: '+this.files[0].type);
       if (this.files.length > 0 && this.files[0].type === 'application/pdf') {
         $('#file-name').text(this.files[0].name);
         $('#remove-pdf').show();
+      } else if (this.files[0].type !== 'application/pdf') {
+        $('.drop-pdf .error-msg').text('Invalid file type! Please upload a PDF file.').addClass('show');
       }
     });
 
@@ -525,11 +502,6 @@ function validateApiKeys() {
       }
     });
   }
-
-  /*fetch template data **/
-
-
-  
 
   async function validateStep3A() {
     let isValid = true;
@@ -619,8 +591,6 @@ function validateApiKeys() {
 
             const pdfDimensions = `${(width / 72).toFixed(2)}x${(height / 72).toFixed(2)}`;
             const selectedPDFDimension = $('.postcard-pdf-size input[name="postcardPDFSize"]:checked').data('dimentions');
-
-    
 
             if (numPages !== 2) {
               resolve({
@@ -825,29 +795,23 @@ function validateApiKeys() {
 
   async function showPdfPreview(postcardId) {
     try {
-       
-        $('#pdf-preview').attr('src', ''); // Clear old PDF
-        $('#pdf-preview-container').css('display', 'none'); // Hide preview container
-        $('.retry-preview-btn').css('display', 'none'); // Hide button initially
-        $('.preview-message').css('display', 'none'); // Hide message initially
-
+        $('#pdf-preview').attr('src', '');
+        $('#pdf-preview-container').css('display', 'none');
+        $('.retry-preview-btn').css('display', 'none');
+        $('.preview-message').css('display', 'none');
         const postcardDetails = await fetchPostcardDetails(postcardId);
         const pdfUrl = postcardDetails.url;
-
-        console.log("PDF URL:", pdfUrl); // Debugging log
-
+        console.log("PDF URL:", pdfUrl);
         connection.trigger('nextStep');
-
         if (pdfUrl) {
-            $('.retry-preview-btn').css('display', 'inline-block'); 
-            $('.preview-message').css('display', 'inline-block'); 
-
+            $('.retry-preview-btn').css('display', 'inline-block');
+            $('.preview-message').css('display', 'inline-block');
             $('.retry-preview-btn').off('click').on('click', function() {
                 console.log("Show Preview button clicked!");
                 $('#pdf-preview').attr('src', pdfUrl + '#toolbar=0&navpanes=0');
-                $('#pdf-preview-container').css('display', 'block'); 
-                $('.retry-preview-btn').css('display', 'none'); 
-                $('.preview-message').css('display', 'none'); 
+                $('#pdf-preview-container').css('display', 'block');
+                $('.retry-preview-btn').css('display', 'none');
+                $('.preview-message').css('display', 'none');
             });
         } else {
             console.warn("No PDF URL received!");
@@ -857,45 +821,39 @@ function validateApiKeys() {
         }
     } catch (error) {
         console.error("Error fetching PDF Preview:", error);
-        $('#pdf-preview-container').css('display', 'block'); 
-        $('.retry-preview-btn').css('display', 'none'); 
-        $('.preview-message').css('display', 'none'); 
-    }
-
-    $('#pdf-preview').on('error', function () {
-        console.error("Error loading PDF preview!");
-        $('#pdf-preview-container').css('display', 'block'); 
-        $('.retry-preview-btn').css('display', 'none'); 
-        $('.preview-message').css('display', 'none'); 
-    });
-}
-
-
-
-async function getPreviewURL () {
-    try {
-        const postcardResponse = await createPostcard();
-        const postcardId = postcardResponse.id;
-        previewPayload.postcardId = postcardId;
-
-        // Delay the preview call slightly to ensure postcard is ready
-        setTimeout(async function() {
-            await showPdfPreview(postcardId);
-        }, 3000);
-
-    } catch (error) {
-        // If postcard creation fails, show the preview container even if no PDF is fetched
         $('#pdf-preview-container').css('display', 'block');
         $('.retry-preview-btn').css('display', 'none');
         $('.preview-message').css('display', 'none');
     }
+    $('#pdf-preview').on('error', function () {
+        console.error("Error loading PDF preview!");
+        $('#pdf-preview-container').css('display', 'block');
+        $('.retry-preview-btn').css('display', 'none');
+        $('.preview-message').css('display', 'none');
+    });
 }
 
-// Event listener for retry button click
-$('.preview-container .retry-preview-btn').click(async function() {
-    await showPdfPreview(previewPayload.postcardId); // Retry fetching the preview
-});
+  async function getPreviewURL () {
+    try {
+      const postcardResponse = await createPostcard();
+      const postcardId = postcardResponse.id;
+      previewPayload.postcardId = postcardId;
 
+      setTimeout(async function() {
+        await showPdfPreview(postcardId);
+      }, 2000);
+
+    } catch (error) {
+      $('.preview-container .retry-preview-btn').addClass('show');
+      $('#pdf-preview-container').css('display','none');
+      $('.pdf-preview-error-msg').text('Failed to fetch preview.');
+
+    }
+  }
+
+  $('.preview-container .retry-preview-btn').click(async function() {
+    await showPdfPreview(previewPayload.postcardId);
+  });
 
   $('.express-delivery-btn').on('click', function() {
     var isChecked = $(this).prop('checked');
@@ -910,81 +868,72 @@ $('.preview-container .retry-preview-btn').click(async function() {
 
   /** screen 4 script */
   let timeoutId;
-
-function fetchContacts(searchQuery) {
+  function fetchContacts(searchQuery) {
     $.ajax({
-        url: 'https://api.postgrid.com/print-mail/v1/contacts', // Replace with your API endpoint
-        method: 'GET',
-        data: searchQuery ? { search: searchQuery, limit: 10 } : { limit: 10 },
-        headers: {
-            'x-api-key': previewPayload.test_api_key // Replace with your API key
-        },
-        success: function (response) {
-            // Clear existing options
-            $('#dropdown-options').empty();
+      url: 'https://api.postgrid.com/print-mail/v1/contacts', // Replace with your API endpoint
+      method: 'GET',
+      data: searchQuery ? { search: searchQuery, limit: 10 } : { limit: 10 },
+      headers: {
+        'x-api-key': previewPayload.test_api_key// Replace with your API key
+      },
+      success: function (response) {
+        // Clear existing options
+        $('#dropdown-options').empty();
 
-            // Populate the dropdown with new options
-            response.data.forEach(function (contact) {
-                $('#dropdown-options').append(
-                    $('<div>').text(contact.firstName).data('contact', contact)
-                );
-            });
 
-            // Show the dropdown if there are results
-            if (response.data.length > 0) {
-                $('#dropdown-options').show();
-            } else {
-                $('#dropdown-options').hide();
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error('Error fetching contacts:', error);
+        // Populate the dropdown with new options
+        response.data.forEach(function (contact) {
+          $('#dropdown-options').append(
+            $('<div>').text(contact.firstName).data('contact', contact)
+          );
+        });
+
+        // Show the dropdown if there are results
+        if (response.data.length > 0) {
+          $('#dropdown-options').show();
+        } else {
+          $('#dropdown-options').hide();
         }
+      },
+      error: function (xhr, status, error) {
+        console.error('Error fetching contacts:', error);
+      }
     });
-}
+  }
 
-function debounce(func, delay) {
+  function debounce(func, delay) {
     return function () {
-        const context = this;
-        const args = arguments;
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => func.apply(context, args), delay);
+      const context = this;
+      const args = arguments;
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(context, args), delay);
     };
-}
+  }
 
-const debouncedFetchContacts = debounce(fetchContacts, 300);
+  const debouncedFetchContacts = debounce(fetchContacts, 300);
 
-$('#search-contact').on('input', function () {
-    const searchQuery = $(this).val().trim();
-    
-    if (searchQuery.length > 2) { 
-        // Only search if the input has more than 2 characters
-        debouncedFetchContacts(searchQuery);
-    } else if (searchQuery === '') {
-        // When input is cleared, fetch default contacts
-        fetchContacts();
+  $('#search-contact').on('input', function () {
+    const searchQuery = $(this).val();
+    if (searchQuery.length > 2) { // Only search if the input has more than 2 characters
+      debouncedFetchContacts(searchQuery);
     } else {
-        $('#dropdown-options').empty().hide();
+      $('#dropdown-options').empty().hide();
     }
-});
+  });
 
-$('#dropdown-options').on('click', 'div', function () {
+  $('#dropdown-options').on('click', 'div', function () {
     const contact = $(this).data('contact');
     $('#search-contact').val(contact.firstName); // Set the selected contact name in the input
     $('#dropdown-options').hide(); // Hide the dropdown
-
     fromContact = contact.id;
 });
-
 $(document).on('click', function (event) {
     if (!$(event.target).closest('.mapping-dropdown').length) {
         $('#dropdown-options').hide();
     }
 });
-
 $('#search-contact').on('focus', function () {
     const searchQuery = $(this).val().trim();
-
     if ($('#dropdown-options').is(':hidden')) {
         if (searchQuery === '') {
             fetchContacts(); // Fetch default contacts if input is empty
@@ -1033,45 +982,37 @@ $('#search-contact').on('focus', function () {
   function validateToContact() {
     let isValid = true;
     resetToContactMappingErrors();
-
     let requiredFields = ['#address1', '#first-name', '#company', '#city', '#state', '#country-code'];
     let isAnyFieldEmpty = false;
-
     requiredFields.forEach(selector => {
-        let value = $(selector).val();
-        
-        // Special validation for First Name or Company (one must be selected)
-        if (selector === '#first-name' || selector === '#company') {
-            if ($('#first-name').val() === 'Select' && $('#company').val() === 'Select') {
-                $('#first-name, #company').css('border', '2px solid red');
-                isAnyFieldEmpty = true;
-            }
-        } else {
-            if (value === 'Select') {
-                $(selector).css('border', '2px solid red');
-                isAnyFieldEmpty = true;
-            }
+      let value = $(selector).val();
+      // Special validation for First Name or Company (one must be selected)
+      if (selector === '#first-name' || selector === '#company') {
+        if ($('#first-name').val() === 'Select' && $('#company').val() === 'Select') {
+          $('#first-name, #company').css('border', '2px solid red');
+          isAnyFieldEmpty = true;
         }
+      } else {
+        if (value === 'Select') {
+          $(selector).css('border', '2px solid red');
+          isAnyFieldEmpty = true;
+        }
+      }
     });
-
     if (isAnyFieldEmpty) {
-        $('.error-message-contactMapping').text('Please fill all required fields.').css('color', 'red').show();
-        isValid = false;
+      $('.error-message-contactMapping').text('Please fill all required fields.').css('color', 'red').show();
+      isValid = false;
     }
-
     return isValid;
-}
+  }
 
-function resetToContactMappingErrors() {
+  function resetToContactMappingErrors() {
     $('.mapping-fields-group select').css('border', ''); // Reset border styles
-    $('.error-message-contactMapping').text('').hide(); // Clear and hide error message
-}
-
-// Automatically hide error message and reset borders when user interacts with a field
-$('.mapping-fields-group select').on('change', function () {
+    $('.error-message-contactMapping').text('').hide(); // Clear and hide error messages
+  }
+  $('.mapping-fields-group select').on('click', function () {
     resetToContactMappingErrors();
-});
-
+  });
   /** screen 4 script */
 
   /** screen 3C script */
@@ -1137,6 +1078,7 @@ $('.mapping-fields-group select').on('change', function () {
       timeoutId = setTimeout(() => func.apply(this, args), delay);
     };
   }
+
   async function fetchTemplates(searchQuery = '') {
     const requestOptions = {
       method: 'GET',
@@ -1236,7 +1178,5 @@ $('.mapping-fields-group select').on('change', function () {
     fetchTemplates(searchQuery);
   }, 300));
 
- 
-  
   /** screen 3C script */
 });
