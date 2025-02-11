@@ -645,7 +645,7 @@ define([
 
 $('.step2radioBTN').change(function () {
   var isPostcard = $('#postcard').is(':checked');
-  var isSelfMailer = $('#selfMailer').is(':checked'); // Check if Self-Mailer is selected
+  var isSelfMailer = $('#selfmailer').is(':checked'); // Check if Self-Mailer is selected
   var isHtml = $('#htmlId').is(':checked');
   var isPdf = $('#pdfId').is(':checked');
   var isExtTemp = $('#extTempId').is(':checked');
