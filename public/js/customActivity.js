@@ -1242,6 +1242,7 @@ $('#search-contact').on('focus', function () {
     return isValid;
   }
 
+  
   // Handling * in Company Label based on First Name selection
 $('.mapping-fields-group #first-name').change(function () {
   var firstNameValue = $(this).val();
@@ -1265,7 +1266,6 @@ $('.mapping-fields-group #company').change(function () {
       firstNameLabel.text('First Name *'); // Add * back
   }
 });
-
 
   function resetToContactMappingErrors() {
     $('.mapping-fields-group select').css('border', ''); // Reset border styles
