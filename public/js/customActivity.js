@@ -643,20 +643,22 @@ define([
     });
 });
 
-  $('.step2radioBTN').change(function () {
-    var isPostcard = $('#postcard').is(':checked');
-    var isHtml = $('#htmlId').is(':checked');
-    var isPdf = $('#pdfId').is(':checked');
-    var isExtTemp = $('#extTempId').is(':checked');
+$('.step2radioBTN').change(function () {
+  var isPostcard = $('#postcard').is(':checked');
+  var isSelfMailer = $('#selfMailer').is(':checked'); // Check if Self-Mailer is selected
+  var isHtml = $('#htmlId').is(':checked');
+  var isPdf = $('#pdfId').is(':checked');
+  var isExtTemp = $('#extTempId').is(':checked');
 
-    if (isPostcard) {
+  if (isPostcard || isSelfMailer) { 
       $('#postcardScreen').show();
       $('#postcardScreen > .screen-1').toggle(isHtml);
       $('#postcardScreen > .screen-2').toggle(isPdf);
       $('#postcardScreen > .screen-3').toggle(isExtTemp);
-    } else {
+  } else {
       $('#postcardScreen').hide();
-    }
+  }
+
 
     // The "Next" button remains enabled
     connection.trigger('updateButton', {
