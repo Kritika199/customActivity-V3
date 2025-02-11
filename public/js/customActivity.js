@@ -1214,67 +1214,74 @@ $('#search-contact').on('focus', function () {
     }
 });
 
+$(document).ready(function () {
   function validateToContact() {
-    let isValid = true;
-    previewPayload.fromContact = fromContact;
-    resetToContactMappingErrors();
-    let requiredFields = ['#address1', '#first-name', '#company', '#city', '#state', '#country-code'];
-    let isAnyFieldEmpty = false;
-    requiredFields.forEach(selector => {
-      let value = $(selector).val();
-      // Special validation for First Name or Company (one must be selected)
-      if (selector === '#first-name' || selector === '#company') {
-        if ($('#first-name').val() === 'Select' && $('#company').val() === 'Select') {
-          $('#first-name, #company').css('border', '2px solid red');
-          isAnyFieldEmpty = true;
-        }
-      } else {
-        if (value === 'Select') {
-          $(selector).css('border', '2px solid red');
-          isAnyFieldEmpty = true;
-        }
+      let isValid = true;
+      previewPayload.fromContact = fromContact;
+      resetToContactMappingErrors();
+
+      let requiredFields = ['#addressLine1', '#firstName', '#companyName', '#city', '#provinceOrState', '#countryCode'];
+      let isAnyFieldEmpty = false;
+
+      requiredFields.forEach(selector => {
+          let value = $(selector).val();
+          // Special validation for First Name or Company (one must be selected)
+          if (selector === '#firstName' || selector === '#companyName') {
+              if ($('#firstName').val() === 'Select' && $('#companyName').val() === 'Select') {
+                  $('#firstName, #companyName').css('border', '2px solid red');
+                  isAnyFieldEmpty = true;
+              }
+          } else {
+              if (value === 'Select') {
+                  $(selector).css('border', '2px solid red');
+                  isAnyFieldEmpty = true;
+              }
+          }
+      });
+
+      if (isAnyFieldEmpty) {
+          $('.error-message-contactMapping').text('Please fill all required fields.').css('color', 'red').show();
+          isValid = false;
       }
-    });
-    if (isAnyFieldEmpty) {
-      $('.error-message-contactMapping').text('Please fill all required fields.').css('color', 'red').show();
-      isValid = false;
-    }
-    return isValid;
+      return isValid;
   }
 
   // Handling * in Company Label based on First Name selection
-$('.mapping-fields-group #first-name').change(function () {
-  var firstNameValue = $(this).val();
-  var companyLabel = $('.mapping-fields-group label[for="companyName"]');
+  $('#firstName').change(function () {
+      var firstNameValue = $(this).val();
+      var companyLabel = $('label[for="companyName"]');
+      var companyField = $('#companyName').val();
 
-  if (firstNameValue !== 'Select') {
-      companyLabel.text('Company'); // Remove *
-  } else {
-      companyLabel.text('Company *'); // Add * back
-  }
-});
+      if (firstNameValue !== 'Select' && firstNameValue !== '') {
+          companyLabel.text('Company'); // Remove *
+      } else if (companyField === 'Select' || companyField === '') {
+          companyLabel.text('Company *'); // Add * back if company is also empty
+      }
+  });
 
-// Handling * in First Name Label based on Company selection
-$('.mapping-fields-group #company').change(function () {
-  var companyValue = $(this).val();
-  var firstNameLabel = $('.mapping-fields-group label[for="firstname"]');
+  // Handling * in First Name Label based on Company selection
+  $('#companyName').change(function () {
+      var companyValue = $(this).val();
+      var firstNameLabel = $('label[for="firstName"]');
+      var firstNameField = $('#firstName').val();
 
-  if (companyValue !== 'Select') {
-      firstNameLabel.text('First Name'); // Remove *
-  } else {
-      firstNameLabel.text('First Name *'); // Add * back
-  }
-});
-
+      if (companyValue !== 'Select' && companyValue !== '') {
+          firstNameLabel.text('First Name'); // Remove *
+      } else if (firstNameField === 'Select' || firstNameField === '') {
+          firstNameLabel.text('First Name *'); // Add * back if first name is also empty
+      }
+  });
 
   function resetToContactMappingErrors() {
-    $('.mapping-fields-group select').css('border', ''); // Reset border styles
-    $('.error-message-contactMapping').text('').hide(); // Clear and hide error messages
+      $('.mapping-fields-group select').css('border', ''); // Reset border styles
+      $('.error-message-contactMapping').text('').hide(); // Clear and hide error messages
   }
+
   $('.mapping-fields-group select').on('click', function () {
-    resetToContactMappingErrors();
+      resetToContactMappingErrors();
   });
-  
+});
+
   /** screen 4 script */
 
   /** screen 3C script */
