@@ -259,7 +259,7 @@ define([
             }
     
             // Self-Mailer Logic
-            var isSelfMailer = $('#selfMailer').is(':checked');
+            var isSelfMailer = $('#selfmailer').is(':checked');
             if (isSelfMailer) {
               var isExtTemp = $('#extTempId').is(':checked');
 
