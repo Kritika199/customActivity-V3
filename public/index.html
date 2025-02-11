@@ -378,6 +378,99 @@
                 </div>
             </div>
         </div>
+
+        <div id="self-mailerScreen" class="Self-mailer">
+
+            <div class="screen-3">
+                <div class="spacer ExistingTemplate">
+                    <div class="section-label">Existing Template</div>
+                    <div class="six-input-field">
+                        <div class="input-box">
+                            <label for="description3" class="input-label">Description *</label>
+                            <input type="text" class="input-field ExistingTemplate" id="description3" name="description3">
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="input-box">
+                            <label for="sendDate3" class="input-label">Send Date *</label>
+                            <div class="date-wrap">
+                                <input type="date" placeholder="" class="input-field" id="sendDate3" name="sendDate3"> 
+                                <i class="fa fa-calendar calendar-icon"></i>
+                                <span class="error-message"></span>
+                            </div>                           
+                        </div>
+                        <div class="input-box">
+                            <label for="mailingClass3" class="input-label">Mailing Class *</label>
+                            <select class="input-field mailing-class" id="mailingClass3" name="mailingClass3">
+                                <option value="first_class" selected>First Class (7 - 10 business days)</option>
+                                <option value="standard_class">Standard Class (10 - 14 business days)</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                        <!-- Front Template Dropdown -->
+                        <div class="input-box">
+                            <label for="frontTemplateInput" class="input-label">Front Template *</label>
+                            <div class="mapping-dropdown">
+                                <div class="template-dropdown-wrap">
+                                    <input type="text" id="frontTemplateInput" placeholder="Search or enter template"
+                                        autocomplete="off" aria-describedby="frontTemplateList" aria-haspopup="listbox"
+                                        aria-expanded="false" />
+                                        <i class="fa fa-angle-right dropdown-icon"></i>
+                                </div>
+                                <div id="frontTemplateList" class="dropdown-options" role="listbox"
+                                    aria-labelledby="frontTemplateInput"></div>
+                                <span class="error-message"></span>
+                            </div>
+                        </div>
+                        <!-- Back Template -->
+                        <div class="input-box">
+                            <label for="backTemplateInput" class="input-label">Back Template *</label>
+                            <div class="mapping-dropdown">
+                                <div class="template-dropdown-wrap">
+                                    <input type="text" id="backTemplateInput" placeholder="Search or enter template"
+                                        autocomplete="off" aria-describedby="backTemplateList" aria-haspopup="listbox"
+                                        aria-expanded="false" />
+                                        <i class="fa fa-angle-right dropdown-icon"></i>
+                                </div>
+                                 <!-- Add down arrow here -->
+                                <div id="backTemplateList" class="dropdown-options" role="listbox"
+                                    aria-labelledby="backTemplateInput"></div>
+                                <span class="error-message"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-label-radio">Size *</div>
+                    <div class="radio-buttons width-50">
+                        <label class="radio-label size_radio_label">
+                            <input type="radio" class="radio-input" id="six-four" name="size" value="6x4" checked>
+                            6x4
+                        </label>
+                        <label class="radio-label size_radio_label">
+                            <input type="radio" class="radio-input" id="nine-six" name="size" value="9x6">
+                            9x6
+                        </label>
+                        <label class="radio-label size_radio_label">
+                            <input type="radio" class="radio-input" id="eleven-eight" name="size" value="11x6">
+                            11x6
+                        </label>
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="checkboxes">
+                        <div class="five-checkboxes">
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="checkbox-input express-delivery-btn" id="expDelivery" name="expDelivery">
+                                Express Delivery
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+        </div>
     </div>
 
     <div id="step4" class="step">

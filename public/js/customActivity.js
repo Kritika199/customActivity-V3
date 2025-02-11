@@ -236,27 +236,47 @@ define([
       }
       break;
 
-    case 'step2':
-      if (validateStep2()) {
-        var isExtTemp = $('#extTempId').is(':checked');
-        if (isExtTemp) {
-            fetchTemplates();
+      case 'step2':
+        if (validateStep2()) {
+            var isExtTemp = $('#extTempId').is(':checked');
+            if (isExtTemp) {
+                fetchTemplates();
+            }
+    
+            // Postcard Logic
+            var isPostcard = $('#postcard').is(':checked');
+            if (isPostcard) {
+                var isHtml = $('#htmlId').is(':checked');
+                var isPdf = $('#pdfId').is(':checked');
+                var isExtTemp = $('#extTempId').is(':checked');
+    
+                $('#postcardScreen > .screen-1').toggle(isHtml);
+                $('#postcardScreen > .screen-2').toggle(isPdf);
+                $('#postcardScreen > .screen-3').toggle(isExtTemp);
+            } else {
+                // Hide Postcard Screens if it's not selected
+                $('#postcardScreen > .screen-1, #postcardScreen > .screen-2, #postcardScreen > .screen-3').hide();
+            }
+    
+            // Self-Mailer Logic
+            var isSelfMailer = $('#selfMailer').is(':checked');
+            if (isSelfMailer) {
+              var isExtTemp = $('#extTempId').is(':checked');
+
+              $('#self-mailerScreen > .screen-3').toggle(isExtTemp);
+                
+                
+            } else {
+                $('#self-mailerScreen').hide();  // Hide the Self-Mailer screen if not selected
+            }
+    
+            connection.trigger('nextStep');
+            createContact();
+        } else {
+            handleValidationFailure();
         }
-        var isPostcard = $('#postcard').is(':checked');
-        if (isPostcard) {
-          var isHtml = $('#htmlId').is(':checked');
-          var isPdf = $('#pdfId').is(':checked');
-          var isExtTemp = $('#extTempId').is(':checked');
-        }
-        $('#postcardScreen > .screen-1').toggle(isHtml);
-        $('#postcardScreen > .screen-2').toggle(isPdf);
-        $('#postcardScreen > .screen-3').toggle(isExtTemp);
-        connection.trigger('nextStep');
-        createContact();
-      } else {
-        handleValidationFailure();
-      }
-      break;
+        break;
+    
 
     case 'step3':
       prepopulateToDeMapping();
