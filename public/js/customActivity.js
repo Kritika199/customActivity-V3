@@ -259,7 +259,7 @@ define([
             }
     
             // Self-Mailer Logic
-            var isSelfMailer = $('#selfmailer').is(':checked');
+            var isSelfMailer = $('#self-mailer').is(':checked');
             if (isSelfMailer) {
               var isExtTemp = $('#extTempId').is(':checked');
 
@@ -645,7 +645,7 @@ define([
 
 $('.step2radioBTN').change(function () {
   var isPostcard = $('#postcard').is(':checked');
-  var isSelfMailer = $('#selfmailer').is(':checked'); // Check if Self-Mailer is selected
+  var isSelfMailer = $('#self-mailer').is(':checked'); // Check if Self-Mailer is selected
   var isHtml = $('#htmlId').is(':checked');
   var isPdf = $('#pdfId').is(':checked');
   var isExtTemp = $('#extTempId').is(':checked');
