@@ -1242,11 +1242,10 @@ $('#search-contact').on('focus', function () {
     return isValid;
   }
 
-  
   // Handling * in Company Label based on First Name selection
 $('.mapping-fields-group #first-name').change(function () {
   var firstNameValue = $(this).val();
-  var companyLabel = $('.mapping-fields-group label[for="company"]');
+  var companyLabel = $('.mapping-fields-group label[for="companyName"]');
 
   if (firstNameValue !== 'Select') {
       companyLabel.text('Company'); // Remove *
@@ -1258,7 +1257,7 @@ $('.mapping-fields-group #first-name').change(function () {
 // Handling * in First Name Label based on Company selection
 $('.mapping-fields-group #company').change(function () {
   var companyValue = $(this).val();
-  var firstNameLabel = $('.mapping-fields-group label[for="first-name"]');
+  var firstNameLabel = $('.mapping-fields-group label[for="firstname"]');
 
   if (companyValue !== 'Select') {
       firstNameLabel.text('First Name'); // Remove *
@@ -1267,6 +1266,7 @@ $('.mapping-fields-group #company').change(function () {
   }
 });
 
+
   function resetToContactMappingErrors() {
     $('.mapping-fields-group select').css('border', ''); // Reset border styles
     $('.error-message-contactMapping').text('').hide(); // Clear and hide error messages
@@ -1274,6 +1274,7 @@ $('.mapping-fields-group #company').change(function () {
   $('.mapping-fields-group select').on('click', function () {
     resetToContactMappingErrors();
   });
+  
   /** screen 4 script */
 
   /** screen 3C script */
