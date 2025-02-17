@@ -1,6 +1,9 @@
 export default [
   // ESLint recommended configuration directly added to the array
   {
+    ignores: ['public/js/require.js',
+      'public/js/postmonger.js'
+    ],
     languageOptions: {
       parserOptions: {
         ecmaVersion: 2020,
@@ -8,10 +11,15 @@ export default [
       },
       globals: {
         require: 'readonly',
+        exports: 'readonly',
         module: 'readonly',
         __dirname: 'readonly',
         process: 'readonly',
-        structuredClone: 'readonly'
+        structuredClone: 'readonly',
+        $: 'readonly',
+        define: 'readonly',
+        document: 'readonly',
+        window: 'readonly'
       }
     },
     rules: {

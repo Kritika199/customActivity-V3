@@ -7,14 +7,14 @@ const app = express();
 
 // Configure Express
 app.use(express.static(path.join(__dirname, '/public')));
-app.use(bodyParser.json({ type: 'application/json' }));
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.post('/save/', activity.save);
 app.post('/validate/', activity.validate);
 app.post('/publish/', activity.publish);
-app.post('/journeybuilder/execute/', activity.execute);
+app.post('/execute/', activity.execute);
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 
-app.listen(PORT)
+app.listen(PORT);
